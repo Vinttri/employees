@@ -1,9 +1,9 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "empleados",
+        "title": "employees",
         "version": "0.0.1",
-        "description": "Modulo de gestion de empleados",
+        "description": "Modulo de gestion de Employee",
         "license": {
             "name": "agpl"
         }
@@ -47,7 +47,7 @@
         }
     },
     "paths": {
-        "/ocs/v2.php/apps/empleados/api": {
+        "/ocs/v2.php/apps/employees/api": {
             "get": {
                 "operationId": "api-index",
                 "summary": "An example API endpoint",

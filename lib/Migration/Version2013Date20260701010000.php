@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,8 +21,8 @@ class Version2013Date20260701010000 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('emp_perm_groups')) {
-			$table = $schema->createTable('emp_perm_groups');
+		if (!$schema->hasTable('permission_groups')) {
+			$table = $schema->createTable('permission_groups');
 
 			$table->addColumn('id', 'integer', [
 				'autoincrement' => true,
@@ -98,47 +98,47 @@ class Version2013Date20260701010000 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$permissions = [
 			[
-				'module' => 'compras',
+				'module' => 'purchases',
 				'permission' => 'request',
-				'group_id' => 'compras_solicitantes',
-				'label' => 'Compras - Solicitantes',
+				'group_id' => 'purchases_solicitantes',
+				'label' => 'Purchases - Solicitantes',
 				'description' => 'Puede crear y dar seguimiento a sus propias solicitudes de compra.',
 				'restricted' => 0,
 				'sort_order' => 10,
 			],
 			[
-				'module' => 'compras',
+				'module' => 'purchases',
 				'permission' => 'approve',
-				'group_id' => 'compras_autorizadores',
-				'label' => 'Compras - Autorizadores',
+				'group_id' => 'purchases_autorizadores',
+				'label' => 'Purchases - Autorizadores',
 				'description' => 'Puede revisar, aprobar o rechazar solicitudes de compra.',
 				'restricted' => 0,
 				'sort_order' => 20,
 			],
 			[
-				'module' => 'compras',
+				'module' => 'purchases',
 				'permission' => 'admin',
-				'group_id' => 'compras_admin',
-				'label' => 'Compras - Administradores',
-				'description' => 'Control total del módulo de compras.',
+				'group_id' => 'purchases_admin',
+				'label' => 'Purchases - Administradores',
+				'description' => 'Control total del módulo de purchases.',
 				'restricted' => 1,
 				'sort_order' => 30,
 			],
 			[
-				'module' => 'compras',
+				'module' => 'purchases',
 				'permission' => 'accounting',
-				'group_id' => 'compras_contabilidad',
-				'label' => 'Compras - Contabilidad',
+				'group_id' => 'purchases_contabilidad',
+				'label' => 'Purchases - Contabilidad',
 				'description' => 'Puede revisar solicitudes para seguimiento contable.',
 				'restricted' => 0,
 				'sort_order' => 40,
 			],
 			[
-				'module' => 'empleados',
+				'module' => 'employees',
 				'permission' => 'hr',
 				'group_id' => 'recursos_humanos',
 				'label' => 'Recursos Humanos',
-				'description' => 'Puede administrar empleados, áreas, puestos, equipos, ahorro y ausencias.',
+				'description' => 'Puede administrar Employee, áreas, Position, Team, savings y Absence.',
 				'restricted' => 1,
 				'sort_order' => 50,
 			],
@@ -153,7 +153,7 @@ class Version2013Date20260701010000 extends SimpleMigrationStep {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('id')
-			->from('emp_perm_groups')
+			->from('permission_groups')
 			->where($qb->expr()->eq('module', $qb->createNamedParameter($permission['module'])))
 			->andWhere($qb->expr()->eq('permission', $qb->createNamedParameter($permission['permission'])))
 			->andWhere($qb->expr()->eq('group_id', $qb->createNamedParameter($permission['group_id'])))
@@ -169,7 +169,7 @@ class Version2013Date20260701010000 extends SimpleMigrationStep {
 
 		$insert = $this->db->getQueryBuilder();
 
-		$insert->insert('emp_perm_groups')
+		$insert->insert('permission_groups')
 			->values([
 				'module' => $insert->createNamedParameter($permission['module']),
 				'permission' => $insert->createNamedParameter($permission['permission']),

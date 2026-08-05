@@ -5,7 +5,7 @@
 		<section class="kpis">
 			<div class="kpi">
 				<div class="kpi-label">
-					{{ t('empleados', 'Employees') }}
+					{{ t('employees', 'Employees') }}
 				</div>
 				<div class="kpi-value">
 					{{ loading ? '…' : stats.totalEmpleados }}
@@ -13,7 +13,7 @@
 			</div>
 			<div class="kpi">
 				<div class="kpi-label">
-					{{ t('empleados', 'Areas') }}
+					{{ t('employees', 'Areas') }}
 				</div>
 				<div class="kpi-value">
 					{{ loading ? '…' : stats.totalAreas }}
@@ -21,7 +21,7 @@
 			</div>
 			<div class="kpi">
 				<div class="kpi-label">
-					{{ t('empleados', 'Absences today') }}
+					{{ t('employees', 'Absences today') }}
 				</div>
 				<div class="kpi-value">
 					{{ loading ? '…' : stats.ausenciasHoy }}
@@ -29,7 +29,7 @@
 			</div>
 			<div class="kpi">
 				<div class="kpi-label">
-					{{ t('empleados', 'Anniversaries (30 days)') }}
+					{{ t('employees', 'Anniversaries (30 days)') }}
 				</div>
 				<div class="kpi-value">
 					{{ loading ? '…' : stats.aniversariosMes }}
@@ -39,73 +39,73 @@
 
 		<!-- Acciones rápidas -->
 		<section class="quick">
-			<h3>{{ t('empleados', 'Quick actions') }}</h3>
+			<h3>{{ t('employees', 'Quick actions') }}</h3>
 			<div class="quick-grid">
-				<button class="nc-btn" @click="go('empleados')">
-					{{ t('empleados', 'View employees') }}
+				<button class="nc-btn" @click="go('employees')">
+					{{ t('employees', 'View employees') }}
 				</button>
-				<button class="nc-btn" @click="go('empleados/nuevo')">
-					{{ t('empleados', 'New employee') }}
+				<button class="nc-btn" @click="go('employees/nuevo')">
+					{{ t('employees', 'New employee') }}
 				</button>
 				<button class="nc-btn" @click="go('areas')">
-					{{ t('empleados', 'Areas and positions') }}
+					{{ t('employees', 'Areas and positions') }}
 				</button>
-				<button class="nc-btn" @click="go('ausencias')">
-					{{ t('empleados', 'Manage absences') }}
+				<button class="nc-btn" @click="go('Absence')">
+					{{ t('employees', 'Manage absences') }}
 				</button>
 				<button class="nc-btn" @click="go('reportes')">
-					{{ t('empleados', 'Reports') }}
+					{{ t('employees', 'Reports') }}
 				</button>
 				<button class="nc-btn" @click="go('config')">
-					{{ t('empleados', 'Settings') }}
+					{{ t('employees', 'Settings') }}
 				</button>
 			</div>
 		</section>
 
-		<!-- Próximos aniversarios -->
+		<!-- Próximos anniversaries -->
 		<section class="panel">
 			<div class="panel-head">
-				<h3>{{ t('empleados', 'Upcoming anniversaries (30 days)') }}</h3>
-				<button class="nc-link" @click="go('aniversarios')">
-					{{ t('empleados', 'View all') }}
+				<h3>{{ t('employees', 'Upcoming anniversaries (30 days)') }}</h3>
+				<button class="nc-link" @click="go('anniversaries')">
+					{{ t('employees', 'View all') }}
 				</button>
 			</div>
 			<div v-if="loading" class="empty">
-				{{ t('empleados', 'Loading...') }}
+				{{ t('employees', 'Loading...') }}
 			</div>
-			<ul v-else-if="aniversarios.length" class="list">
-				<li v-for="a in aniversarios" :key="a.id" class="item">
+			<ul v-else-if="anniversaries.length" class="list">
+				<li v-for="a in anniversaries" :key="a.id" class="item">
 					<div class="item-main">
-						<strong>{{ a.nombre }}</strong>
+						<strong>{{ a.name }}</strong>
 						<span class="muted">· {{ a.area }}</span>
 					</div>
 					<div class="item-meta">
-						<span class="pill">{{ a.fecha }}</span>
-						<span class="muted">{{ t('empleados', '{years} years', { years: a.years }) }}</span>
+						<span class="pill">{{ a.date }}</span>
+						<span class="muted">{{ t('employees', '{years} years', { years: a.years }) }}</span>
 					</div>
 				</li>
 			</ul>
 			<div v-else class="empty">
-				{{ t('empleados', 'No upcoming anniversaries.') }}
+				{{ t('employees', 'No upcoming anniversaries.') }}
 			</div>
 		</section>
 
 		<!-- Ausencias hoy -->
 		<section class="panel">
 			<div class="panel-head">
-				<h3>{{ t('empleados', 'Today absences') }}</h3>
-				<button class="nc-link" @click="go('ausencias')">
-					{{ t('empleados', 'Manage') }}
+				<h3>{{ t('employees', 'Today absences') }}</h3>
+				<button class="nc-link" @click="go('Absence')">
+					{{ t('employees', 'Manage') }}
 				</button>
 			</div>
 			<div v-if="loading" class="empty">
-				{{ t('empleados', 'Loading...') }}
+				{{ t('employees', 'Loading...') }}
 			</div>
 			<ul v-else-if="ausenciasHoy.length" class="list">
 				<li v-for="x in ausenciasHoy" :key="x.id" class="item">
 					<div class="item-main">
-						<strong>{{ x.nombre }}</strong>
-						<span class="muted">· {{ x.tipo }}</span>
+						<strong>{{ x.name }}</strong>
+						<span class="muted">· {{ x.type }}</span>
 					</div>
 					<div class="item-meta">
 						<span class="pill">{{ x.de }} → {{ x.hasta }}</span>
@@ -114,34 +114,34 @@
 				</li>
 			</ul>
 			<div v-else class="empty">
-				{{ t('empleados', 'Nobody is absent today.') }}
+				{{ t('employees', 'Nobody is absent today.') }}
 			</div>
 		</section>
 
-		<!-- Últimos cambios -->
+		<!-- Últimos changes -->
 		<section class="panel">
 			<div class="panel-head">
-				<h3>{{ t('empleados', 'Latest changes') }}</h3>
+				<h3>{{ t('employees', 'Latest changes') }}</h3>
 				<button class="nc-link" @click="go('actividad')">
-					{{ t('empleados', 'View activity') }}
+					{{ t('employees', 'View activity') }}
 				</button>
 			</div>
 			<div v-if="loading" class="empty">
-				{{ t('empleados', 'Loading...') }}
+				{{ t('employees', 'Loading...') }}
 			</div>
 			<ul v-else-if="actividad.length" class="list">
 				<li v-for="e in actividad" :key="e.id" class="item">
 					<div class="item-main">
-						<strong>{{ e.titulo }}</strong>
+						<strong>{{ e.title }}</strong>
 						<span class="muted">· {{ e.usuario }}</span>
 					</div>
 					<div class="item-meta">
-						<span class="muted">{{ e.fecha }}</span>
+						<span class="muted">{{ e.date }}</span>
 					</div>
 				</li>
 			</ul>
 			<div v-else class="empty">
-				{{ t('empleados', 'No recent activity.') }}
+				{{ t('employees', 'No recent activity.') }}
 			</div>
 		</section>
 	</div>

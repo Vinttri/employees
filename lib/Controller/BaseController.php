@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace OCA\Empleados\Controller;
+namespace OCA\Employees\Controller;
 
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\OCS\OCSForbiddenException;
 use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\IGroupManager;
-use OCA\Empleados\Db\empleadosMapper;
-use OCA\Empleados\Db\configuracionesMapper;
+use OCA\Employees\Db\EmployeeMapper;
+use OCA\Employees\Db\SettingsMapper;
 
 abstract class BaseController extends OCSController {
 
     protected $userSession;
     protected $groupManager;
-    protected $configuracionesMapper;
-    protected $empleadosMapper;
+    protected $SettingsMapper;
+    protected $EmployeeMapper;
     protected $configParams = [];
 
     public function __construct(
@@ -24,14 +24,14 @@ abstract class BaseController extends OCSController {
         IRequest $request,
         IUserSession $userSession,
         IGroupManager $groupManager,
-        empleadosMapper $empleadosMapper,
-        configuracionesMapper $configuracionesMapper
+        EmployeeMapper $EmployeeMapper,
+        SettingsMapper $SettingsMapper
     ) {
         parent::__construct($appName, $request);
         $this->userSession = $userSession;
         $this->groupManager = $groupManager;
-        $this->empleadosMapper = $empleadosMapper;
-        $this->configuracionesMapper = $configuracionesMapper;
+        $this->EmployeeMapper = $EmployeeMapper;
+        $this->SettingsMapper = $SettingsMapper;
         $this->loadConfigParams(); // 🖥️ Cargar configuración automáticamente
     }
 
@@ -86,20 +86,20 @@ abstract class BaseController extends OCSController {
      * 🔥 Carga la configuración automáticamente para todos los controladores.
      */
     private function loadConfigParams(): void {
-        $configMap = array_column($this->configuracionesMapper->GetConfig(), 'Data', 'Nombre');
+        $configMap = array_column($this->SettingsMapper->GetConfig(), 'data', 'name');
 
         $this->configParams = [
             "usuario_almacenamiento" => $configMap['usuario_almacenamiento'] ?? null,
             "automatic_save_note" => $configMap['automatic_save_note'] ?? null,
             "acumular_vacaciones" => $configMap['acumular_vacaciones'] ?? null,
-            "modulo_ahorro" => $configMap['modulo_ahorro'] ?? null,
+            "modulo_savings" => $configMap['modulo_savings'] ?? null,
             "modulo_ausencias" => $configMap['modulo_ausencias'] ?? null,
             "modulo_ausencias_readonly" => $configMap['ausencias_readonly'] ?? null,
-            "modulo_clientes" => $configMap['modulo_clientes'] ?? null,
+            "modulo_clients" => $configMap['modulo_clients'] ?? null,
             "modulo_reporte_tiempos" => $configMap['modulo_reporte_tiempos'] ?? null,
             "modulo_inventario" => $configMap['modulo_inventario'] ?? null,
             "modulo_soporte" => $configMap['modulo_soporte'] ?? null,
-            "modulo_compras" => $configMap['modulo_compras'] ?? null,
+            "modulo_purchases" => $configMap['modulo_purchases'] ?? null,
         ];
     }
 
@@ -115,7 +115,7 @@ abstract class BaseController extends OCSController {
      */
     public function getEmployeeInfo(): array {
         $user = $this->userSession->getUser();
-        return $this->empleadosMapper->GetMyEmployeeInfo($user->getUID());
+        return $this->EmployeeMapper->GetMyEmployeeInfo($user->getUID());
     }
 
     /**
@@ -123,6 +123,6 @@ abstract class BaseController extends OCSController {
      */
     public function GetSubordinates(): array {
         $user = $this->userSession->getUser();
-        return $this->empleadosMapper->GetSubordinates($user->getUID());
+        return $this->EmployeeMapper->GetSubordinates($user->getUID());
     }
 }

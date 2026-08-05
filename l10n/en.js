@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "empleados",
+    "employees",
     {
     "Anniversaries table": "Anniversaries table",
     "Create new anniversary": "Create new anniversary",
@@ -1299,8 +1299,8 @@ OC.L10N.register(
     "Equipo eliminado exitosamente": "Team deleted successfully",
     "Error approving: {error}": "Error approving: {error}",
     "Error cancelling absence: {error}": "Error cancelling absence: {error}",
-    "Error cargando actividades: {error}": "Error loading activities: {error}",
-    "Error cargando clientes: {error}": "Error loading customers: {error}",
+    "Error cargando Activity: {error}": "Error loading activities: {error}",
+    "Error cargando Client: {error}": "Error loading customers: {error}",
     "Error checking group structure: {error}": "Error checking group structure: {error}",
     "Error creando reporte: {error}": "Error creating report: {error}",
     "Error importing inventory data: {error}": "Error importing inventory data: {error}",
@@ -1407,7 +1407,7 @@ OC.L10N.register(
     "No required catalog entries": "No required catalog entries",
     "No se pudieron asignar los días [{error}]": "Could not assign the days [{error}]",
     "No se pudo cargar el estado de hoy: {error}": "Could not load today's status: {error}",
-    "No se pudo cargar el inventario de equipos [{error}]": "Could not load the equipment inventory [{error}]",
+    "No se pudo cargar el inventario de Team [{error}]": "Could not load the equipment inventory [{error}]",
     "No se pudo cargar el periodo de vacaciones [{error}]": "Could not load the vacation period [{error}]",
     "No support records found": "No support records found",
     "Not approved yet": "Not approved yet",

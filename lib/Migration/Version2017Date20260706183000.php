@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,8 +16,8 @@ class Version2017Date20260706183000 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('empleados_clientes')) {
-			$table = $schema->createTable('empleados_clientes');
+		if (!$schema->hasTable('clients')) {
+			$table = $schema->createTable('clients');
 
 			$table->addColumn('id', Types::INTEGER, [
 				'autoincrement' => true,
@@ -32,90 +32,90 @@ class Version2017Date20260706183000 extends SimpleMigrationStep {
 			return $schema;
 		}
 
-		$table = $schema->getTable('empleados_clientes');
+		$table = $schema->getTable('clients');
 
-		// Estructura vieja: id_cliente -> id
-		if ($table->hasColumn('id_cliente') && !$table->hasColumn('id')) {
-			$table->renameColumn('id_cliente', 'id');
+		// Estructura vieja: id_client -> id
+		if ($table->hasColumn('id_client') && !$table->hasColumn('id')) {
+			$table->renameColumn('id_client', 'id');
 		}
 
-		if (!$table->hasColumn('nombre')) {
-			$table->addColumn('nombre', Types::STRING, [
+		if (!$table->hasColumn('name')) {
+			$table->addColumn('name', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 				'default' => '',
 			]);
 		}
 
-		if (!$table->hasColumn('detalles')) {
-			$table->addColumn('detalles', Types::TEXT, [
+		if (!$table->hasColumn('details')) {
+			$table->addColumn('details', Types::TEXT, [
 				'notnull' => false,
 			]);
 		}
 
-		if (!$table->hasColumn('lider_proyecto')) {
-			$table->addColumn('lider_proyecto', Types::INTEGER, [
+		if (!$table->hasColumn('project_leader')) {
+			$table->addColumn('project_leader', Types::INTEGER, [
 				'notnull' => false,
 			]);
 		}
 
-		if (!$table->hasColumn('colaboradores')) {
-			$table->addColumn('colaboradores', Types::TEXT, [
+		if (!$table->hasColumn('collaborators')) {
+			$table->addColumn('collaborators', Types::TEXT, [
 				'notnull' => false,
 			]);
 		}
 
-		if (!$table->hasColumn('razon_social')) {
-			$table->addColumn('razon_social', Types::STRING, [
-				'notnull' => false,
-				'length' => 255,
-			]);
-		}
-
-		if (!$table->hasColumn('nombre_contacto')) {
-			$table->addColumn('nombre_contacto', Types::STRING, [
+		if (!$table->hasColumn('legal_name')) {
+			$table->addColumn('legal_name', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
 		}
 
-		if (!$table->hasColumn('telefono')) {
-			$table->addColumn('telefono', Types::STRING, [
+		if (!$table->hasColumn('name_contact')) {
+			$table->addColumn('name_contact', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
+			]);
+		}
+
+		if (!$table->hasColumn('phone')) {
+			$table->addColumn('phone', Types::STRING, [
 				'notnull' => false,
 				'length' => 64,
 			]);
 		}
 
-		if (!$table->hasColumn('correo')) {
-			$table->addColumn('correo', Types::STRING, [
+		if (!$table->hasColumn('email')) {
+			$table->addColumn('email', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
 		}
 
-		if (!$table->hasColumn('ubicacion')) {
-			$table->addColumn('ubicacion', Types::STRING, [
+		if (!$table->hasColumn('location')) {
+			$table->addColumn('location', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
 			]);
 		}
 
-		if (!$table->hasColumn('especial')) {
-			$table->addColumn('especial', Types::INTEGER, [
+		if (!$table->hasColumn('special')) {
+			$table->addColumn('special', Types::INTEGER, [
 				'notnull' => true,
 				'default' => 0,
 				'length' => 1,
 			]);
 		}
 
-		if (!$table->hasColumn('cliente_padre')) {
-			$table->addColumn('cliente_padre', Types::INTEGER, [
+		if (!$table->hasColumn('client_parent')) {
+			$table->addColumn('client_parent', Types::INTEGER, [
 				'notnull' => false,
 			]);
 		}
 
-		if (!$table->hasColumn('estado')) {
-			$table->addColumn('estado', Types::INTEGER, [
+		if (!$table->hasColumn('status')) {
+			$table->addColumn('status', Types::INTEGER, [
 				'notnull' => true,
 				'default' => 1,
 				'length' => 1,
@@ -126,60 +126,60 @@ class Version2017Date20260706183000 extends SimpleMigrationStep {
 	}
 
 	private function addClienteColumns($table): void {
-		$table->addColumn('nombre', Types::STRING, [
+		$table->addColumn('name', Types::STRING, [
 			'notnull' => true,
 			'length' => 255,
 			'default' => '',
 		]);
 
-		$table->addColumn('detalles', Types::TEXT, [
+		$table->addColumn('details', Types::TEXT, [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('lider_proyecto', Types::INTEGER, [
+		$table->addColumn('project_leader', Types::INTEGER, [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('colaboradores', Types::TEXT, [
+		$table->addColumn('collaborators', Types::TEXT, [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('razon_social', Types::STRING, [
-			'notnull' => false,
-			'length' => 255,
-		]);
-
-		$table->addColumn('nombre_contacto', Types::STRING, [
+		$table->addColumn('legal_name', Types::STRING, [
 			'notnull' => false,
 			'length' => 255,
 		]);
 
-		$table->addColumn('telefono', Types::STRING, [
+		$table->addColumn('name_contact', Types::STRING, [
+			'notnull' => false,
+			'length' => 255,
+		]);
+
+		$table->addColumn('phone', Types::STRING, [
 			'notnull' => false,
 			'length' => 64,
 		]);
 
-		$table->addColumn('correo', Types::STRING, [
+		$table->addColumn('email', Types::STRING, [
 			'notnull' => false,
 			'length' => 255,
 		]);
 
-		$table->addColumn('ubicacion', Types::STRING, [
+		$table->addColumn('location', Types::STRING, [
 			'notnull' => false,
 			'length' => 255,
 		]);
 
-		$table->addColumn('especial', Types::INTEGER, [
+		$table->addColumn('special', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 			'length' => 1,
 		]);
 
-		$table->addColumn('cliente_padre', Types::INTEGER, [
+		$table->addColumn('client_parent', Types::INTEGER, [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('estado', Types::INTEGER, [
+		$table->addColumn('status', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 1,
 			'length' => 1,

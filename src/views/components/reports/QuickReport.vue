@@ -1,19 +1,19 @@
 <template>
-	<NcAppContent :name="t('empleados', 'Employees - Quick report')">
+	<NcAppContent :name="t('employees', 'Employees - Quick report')">
 		<div class="quick-report-page">
 			<div class="quick-report-card">
 				<div class="header">
-					<h2>{{ t('empleados', 'Quick time report') }}</h2>
+					<h2>{{ t('employees', 'Quick time report') }}</h2>
 					<p>
-						{{ t('empleados', 'Log your day activities quickly.') }}
+						{{ t('employees', 'Log your day activities quickly.') }}
 					</p>
 				</div>
-				<div class="estado-card" :class="estadoClass">
+				<div class="status-card" :class="estadoClass">
 					<div>
-						<strong>{{ t('empleados', 'Today status:') }}</strong> {{ loadingEstado ? t('empleados', 'Loading...') : estadoLabel }}
+						<strong>{{ t('employees', 'Today status:') }}</strong> {{ loadingEstado ? t('employees', 'Loading...') : estadoLabel }}
 					</div>
 					<div>
-						{{ t('empleados', 'Hours reported today: {hours} h', { hours: horasHoy }) }}
+						{{ t('employees', 'Hours reported today: {hours} h', { hours: horasHoy }) }}
 					</div>
 				</div>
 
@@ -24,13 +24,13 @@
 				<div v-else class="form">
 					<NcSelect
 						v-model="activity_selected"
-						:input-label="t('empleados', 'Proyecto / Cliente')"
-						:options="actividades"
+						:input-label="t('employees', 'Proyecto / Cliente')"
+						:options="Activity"
 						class="fit" />
 
 					<NcSelect
 						v-model="listas_selected"
-						:input-label="t('empleados', 'Actividad')"
+						:input-label="t('employees', 'Actividad')"
 						:options="listas"
 						class="fit top" />
 
@@ -45,27 +45,27 @@
 							:value.sync="time_activity"
 							type="number"
 							min="1"
-							:label="t('empleados', 'Tiempo')" />
+							:label="t('employees', 'Tiempo')" />
 
 						<div class="radios">
 							<NcCheckboxRadioSwitch
 								v-model="type_time"
 								:button-variant="true"
 								value="minutos"
-								:name="t('empleados', 'Minutes')"
+								:name="t('employees', 'Minutes')"
 								type="radio"
 								button-variant-grouped="horizontal">
-								{{ t('empleados', 'Minutes') }}
+								{{ t('employees', 'Minutes') }}
 							</NcCheckboxRadioSwitch>
 
 							<NcCheckboxRadioSwitch
 								v-model="type_time"
 								:button-variant="true"
 								value="horas"
-								:name="t('empleados', 'Hours')"
+								:name="t('employees', 'Hours')"
 								type="radio"
 								button-variant-grouped="horizontal">
-								{{ t('empleados', 'Hours') }}
+								{{ t('employees', 'Hours') }}
 							</NcCheckboxRadioSwitch>
 						</div>
 					</div>
@@ -75,20 +75,20 @@
 						resize="vertical"
 						:value.sync="description_activity"
 						class="top"
-						:label="t('empleados', 'Activity description')" />
+						:label="t('employees', 'Activity description')" />
 
 					<div class="actions">
 						<NcButton
 							type="secondary"
 							@click="resetForm">
-							{{ t('empleados', 'Clear') }}
+							{{ t('employees', 'Clear') }}
 						</NcButton>
 
 						<NcButton
 							type="primary"
 							:disabled="!isFormValid || saving"
 							@click="create">
-							{{ saving ? t('empleados', 'Saving...') : t('empleados', 'Save report') }}
+							{{ saving ? t('employees', 'Saving...') : t('employees', 'Save report') }}
 						</NcButton>
 					</div>
 				</div>
@@ -139,7 +139,7 @@ export default {
 			time: new Date(),
 
 			listas: [],
-			actividades: [],
+			Activity: [],
 
 			activity_selected: null,
 			listas_selected: null,
@@ -154,8 +154,8 @@ export default {
 			const clienteId = this.activity_selected?.id
 			const actividadId = this.listas_selected?.id
 			const tiempo = Number(this.time_activity)
-			const descripcion = String(this.description_activity || '').trim()
-			const fecha = this.time instanceof Date ? this.time : new Date(this.time)
+			const description = String(this.description_activity || '').trim()
+			const date = this.time instanceof Date ? this.time : new Date(this.time)
 
 			return Boolean(
 				clienteId !== null
@@ -164,32 +164,32 @@ export default {
 				&& actividadId !== undefined
 				&& Number.isFinite(tiempo)
 				&& tiempo > 0
-				&& descripcion.length > 0
-				&& !isNaN(fecha.getTime()),
+				&& description.length > 0
+				&& !isNaN(date.getTime()),
 			)
 		},
 		estadoLabel() {
-			const estado = this.estadoHoy?.estado
+			const status = this.estadoHoy?.status
 
-			if (estado === 'reportado') {
-				return t('empleados', 'Reported')
+			if (status === 'reportado') {
+				return t('employees', 'Reported')
 			}
 
-			if (estado === 'sin_empleado') {
-				return t('empleados', 'No employee assigned')
+			if (status === 'sin_empleado') {
+				return t('employees', 'No employee assigned')
 			}
 
-			return t('empleados', 'Pending')
+			return t('employees', 'Pending')
 		},
 
 		estadoClass() {
-			const estado = this.estadoHoy?.estado
+			const status = this.estadoHoy?.status
 
-			if (estado === 'reportado') {
+			if (status === 'reportado') {
 				return 'status-ok'
 			}
 
-			if (estado === 'sin_empleado') {
+			if (status === 'sin_empleado') {
 				return 'status-warning'
 			}
 
@@ -207,7 +207,7 @@ export default {
 		try {
 			await Promise.all([
 				this.GetCompaniesGroups(),
-				this.GetActividades(),
+				this.GetActivities(),
 				this.loadEstadoHoy(),
 			])
 		} finally {
@@ -218,12 +218,12 @@ export default {
 	methods: {
 		t,
 
-		async GetActividades() {
+		async GetActivities() {
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/GetActividades'))
+				const response = await axios.get(generateUrl('/apps/employees/GetActivities'))
 
 				if (response?.data?.ocs?.meta?.status !== 'ok') {
-					showError(response?.data?.ocs?.meta?.message || t('empleados', 'Could not load activities'))
+					showError(response?.data?.ocs?.meta?.message || t('employees', 'Could not load activities'))
 					return
 				}
 
@@ -232,21 +232,21 @@ export default {
 					: []
 
 				this.listas = arr.map((item) => ({
-					id: item.id_actividad,
-					label: item.nombre,
-					count: item.tiempo_real,
+					id: item.id_activity,
+					label: item.name,
+					count: item.time_actual,
 				}))
 			} catch (err) {
-				showError(t('empleados', 'Error loading activities: {error}', { error: String(err) }))
+				showError(t('employees', 'Error loading activities: {error}', { error: String(err) }))
 			}
 		},
 
 		async GetCompaniesGroups() {
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/GetCompaniesGroups'))
+				const response = await axios.get(generateUrl('/apps/employees/GetCompaniesGroups'))
 
 				if (response?.data?.ocs?.meta?.status !== 'ok') {
-					showError(response?.data?.ocs?.meta?.message || t('empleados', 'Could not load customers'))
+					showError(response?.data?.ocs?.meta?.message || t('employees', 'Could not load customers'))
 					return
 				}
 
@@ -254,42 +254,42 @@ export default {
 					? response.data.ocs.data
 					: []
 
-				this.actividades = arr.map((item) => ({
+				this.Activity = arr.map((item) => ({
 					id: item.id,
-					label: item.nombre,
+					label: item.name,
 				}))
 			} catch (err) {
-				showError(t('empleados', 'Error loading customers: {error}', { error: String(err) }))
+				showError(t('employees', 'Error loading customers: {error}', { error: String(err) }))
 			}
 		},
 
 		async create() {
 			if (!this.isFormValid) {
-				showError(t('empleados', 'Complete all required fields with valid values.'))
+				showError(t('employees', 'Complete all required fields with valid values.'))
 				return
 			}
 
-			const fecha = this.time instanceof Date ? this.time : new Date(this.time)
+			const date = this.time instanceof Date ? this.time : new Date(this.time)
 
 			const payload = {
-				id_cliente: this.activity_selected.id,
-				id_actividad: this.listas_selected.id,
+				id_client: this.activity_selected.id,
+				id_activity: this.listas_selected.id,
 				tiemporegistrado: Number(this.time_activity),
-				descripcion: String(this.description_activity || '').trim(),
-				tipo: this.type_time,
-				time: fecha.toISOString().slice(0, 10),
+				description: String(this.description_activity || '').trim(),
+				type: this.type_time,
+				time: date.toISOString().slice(0, 10),
 			}
 
 			this.saving = true
 
 			try {
-				await axios.post(generateUrl('/apps/empleados/crearReporte'), payload)
+				await axios.post(generateUrl('/apps/employees/crearReporte'), payload)
 
-				showSuccess(t('empleados', 'Report created successfully'))
+				showSuccess(t('employees', 'Report created successfully'))
 				await this.loadEstadoHoy()
 				this.resetForm()
 			} catch (err) {
-				showError(t('empleados', 'Error creating report: {error}', { error: String(err) }))
+				showError(t('employees', 'Error creating report: {error}', { error: String(err) }))
 			} finally {
 				this.saving = false
 			}
@@ -307,11 +307,11 @@ export default {
 			this.loadingEstado = true
 
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/estadoReporteHoy'))
+				const response = await axios.get(generateUrl('/apps/employees/estadoReporteHoy'))
 
 				this.estadoHoy = response?.data?.ocs?.data ?? response?.data ?? null
 			} catch (err) {
-				showError(t('empleados', 'Could not load today status: {error}', { error: String(err) }))
+				showError(t('employees', 'Could not load today status: {error}', { error: String(err) }))
 			} finally {
 				this.loadingEstado = false
 			}

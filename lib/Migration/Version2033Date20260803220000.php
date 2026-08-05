@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -43,7 +43,7 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 				'permission' => 'view',
 				'group_id' => 'ti_consulta',
 				'label' => 'TI - Consulta',
-				'description' => 'Puede consultar inventario, calendario y avance de mantenimientos.',
+				'description' => 'Puede consultar inventario, calendar y avance de mantenimientos.',
 				'sort_order' => 72,
 			],
 		];
@@ -54,130 +54,130 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 	}
 
 	private function createMaintenanceGroups(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inv_mant_grupos')) {
+		if ($schema->hasTable('maintenance_groups')) {
 			return;
 		}
 
-		$table = $schema->createTable('inv_mant_grupos');
+		$table = $schema->createTable('maintenance_groups');
 		$table->addColumn('id', 'bigint', ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
-		$table->addColumn('titulo', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('id_departamento', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('departamento_nombre', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('tipo', 'string', ['length' => 40, 'notnull' => true]);
-		$table->addColumn('fecha_programada', 'date', ['notnull' => true]);
-		$table->addColumn('hora_inicio', 'string', ['length' => 8, 'notnull' => false]);
-		$table->addColumn('hora_fin', 'string', ['length' => 8, 'notnull' => false]);
-		$table->addColumn('tecnico_uid', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('tecnico_nombre', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('estado_admin', 'string', ['length' => 20, 'notnull' => true, 'default' => 'active']);
-		$table->addColumn('descripcion', 'text', ['notnull' => false]);
-		$table->addColumn('creado_por', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('fecha_creacion', 'datetime', ['notnull' => true]);
-		$table->addColumn('fecha_actualizacion', 'datetime', ['notnull' => true]);
+		$table->addColumn('title', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('id_department', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('department_name', 'string', ['length' => 190, 'notnull' => false]);
+		$table->addColumn('type', 'string', ['length' => 40, 'notnull' => true]);
+		$table->addColumn('date_scheduled', 'date', ['notnull' => true]);
+		$table->addColumn('time_start', 'string', ['length' => 8, 'notnull' => false]);
+		$table->addColumn('time_end', 'string', ['length' => 8, 'notnull' => false]);
+		$table->addColumn('technician_uid', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('technician_name', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('status_admin', 'string', ['length' => 20, 'notnull' => true, 'default' => 'active']);
+		$table->addColumn('description', 'text', ['notnull' => false]);
+		$table->addColumn('created_by', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('date_creation', 'datetime', ['notnull' => true]);
+		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['fecha_programada'], 'img_fecha_idx');
-		$table->addIndex(['id_departamento', 'fecha_programada'], 'img_depto_fecha_idx');
-		$table->addIndex(['tecnico_uid', 'fecha_programada'], 'img_tec_fecha_idx');
-		$table->addIndex(['tipo', 'fecha_programada'], 'img_tipo_fecha_idx');
-		$table->addIndex(['estado_admin', 'fecha_programada'], 'img_estado_fecha_idx');
+		$table->addIndex(['date_scheduled'], 'maintenance_groups_date_idx');
+		$table->addIndex(['id_department', 'date_scheduled'], 'maintenance_groups_department_date_idx');
+		$table->addIndex(['technician_uid', 'date_scheduled'], 'maintenance_groups_technician_date_idx');
+		$table->addIndex(['type', 'date_scheduled'], 'maintenance_groups_type_date_idx');
+		$table->addIndex(['status_admin', 'date_scheduled'], 'maintenance_groups_status_date_idx');
 	}
 
 	private function createMaintenances(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inv_mantenimientos')) {
+		if ($schema->hasTable('maintenance_records')) {
 			return;
 		}
 
-		$table = $schema->createTable('inv_mantenimientos');
+		$table = $schema->createTable('maintenance_records');
 		$table->addColumn('id', 'bigint', ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_grupo', 'bigint', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_equipo', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('equipo_nombre', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('equipo_identificador', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('id_modelo', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('modelo_nombre', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('numero_serie', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('id_empleado', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('empleado_uid', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('empleado_nombre', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('id_departamento', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('departamento_nombre', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('tecnico_uid', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('tecnico_nombre', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('tipo', 'string', ['length' => 40, 'notnull' => true]);
-		$table->addColumn('fecha_programada', 'date', ['notnull' => true]);
-		$table->addColumn('hora_inicio_programada', 'string', ['length' => 8, 'notnull' => false]);
-		$table->addColumn('hora_fin_programada', 'string', ['length' => 8, 'notnull' => false]);
-		$table->addColumn('fecha_inicio_real', 'datetime', ['notnull' => false]);
-		$table->addColumn('fecha_fin_real', 'datetime', ['notnull' => false]);
-		$table->addColumn('estado', 'string', ['length' => 24, 'notnull' => true, 'default' => 'pending']);
-		$table->addColumn('resultado', 'text', ['notnull' => false]);
-		$table->addColumn('acciones_realizadas', 'text', ['notnull' => false]);
-		$table->addColumn('incidencias', 'text', ['notnull' => false]);
-		$table->addColumn('repuestos', 'text', ['notnull' => false]);
-		$table->addColumn('observaciones', 'text', ['notnull' => false]);
-		$table->addColumn('proxima_fecha', 'date', ['notnull' => false]);
-		$table->addColumn('creado_por', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('actualizado_por', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('fecha_creacion', 'datetime', ['notnull' => true]);
-		$table->addColumn('fecha_actualizacion', 'datetime', ['notnull' => true]);
+		$table->addColumn('id_group', 'bigint', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('id_team', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('team_name', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('team_identifier', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('id_model', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('model_name', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('serial_number', 'string', ['length' => 190, 'notnull' => false]);
+		$table->addColumn('id_employee', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('employee_uid', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('employee_name', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('id_department', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('department_name', 'string', ['length' => 190, 'notnull' => false]);
+		$table->addColumn('technician_uid', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('technician_name', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('type', 'string', ['length' => 40, 'notnull' => true]);
+		$table->addColumn('date_scheduled', 'date', ['notnull' => true]);
+		$table->addColumn('time_start_scheduled', 'string', ['length' => 8, 'notnull' => false]);
+		$table->addColumn('time_end_scheduled', 'string', ['length' => 8, 'notnull' => false]);
+		$table->addColumn('date_start_actual', 'datetime', ['notnull' => false]);
+		$table->addColumn('date_end_actual', 'datetime', ['notnull' => false]);
+		$table->addColumn('status', 'string', ['length' => 24, 'notnull' => true, 'default' => 'pending']);
+		$table->addColumn('result', 'text', ['notnull' => false]);
+		$table->addColumn('actions_performed', 'text', ['notnull' => false]);
+		$table->addColumn('incidents', 'text', ['notnull' => false]);
+		$table->addColumn('spare_parts', 'text', ['notnull' => false]);
+		$table->addColumn('observations', 'text', ['notnull' => false]);
+		$table->addColumn('next_date', 'date', ['notnull' => false]);
+		$table->addColumn('created_by', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('updated_by', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('date_creation', 'datetime', ['notnull' => true]);
+		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_grupo'], 'im_grupo_idx');
-		$table->addIndex(['id_grupo', 'estado'], 'im_grupo_estado_idx');
-		$table->addIndex(['id_equipo', 'fecha_programada'], 'im_equipo_fecha_idx');
-		$table->addIndex(['id_departamento', 'fecha_programada'], 'im_depto_fecha_idx');
-		$table->addIndex(['tecnico_uid', 'fecha_programada'], 'im_tec_fecha_idx');
-		$table->addIndex(['estado', 'fecha_programada'], 'im_estado_fecha_idx');
-		$table->addIndex(['tipo', 'fecha_programada'], 'im_tipo_fecha_idx');
-		$table->addUniqueIndex(['id_grupo', 'id_equipo'], 'im_grupo_equipo_uniq');
+		$table->addIndex(['id_group'], 'maintenances_group_idx');
+		$table->addIndex(['id_group', 'status'], 'maintenances_group_status_idx');
+		$table->addIndex(['id_team', 'date_scheduled'], 'maintenances_team_date_idx');
+		$table->addIndex(['id_department', 'date_scheduled'], 'maintenances_department_date_idx');
+		$table->addIndex(['technician_uid', 'date_scheduled'], 'maintenances_technician_date_idx');
+		$table->addIndex(['status', 'date_scheduled'], 'maintenances_status_date_idx');
+		$table->addIndex(['type', 'date_scheduled'], 'maintenances_type_date_idx');
+		$table->addUniqueIndex(['id_group', 'id_team'], 'maintenances_group_team_uq');
 	}
 
 	private function createMaintenanceChecks(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inv_mant_checks')) {
+		if ($schema->hasTable('maintenance_checks')) {
 			return;
 		}
 
-		$table = $schema->createTable('inv_mant_checks');
+		$table = $schema->createTable('maintenance_checks');
 		$table->addColumn('id', 'bigint', ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_mantenimiento', 'bigint', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('clave', 'string', ['length' => 80, 'notnull' => true]);
-		$table->addColumn('etiqueta', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('orden', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('resultado', 'string', ['length' => 24, 'notnull' => true, 'default' => 'pending']);
-		$table->addColumn('observacion', 'text', ['notnull' => false]);
-		$table->addColumn('actualizado_por', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('fecha_actualizacion', 'datetime', ['notnull' => true]);
+		$table->addColumn('id_maintenance', 'bigint', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('code', 'string', ['length' => 80, 'notnull' => true]);
+		$table->addColumn('label', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('order', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('result', 'string', ['length' => 24, 'notnull' => true, 'default' => 'pending']);
+		$table->addColumn('observation', 'text', ['notnull' => false]);
+		$table->addColumn('updated_by', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_mantenimiento'], 'imc_mant_idx');
-		$table->addIndex(['id_mantenimiento', 'orden'], 'imc_mant_orden_idx');
-		$table->addUniqueIndex(['id_mantenimiento', 'clave'], 'imc_mant_clave_uniq');
+		$table->addIndex(['id_maintenance'], 'maintenance_checklists_maintenance_idx');
+		$table->addIndex(['id_maintenance', 'order'], 'maintenance_checklists_order_idx');
+		$table->addUniqueIndex(['id_maintenance', 'code'], 'maintenance_checklists_code_uq');
 	}
 
 	private function createMaintenanceChanges(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inv_mant_cambios')) {
+		if ($schema->hasTable('maintenance_changes')) {
 			return;
 		}
 
-		$table = $schema->createTable('inv_mant_cambios');
+		$table = $schema->createTable('maintenance_changes');
 		$table->addColumn('id', 'bigint', ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_grupo', 'bigint', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('id_mantenimiento', 'bigint', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('tipo_cambio', 'string', ['length' => 40, 'notnull' => true]);
-		$table->addColumn('valor_anterior', 'text', ['notnull' => false]);
-		$table->addColumn('valor_nuevo', 'text', ['notnull' => false]);
-		$table->addColumn('comentario', 'text', ['notnull' => false]);
-		$table->addColumn('usuario_uid', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('usuario_nombre', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('fecha', 'datetime', ['notnull' => true]);
+		$table->addColumn('id_group', 'bigint', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_maintenance', 'bigint', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('change_type', 'string', ['length' => 40, 'notnull' => true]);
+		$table->addColumn('value_previous', 'text', ['notnull' => false]);
+		$table->addColumn('value_new', 'text', ['notnull' => false]);
+		$table->addColumn('comment', 'text', ['notnull' => false]);
+		$table->addColumn('user_uid', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('user_name', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('date', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_grupo', 'fecha'], 'imca_grupo_fecha_idx');
-		$table->addIndex(['id_mantenimiento', 'fecha'], 'imca_mant_fecha_idx');
-		$table->addIndex(['usuario_uid', 'fecha'], 'imca_user_fecha_idx');
+		$table->addIndex(['id_group', 'date'], 'maintenance_changes_group_date_idx');
+		$table->addIndex(['id_maintenance', 'date'], 'maintenance_changes_maintenance_date_idx');
+		$table->addIndex(['user_uid', 'date'], 'maintenance_changes_user_date_idx');
 	}
 
 	private function insertPermissionIfMissing(array $permission): void {
 		$qb = $this->db->getQueryBuilder();
 		$result = $qb->select('id')
-			->from('emp_perm_groups')
+			->from('permission_groups')
 			->where($qb->expr()->eq('module', $qb->createNamedParameter($permission['module'])))
 			->andWhere($qb->expr()->eq('permission', $qb->createNamedParameter($permission['permission'])))
 			->andWhere($qb->expr()->eq('group_id', $qb->createNamedParameter($permission['group_id'])))
@@ -191,7 +191,7 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 		}
 
 		$insert = $this->db->getQueryBuilder();
-		$insert->insert('emp_perm_groups')->values([
+		$insert->insert('permission_groups')->values([
 			'module' => $insert->createNamedParameter($permission['module']),
 			'permission' => $insert->createNamedParameter($permission['permission']),
 			'group_id' => $insert->createNamedParameter($permission['group_id']),

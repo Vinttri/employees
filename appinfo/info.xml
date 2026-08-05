@@ -2,7 +2,7 @@
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 
-    <id>empleados</id>
+    <id>employees</id>
     <name>Employees</name>
 
     <summary>Employee ERP for HR, documents, vacations, savings and time reports.</summary>
@@ -68,36 +68,36 @@ https://youtu.be/WrfVQT97Mqk
 
 ## Project Links
 
-- Repository: https://github.com/Destripador/empleados
-- Wiki: https://github.com/Destripador/empleados/wiki
-- Issues: https://github.com/Destripador/empleados/issues
+- Repository: https://github.com/Destripador/Employee
+- Wiki: https://github.com/Destripador/employees/wiki
+- Issues: https://github.com/Destripador/employees/issues
 
 ## Current Status
 
 This project is currently in beta and under active development. It is already functional in internal environments, but some workflows, documentation and administrative tools may continue to change as the module evolves.
     ]]></description>
 
-    <version>2.5.13</version>
+    <version>3.0.0</version>
     <licence>AGPL-3.0-or-later</licence>
 
     <author mail="luis.alvarado@crowe.mx" homepage="https://gossler-torreon.com">Luis Angel Alvarado Hernandez</author>
 
-    <namespace>Empleados</namespace>
+    <namespace>Employees</namespace>
     <category>organization</category>
 
-    <website>https://github.com/Vinttri/empleados</website>
-    <repository type="git">https://github.com/Vinttri/empleados</repository>
-    <bugs>https://github.com/Vinttri/empleados/issues</bugs>
-    <discussion>https://github.com/Vinttri/empleados/issues</discussion>
+    <website>https://github.com/Vinttri/employees</website>
+    <repository type="git">https://github.com/Vinttri/employees</repository>
+    <bugs>https://github.com/Vinttri/employees/issues</bugs>
+    <discussion>https://github.com/Vinttri/employees/issues</discussion>
 
     <documentation>
-        <user>https://github.com/Destripador/empleados/wiki</user>
-        <admin>https://github.com/Destripador/empleados/blob/main/README.md</admin>
-        <developer>https://github.com/Vinttri/empleados</developer>
+        <user>https://github.com/Destripador/employees/wiki</user>
+        <admin>https://github.com/Destripador/employees/blob/main/README.md</admin>
+        <developer>https://github.com/Vinttri/employees</developer>
     </documentation>
 
-    <screenshot small-thumbnail="https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/empleado_general.png">https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/empleado_general.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/configuraciones.png</screenshot>
+    <screenshot small-thumbnail="https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/employee_general.png">https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/employee_general.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/Settings.png</screenshot>
 
     <dependencies>
         <nextcloud min-version="27" max-version="34"/>
@@ -105,33 +105,33 @@ This project is currently in beta and under active development. It is already fu
 
     <activity>
         <providers>
-            <provider>OCA\Empleados\Activity\ActivityProvider</provider>
+            <provider>OCA\Employees\Activity\ActivityProvider</provider>
         </providers>
         <extensions>
-            <extension>OCA\Empleados\Activity\ActivityExtension</extension>
+            <extension>OCA\Employees\Activity\ActivityExtension</extension>
         </extensions>
     </activity>
 
     <navigations>
         <navigation>
-            <id>empleados</id>
+            <id>employees</id>
             <name>Employees</name>
-            <route>empleados.page.index</route>
+            <route>employees.page.index</route>
             <icon>app.svg</icon>
             <type>link</type>
         </navigation>
     </navigations>
 
     <commands>
-        <command>OCA\Empleados\Command\RepairConfigCommand</command>
-        <command>OCA\Empleados\Command\ResetBetaSchemaCommand</command>
-        <command>OCA\Empleados\Command\SeedFestivosOficiales</command>
-		<command>OCA\Empleados\Command\SyncSupportTimeCommand</command>
+        <command>OCA\Employees\Command\RepairConfigCommand</command>
+        <command>OCA\Employees\Command\ResetBetaSchemaCommand</command>
+        <command>OCA\Employees\Command\SeedOfficialHolidays</command>
+		<command>OCA\Employees\Command\SyncSupportTimeCommand</command>
     </commands>
 
     <settings>
-        <admin>OCA\Empleados\Settings\settingsAdmin</admin>
-        <admin-section>OCA\Empleados\Sections\settingsAdmin</admin-section>
+        <admin>OCA\Employees\Settings\AdminSettings</admin>
+        <admin-section>OCA\Employees\Sections\AdminSettings</admin-section>
     </settings>
 
 </info>

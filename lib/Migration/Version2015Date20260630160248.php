@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,14 +21,14 @@ class Version2015Date20260630160248 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('empleados_honorarios')) {
+		if (!$schema->hasTable('professional_fees')) {
 			return null;
 		}
 
-		$table = $schema->getTable('empleados_honorarios');
+		$table = $schema->getTable('professional_fees');
 
-		if (!$table->hasColumn('especial')) {
-			$table->addColumn('especial', Types::INTEGER, [
+		if (!$table->hasColumn('special')) {
+			$table->addColumn('special', Types::INTEGER, [
 				'notnull' => true,
 				'default' => 0,
 				'length' => 1,

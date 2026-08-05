@@ -1,6 +1,6 @@
 {
-	"name": "nextcloud/empleados",
-	"description": "Modulo de gestion de empleados",
+	"name": "nextcloud/employees",
+	"description": "Employee management for Nextcloud",
 	"license": "AGPL-3.0-or-later",
 	"authors": [
 		{
@@ -11,7 +11,8 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"OCA\\Empleados\\": "lib/"
+			"OCA\\Employees\\": "lib/",
+			"Shuchkin\\": "third_party/Shuchkin/"
 		}
 	},
 	"scripts": {

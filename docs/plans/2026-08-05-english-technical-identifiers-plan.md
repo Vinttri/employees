@@ -7,5 +7,5 @@
 5. Change build/package metadata and regenerate production assets under the `employees` prefix.
 6. Run source, PHP, Composer, frontend and production-build gates.
 7. Commit and push the application fork, then pin it in the owning NextCloud repository.
-8. Back up the live tree/database, replace `empleados` with `employees`, and run API/schema/browser/log smoke.
+8. Back up the live tree/database, replace `employees` with `employees`, and run API/schema/browser/log smoke.
 9. Merge both repositories only after the deployed source and pinned commit match exactly.

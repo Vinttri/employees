@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -18,7 +18,7 @@ class Version2025Date20260725040000 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		foreach (['ausencias', 'historial_ausencias'] as $tableName) {
+		foreach (['absences', 'absence_history'] as $tableName) {
 			if (!$schema->hasTable($tableName)) {
 				continue;
 			}

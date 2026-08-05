@@ -1,39 +1,26 @@
 <?php
-
 declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $mapperFiles = glob($root . '/lib/Db/*Mapper.php') ?: [];
-
-$physicalColumns = [
-	'Id_ch', 'Id_conf', 'Id_departamento', 'Id_empleado', 'Id_empleados',
-	'Id_equipo', 'Id_gerente', 'Id_jefe_equipo', 'Id_padre', 'Id_puesto',
-	'Id_puestos', 'Id_socio', 'Id_user', 'Contacto_emergencia',
-	'Correo_contacto', 'Curp', 'Data', 'Direccion', 'Estado', 'Estado_civil',
-	'Fecha_nacimiento', 'Fondo_ahorro', 'Fondo_clave', 'Genero', 'Imss',
-	'Ingreso', 'Nivel', 'Nombre', 'Notas', 'Numero_cuenta',
-	'Numero_emergencia', 'Numero_empleado', 'Rfc', 'Sueldo',
-	'Telefono_contacto',
-];
-
 $violations = [];
+$spanish = '/(?:emplead|configuracion|puesto|equipo|organigrama|aniversario|ausencia|ahorro|cliente|honorario|inventario|mantenimiento|actividad|permiso|festivo|vacacion|reporte|archivo|solicitud|movimiento|departamento|compra|autorizacion|historial|contacto|soporte|nombre|fecha|estado|correo|telefono|direccion|numero|dias|monto|importe|usuario|proveedor|descripcion|detalle|observacion|marca|modelo|nivel)/i';
+
 foreach ($mapperFiles as $file) {
-	$tokens = token_get_all((string)file_get_contents($file));
-	foreach ($tokens as $token) {
-		if (!is_array($token) || $token[0] !== T_CONSTANT_ENCAPSED_STRING) {
-			continue;
-		}
-		$value = stripcslashes(substr($token[1], 1, -1));
-		$column = str_contains($value, '.') ? substr($value, strrpos($value, '.') + 1) : $value;
-		if (in_array($column, $physicalColumns, true)) {
-			$violations[] = basename($file) . ':' . $token[2] . ':' . $value;
+	$source = (string)file_get_contents($file);
+	if (!preg_match_all('/parent::__construct\(\s*\$db\s*,\s*[\'\"]([A-Za-z0-9_]+)[\'\"]/', $source, $matches)) {
+		continue;
+	}
+	foreach ($matches[1] as $table) {
+		if ($table !== strtolower($table) || preg_match($spanish, $table)) {
+			$violations[] = basename($file) . ':' . $table;
 		}
 	}
 }
 
-$capitalMapper = (string)file_get_contents($root . '/lib/Db/capitalhumanoMapper.php');
-if (str_contains($capitalMapper, "parent::__construct(\$db, 'CapitalHumano'")) {
-	$violations[] = 'capitalhumanoMapper.php:physical table name CapitalHumano';
+$humanResourcesMapper = (string)file_get_contents($root . '/lib/Db/HumanResourcesMapper.php');
+if (!str_contains($humanResourcesMapper, "parent::__construct(\$db, 'human_resources'")) {
+	$violations[] = 'HumanResourcesMapper.php:missing human_resources table';
 }
 
 if ($violations !== []) {

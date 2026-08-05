@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Service;
+namespace OCA\Employees\Service;
 
 class XlsxTemplateFiller
 {
@@ -24,7 +24,7 @@ class XlsxTemplateFiller
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'xlsx_fill_');
         if ($tmpFile === false || !copy($this->templatePath, $tmpFile)) {
-            throw new \RuntimeException('No se pudo copiar la plantilla a un archivo temporal.');
+            throw new \RuntimeException('No se pudo copiar la plantilla a un file temporal.');
         }
 
         $zip = new \ZipArchive();
@@ -230,7 +230,7 @@ class XlsxTemplateFiller
     /**
      * Convierte un twoCellAnchor a oneCellAnchor para que el tamaño
      * quede fijo (cx/cy explícitos) y Excel no lo vuelva a estirar
-     * según las celdas al abrir el archivo.
+     * según las celdas al abrir el file.
      */
     private function convertTwoCellToOneCell(
         \DOMDocument $doc,

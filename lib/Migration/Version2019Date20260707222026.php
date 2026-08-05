@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,11 +21,11 @@ class Version2019Date20260707222026 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('historial_vacaciones')) {
-			$table = $schema->getTable('historial_vacaciones');
+		if ($schema->hasTable('vacation_history')) {
+			$table = $schema->getTable('vacation_history');
 
-			if (!$table->hasColumn('acumulado_calculado')) {
-				$table->addColumn('acumulado_calculado', Types::SMALLINT, [
+			if (!$table->hasColumn('accrued_calculated')) {
+				$table->addColumn('accrued_calculated', Types::SMALLINT, [
 					'notnull' => true,
 					'default' => 0,
 				]);

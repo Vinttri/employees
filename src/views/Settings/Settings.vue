@@ -8,40 +8,40 @@
 		</div>
 		<div v-else>
 			<VueTabs>
-				<VTab :title="t('empleados', 'Employees')">
-					<EmpleadosSettings v-if="datamanager[0] !== null" />
+				<VTab :title="t('employees', 'Employees')">
+					<EmployeesSettings v-if="datamanager[0] !== null" />
 					<NcEmptyContent v-else
-						:name="t('empleados', 'Finish the initial setup')"
-						:description="t('empleados', 'Go to global settings and select the data manager.')">
+						:name="t('employees', 'Finish the initial setup')"
+						:description="t('employees', 'Go to global settings and select the data manager.')">
 						<template #icon>
 							<AlertCircleOutline />
 						</template>
 					</NcEmptyContent>
 				</VTab>
 
-				<VTab :title="t('empleados', 'Group and permissions')">
+				<VTab :title="t('employees', 'Group and permissions')">
 					<GroupSettings v-if="datamanager[0] !== null" />
 					<NcEmptyContent v-else
-						:name="t('empleados', 'Finish the initial setup')"
-						:description="t('empleados', 'Go to global settings and select the data manager.')">
+						:name="t('employees', 'Finish the initial setup')"
+						:description="t('employees', 'Go to global settings and select the data manager.')">
 						<template #icon>
 							<AlertCircleOutline />
 						</template>
 					</NcEmptyContent>
 				</VTab>
 
-				<VTab :title="t('empleados', 'Working time')">
-					<TiempoLaboralSettings v-if="datamanager[0] !== null" />
+				<VTab :title="t('employees', 'Working time')">
+					<WorkingTimeSettings v-if="datamanager[0] !== null" />
 					<NcEmptyContent v-else
-						:name="t('empleados', 'Finish the initial setup')"
-						:description="t('empleados', 'Go to global settings and select the data manager.')">
+						:name="t('employees', 'Finish the initial setup')"
+						:description="t('employees', 'Go to global settings and select the data manager.')">
 						<template #icon>
 							<AlertCircleOutline />
 						</template>
 					</NcEmptyContent>
 				</VTab>
 
-				<VTab :title="t('empleados', 'Global settings')">
+				<VTab :title="t('employees', 'Global settings')">
 					<ListSettings />
 				</VTab>
 			</VueTabs>
@@ -53,8 +53,8 @@
 // ICONS
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 
-import TiempoLaboralSettings from './TiempoLaboralSettings.vue'
-import EmpleadosSettings from './EmpleadosSettings.vue'
+import WorkingTimeSettings from './WorkingTimeSettings.vue'
+import EmployeesSettings from './EmployeesSettings.vue'
 import ListSettings from './ListSettings.vue'
 import GroupSettings from './GroupSettings.vue'
 
@@ -71,8 +71,8 @@ import { NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 export default {
 	name: 'Settings',
 	components: {
-		EmpleadosSettings,
-		TiempoLaboralSettings,
+		EmployeesSettings,
+		WorkingTimeSettings,
 		ListSettings,
 		GroupSettings,
 		VueTabs,
@@ -99,19 +99,19 @@ export default {
 	methods: {
 		t,
 		/**
-		 * Load global configuration, including "Users" for Data Manager.
+		 * Load global configuration, including "Users" for data Manager.
 		 */
 		async getall() {
 			try {
 				this.loading = true
-				const response = await axios.get(generateUrl('/apps/empleados/GetDataManager'))
+				const response = await axios.get(generateUrl('/apps/employees/GetDataManager'))
 
 				this.datamanager = response.data
 
 				this.loading = false
 			} catch (err) {
 				this.loading = false
-				showError(t('empleados', 'Exception [GetConfigurations]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [GetConfigurations]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},

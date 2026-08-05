@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,10 +16,10 @@ class Version2023Date20260717164507 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('puestos');
+		$table = $schema->getTable('positions');
 
-		if (!$table->hasColumn('nivel')) {
-			$table->addColumn('nivel', Types::INTEGER, [
+		if (!$table->hasColumn('level')) {
+			$table->addColumn('level', Types::INTEGER, [
 				'notnull' => false,
 			]);
 		}

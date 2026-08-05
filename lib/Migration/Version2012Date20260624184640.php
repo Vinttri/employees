@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,35 +21,35 @@ class Version2012Date20260624184640 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('empleados_festivos')) {
-			$schema->dropTable('empleados_festivos');
+		if ($schema->hasTable('holidays')) {
+			$schema->dropTable('holidays');
 		}
 
 
-		$table = $schema->createTable('empleados_festivos');
+		$table = $schema->createTable('holidays');
 
-		$table->addColumn('id_festivo', Types::INTEGER, [
+		$table->addColumn('id_holiday', Types::INTEGER, [
 			'autoincrement' => true,
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('nombre', Types::STRING, [
+		$table->addColumn('name', Types::STRING, [
 			'notnull' => true,
 			'length' => 255,
 			'default' => '',
 		]);
 
-		$table->addColumn('fecha', Types::STRING, [
+		$table->addColumn('date', Types::STRING, [
 			'notnull' => true,
 			'length' => 5,
 		]);
 
-		$table->setPrimaryKey(['id_festivo']);
+		$table->setPrimaryKey(['id_holiday']);
 
 		$table->addIndex(
-			['fecha'],
-			'festivos_fecha_idx'
+			['date'],
+			'holidays_date_idx'
 		);
 
 		return $schema;

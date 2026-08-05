@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Helper;
+namespace OCA\Employees\Helper;
 
-use OCA\Empleados\AppInfo\Application;
+use OCA\Employees\AppInfo\Application;
 use OCP\IURLGenerator;
 use OCP\Mail\IMailer;
 use Psr\Log\LoggerInterface;
@@ -26,15 +26,15 @@ final class MailHelper {
 		string $subject,
 		array $contenidoCuerpo,
 		?string $recipientName = null,
-		?string $buttonText = 'Ir al módulo de empleados',
+		?string $buttonText = 'Ir al módulo de Employee',
 		?string $buttonUrl = null,
-		string $templateId = 'empleados.Notification',
+		string $templateId = 'employees.Notification',
 	): bool {
 		$to = trim($to);
 		$subject = trim($subject);
 
 		if ($to === '' || filter_var($to, FILTER_VALIDATE_EMAIL) === false) {
-			$this->logger->warning('No se envió correo porque el destinatario no es válido.', [
+			$this->logger->warning('No se envió email porque el destinatario no es válido.', [
 				'app' => Application::APP_ID,
 				'mail' => $to,
 				'subject' => $subject,
@@ -44,7 +44,7 @@ final class MailHelper {
 		}
 
 		if ($subject === '') {
-			$this->logger->warning('No se envió correo porque el asunto está vacío.', [
+			$this->logger->warning('No se envió email porque el asunto está vacío.', [
 				'app' => Application::APP_ID,
 				'mail' => $to,
 			]);
@@ -90,7 +90,7 @@ final class MailHelper {
 
 			if ($buttonText !== null && trim($buttonText) !== '') {
 				$buttonUrl ??= $this->urlGenerator->linkToRouteAbsolute(
-					'empleados.page.index'
+					'employees.page.index'
 				);
 
 				$template->addBodyButton($buttonText, $buttonUrl);
@@ -120,7 +120,7 @@ final class MailHelper {
 
 			return true;
 		} catch (Throwable $e) {
-			$this->logger->error('No se pudo enviar un correo del módulo Empleados.', [
+			$this->logger->error('No se pudo enviar un email del módulo Empleados.', [
 				'app' => Application::APP_ID,
 				'mail' => $to,
 				'subject' => $subject,

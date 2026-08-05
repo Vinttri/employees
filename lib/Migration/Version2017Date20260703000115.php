@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,41 +21,41 @@ class Version2017Date20260703000115 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('historial_vacaciones')) {
-			$schema->dropTable('historial_vacaciones');
+		if ($schema->hasTable('vacation_history')) {
+			$schema->dropTable('vacation_history');
 		}
 
-		$table = $schema->createTable('historial_vacaciones');
+		$table = $schema->createTable('vacation_history');
 
-		$table->addColumn('id_historial', Types::INTEGER, [
+		$table->addColumn('id_history', Types::INTEGER, [
 			'autoincrement' => true,
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_empleado', Types::INTEGER, [
+		$table->addColumn('id_employee', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('numero_aniversario', Types::INTEGER, [
+		$table->addColumn('number_anniversary', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('periodo_inicio', Types::STRING, [
+		$table->addColumn('period_start', Types::STRING, [
 			'notnull' => true,
 			'length' => 10,
 			'default' => '',
 		]);
 
-		$table->addColumn('periodo_fin', Types::STRING, [
+		$table->addColumn('period_end', Types::STRING, [
 			'notnull' => true,
 			'length' => 10,
 			'default' => '',
 		]);
 
-		$table->addColumn('dias_derecho', Types::DECIMAL, [
+		$table->addColumn('days_entitlement', Types::DECIMAL, [
 			'notnull' => true,
 			'precision' => 6,
 			'scale' => 2,
@@ -74,11 +74,11 @@ class Version2017Date20260703000115 extends SimpleMigrationStep {
 			'default' => '',
 		]);
 
-		$table->setPrimaryKey(['id_historial']);
+		$table->setPrimaryKey(['id_history']);
 
 		$table->addUniqueIndex(
-			['id_empleado', 'numero_aniversario'],
-			'historial_vac_emp_aniv_idx'
+			['id_employee', 'number_anniversary'],
+			'vacation_history_employee_anniversary_uq'
 		);
 
 		return $schema;

@@ -11,7 +11,7 @@ import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 // eslint-disable-next-line no-unused-vars
 /* global __webpack_public_path__: writable */
-__webpack_public_path__ = generateFilePath('empleados', '', 'js/')
+__webpack_public_path__ = generateFilePath('employees', '', 'js/')
 
 Vue.use(Router)
 
@@ -35,8 +35,8 @@ const parseDomJson = (id, defaultValue = {}) => {
 	}
 }
 
-// Obtener configuraciones iniciales desde el DOM
-const configuraciones = parseDomJson('data', {})
+// Obtener Settings iniciales desde el DOM
+const Settings = parseDomJson('data', {})
 const groups = parseDomJson('group-user', {})
 const employee = parseDomJson('employee', [])
 const subordinates = parseDomJson('subordinates', [])
@@ -89,7 +89,7 @@ const getResponsePayload = (response) => {
 
 const loadRuntimeConfigurations = async () => {
 	try {
-		const response = await axios.get(generateUrl('/apps/empleados/GetConfigurations'), {
+		const response = await axios.get(generateUrl('/apps/employees/GetConfigurations'), {
 			headers: {
 				Accept: 'application/json',
 				'OCS-APIRequest': true,
@@ -98,23 +98,23 @@ const loadRuntimeConfigurations = async () => {
 
 		const data = getResponsePayload(response)
 
-		Object.assign(configuraciones, data)
+		Object.assign(Settings, data)
 	} catch (err) {
 		console.error('No se pudo cargar GetConfigurations desde main.js:', err)
 	}
 
-	const adminReportsGroup = configuraciones?.Reportes?.admin_reports_group
-		|| configuraciones?.reportes_admin_reports_group
+	const adminReportsGroup = Settings?.Reportes?.admin_reports_group
+		|| Settings?.reportes_admin_reports_group
 		|| 'recursos_humanos'
 
-	configuraciones.CanAdminReports = isTruthy(configuraciones?.CanAdminReports)
+	Settings.CanAdminReports = isTruthy(Settings?.CanAdminReports)
 		|| userHasGroup('admin')
 		|| userHasGroup(adminReportsGroup)
 }
 
 const loadPermissionsContext = async () => {
 	try {
-		const response = await axios.get(generateUrl('/apps/empleados/permisos/contexto'), {
+		const response = await axios.get(generateUrl('/apps/employees/permisos/contexto'), {
 			headers: {
 				Accept: 'application/json',
 				'OCS-APIRequest': true,
@@ -138,7 +138,7 @@ const mountApplication = async () => {
 	new View({
 		router,
 		propsData: {
-			parameters: configuraciones,
+			parameters: Settings,
 			groupsUser: groups,
 			employee,
 			subordinatesGroup: subordinates,

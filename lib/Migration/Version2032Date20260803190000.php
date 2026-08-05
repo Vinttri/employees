@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -20,15 +20,15 @@ class Version2032Date20260803190000 extends SimpleMigrationStep {
 		$counts = ['migrados' => 0, 'correctos' => 0, 'conflictos' => 0, 'inexistentes' => 0];
 
 		$select = $db->getQueryBuilder();
-		$result = $select->select('Id_empleados', 'Equipo_asignado')
-			->from('empleados')
-			->where($select->expr()->isNotNull('Equipo_asignado'))
+		$result = $select->select('id_employees', 'team_assigned')
+			->from('employees')
+			->where($select->expr()->isNotNull('team_assigned'))
 			->executeQuery();
 		$rows = $result->fetchAll();
 		$result->closeCursor();
 
 		foreach ($rows as $row) {
-			$legacyId = trim((string)($row['Equipo_asignado'] ?? ''));
+			$legacyId = trim((string)($row['team_assigned'] ?? ''));
 			if ($legacyId === '' || $legacyId === '0') {
 				continue;
 			}
@@ -37,12 +37,12 @@ class Version2032Date20260803190000 extends SimpleMigrationStep {
 				continue;
 			}
 
-			$idEquipo = (int)$legacyId;
-			$idEmpleado = (int)$row['Id_empleados'];
+			$idTeam = (int)$legacyId;
+			$idEmployee = (int)$row['id_employees'];
 			$check = $db->getQueryBuilder();
-			$checkResult = $check->select('id_empleado')
-				->from('inventario_computo')
-				->where($check->expr()->eq('id_equipo', $check->createNamedParameter($idEquipo, IQueryBuilder::PARAM_INT)))
+			$checkResult = $check->select('id_employee')
+				->from('computer_inventory')
+				->where($check->expr()->eq('id_team', $check->createNamedParameter($idTeam, IQueryBuilder::PARAM_INT)))
 				->setMaxResults(1)
 				->executeQuery();
 			$equipment = $checkResult->fetch();
@@ -53,8 +53,8 @@ class Version2032Date20260803190000 extends SimpleMigrationStep {
 				continue;
 			}
 
-			$currentEmployee = $equipment['id_empleado'] === null ? null : (int)$equipment['id_empleado'];
-			if ($currentEmployee === $idEmpleado) {
+			$currentEmployee = $equipment['id_employee'] === null ? null : (int)$equipment['id_employee'];
+			if ($currentEmployee === $idEmployee) {
 				$counts['correctos']++;
 				continue;
 			}
@@ -64,16 +64,16 @@ class Version2032Date20260803190000 extends SimpleMigrationStep {
 			}
 
 			$update = $db->getQueryBuilder();
-			$updated = $update->update('inventario_computo')
-				->set('id_empleado', $update->createNamedParameter($idEmpleado, IQueryBuilder::PARAM_INT))
-				->where($update->expr()->eq('id_equipo', $update->createNamedParameter($idEquipo, IQueryBuilder::PARAM_INT)))
-				->andWhere($update->expr()->isNull('id_empleado'))
+			$updated = $update->update('computer_inventory')
+				->set('id_employee', $update->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT))
+				->where($update->expr()->eq('id_team', $update->createNamedParameter($idTeam, IQueryBuilder::PARAM_INT)))
+				->andWhere($update->expr()->isNull('id_employee'))
 				->executeStatement();
 			$counts[$updated === 1 ? 'migrados' : 'conflictos']++;
 		}
 
 		$output->info(sprintf(
-			'Asignaciones de inventario: %d migrados, %d ya correctos, %d conflictos, %d equipos inexistentes.',
+			'Asignaciones de inventario: %d migrados, %d ya correctos, %d conflictos, %d Team inexistentes.',
 			$counts['migrados'],
 			$counts['correctos'],
 			$counts['conflictos'],

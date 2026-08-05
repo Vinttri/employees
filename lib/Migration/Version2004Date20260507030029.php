@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -30,16 +30,16 @@ class Version2004Date20260507030029 extends SimpleMigrationStep {
 	}
 
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		// No hay cambios de esquema.
+		// No hay changes de esquema.
 		return null;
 	}
 
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$groups = [
-			'compras_grupo_solicitantes' => 'compras_solicitantes',
-			'compras_grupo_autorizadores' => 'compras_autorizadores',
-			'compras_grupo_admin' => 'compras_admin',
-			'compras_grupo_contabilidad' => 'compras_contabilidad',
+			'purchases_grupo_solicitantes' => 'purchases_solicitantes',
+			'purchases_grupo_autorizadores' => 'purchases_autorizadores',
+			'purchases_grupo_admin' => 'purchases_admin',
+			'purchases_grupo_contabilidad' => 'purchases_contabilidad',
 		];
 
 		foreach ($groups as $configName => $defaultGroupId) {
@@ -65,14 +65,14 @@ class Version2004Date20260507030029 extends SimpleMigrationStep {
 		}
 	}
 
-	private function getConfig(string $nombre, string $default): string {
+	private function getConfig(string $name, string $default): string {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Data')
-			->from('empleados_conf')
+		$qb->select('data')
+			->from('employee_settings')
 			->where($qb->expr()->eq(
-				'Nombre',
-				$qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR)
+				'name',
+				$qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)
 			))
 			->setMaxResults(1);
 
@@ -82,13 +82,13 @@ class Version2004Date20260507030029 extends SimpleMigrationStep {
 
 		if (
 			!$row ||
-			!isset($row['Data']) ||
-			$row['Data'] === null ||
-			trim((string)$row['Data']) === ''
+			!isset($row['data']) ||
+			$row['data'] === null ||
+			trim((string)$row['data']) === ''
 		) {
 			return $default;
 		}
 
-		return trim((string)$row['Data']);
+		return trim((string)$row['data']);
 	}
 }

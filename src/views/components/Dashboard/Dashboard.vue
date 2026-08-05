@@ -1,16 +1,16 @@
 <template>
-	<NcAppContent :name="t('empleados', 'Employees dashboard')">
+	<NcAppContent :name="t('employees', 'Employees dashboard')">
 		<div class="dashboard">
 			<section class="hero">
 				<div class="hero-main">
 					<p class="kicker">
-						{{ t('empleados', 'ERP for Nextcloud') }}
+						{{ t('employees', 'ERP for Nextcloud') }}
 					</p>
 
 					<h1>{{ greeting }}</h1>
 
 					<p class="hero-text">
-						{{ t('empleados', 'Manage employees, teams, departments, time reports, absences, savings and IT assets from one workspace.') }}
+						{{ t('employees', 'Manage employees, teams, departments, time reports, absences, savings and IT assets from one workspace.') }}
 					</p>
 
 					<div class="hero-actions">
@@ -21,7 +21,7 @@
 							<template #icon>
 								<BadgeAccountAlert :size="20" />
 							</template>
-							{{ t('empleados', 'Manage employees') }}
+							{{ t('employees', 'Manage employees') }}
 						</NcButton>
 
 						<NcButton
@@ -30,23 +30,23 @@
 							<template #icon>
 								<CalendarClock :size="20" />
 							</template>
-							{{ t('empleados', 'Report time') }}
+							{{ t('employees', 'Report time') }}
 						</NcButton>
 
 						<NcButton
 							v-if="inventoryEnabled && isAdmin"
-							@click="go('Inventario')">
+							@click="go('Inventory')">
 							<template #icon>
 								<Laptop :size="20" />
 							</template>
-							{{ t('empleados', 'IT Inventory') }}
+							{{ t('employees', 'IT Inventory') }}
 						</NcButton>
 					</div>
 				</div>
 
 				<div class="hero-side">
 					<div class="date-card">
-						<span>{{ t('empleados', 'Today') }}</span>
+						<span>{{ t('employees', 'Today') }}</span>
 						<strong>{{ currentDateLabel }}</strong>
 					</div>
 
@@ -56,20 +56,20 @@
 						</div>
 
 						<div>
-							<span>{{ t('empleados', 'Workspace') }}</span>
-							<strong>{{ t('empleados', 'Human Resources') }}</strong>
+							<span>{{ t('employees', 'Workspace') }}</span>
+							<strong>{{ t('employees', 'Human Resources') }}</strong>
 						</div>
 					</div>
 
 					<div class="hero-stats">
 						<div>
-							<span>{{ t('empleados', 'Modules') }}</span>
+							<span>{{ t('employees', 'Modules') }}</span>
 							<strong>{{ enabledModules }}</strong>
 						</div>
 
 						<div>
-							<span>{{ t('empleados', 'Role') }}</span>
-							<strong>{{ isAdmin ? t('empleados', 'Admin') : t('empleados', 'User') }}</strong>
+							<span>{{ t('employees', 'Role') }}</span>
+							<strong>{{ isAdmin ? t('employees', 'Admin') : t('employees', 'User') }}</strong>
 						</div>
 					</div>
 				</div>
@@ -96,7 +96,7 @@
 				v-if="!isAdmin"
 				type="info"
 				class="notice">
-				{{ t('empleados', 'This dashboard shows the options available for your user. Administrative metrics are only available for administrators or Human Resources users.') }}
+				{{ t('employees', 'This dashboard shows the options available for your user. Administrative metrics are only available for administrators or Human Resources users.') }}
 			</NcNoteCard>
 
 			<section class="layout">
@@ -104,14 +104,14 @@
 					<div class="panel-header">
 						<div>
 							<p class="section-label">
-								{{ t('empleados', 'Applications') }}
+								{{ t('employees', 'Applications') }}
 							</p>
-							<h2>{{ t('empleados', 'Business apps') }}</h2>
+							<h2>{{ t('employees', 'Business apps') }}</h2>
 						</div>
 
 						<NcButton
 							v-if="isAdmin"
-							:aria-label="t('empleados', 'Refresh')"
+							:aria-label="t('employees', 'Refresh')"
 							@click="loadData">
 							<template #icon>
 								<Reload :size="20" />
@@ -137,7 +137,7 @@
 				</div>
 
 				<div class="right-column">
-					<SoporteEquipoDashboardWidget v-if="showEquipmentSupportWidget" class="panel" />
+					<TeamSupportDashboardWidget v-if="showEquipmentSupportWidget" class="panel" />
 
 					<div
 						v-if="timeReportsEnabled"
@@ -146,9 +146,9 @@
 						<div class="panel-header compact">
 							<div>
 								<p class="section-label">
-									{{ t('empleados', 'Today') }}
+									{{ t('employees', 'Today') }}
 								</p>
-								<h2>{{ t('empleados', 'Time report') }}</h2>
+								<h2>{{ t('employees', 'Time report') }}</h2>
 							</div>
 						</div>
 
@@ -164,7 +164,7 @@
 						</div>
 
 						<div class="hours-box">
-							<span>{{ t('empleados', 'Reported hours') }}</span>
+							<span>{{ t('employees', 'Reported hours') }}</span>
 							<strong>{{ todayHours }} h</strong>
 						</div>
 
@@ -172,7 +172,7 @@
 							wide
 							type="primary"
 							@click="go('Reports')">
-							{{ t('empleados', 'Open reports') }}
+							{{ t('employees', 'Open reports') }}
 						</NcButton>
 					</div>
 
@@ -180,15 +180,15 @@
 						<div class="panel-header compact">
 							<div>
 								<p class="section-label">
-									{{ t('empleados', 'Overview') }}
+									{{ t('employees', 'Overview') }}
 								</p>
-								<h2>{{ t('empleados', 'Organization') }}</h2>
+								<h2>{{ t('employees', 'Organization') }}</h2>
 							</div>
 						</div>
 
 						<div v-if="loading" class="empty-state">
 							<NcLoadingIcon :size="32" />
-							<span>{{ t('empleados', 'Loading') }}</span>
+							<span>{{ t('employees', 'Loading') }}</span>
 						</div>
 
 						<div v-else-if="isAdmin" class="status-list">
@@ -206,7 +206,7 @@
 						</div>
 
 						<div v-else class="empty-state">
-							<span>{{ t('empleados', 'No administrative metrics available for this profile.') }}</span>
+							<span>{{ t('employees', 'No administrative metrics available for this profile.') }}</span>
 						</div>
 					</div>
 				</div>
@@ -216,9 +216,9 @@
 				<div class="panel-header">
 					<div>
 						<p class="section-label">
-							{{ t('empleados', 'Modules') }}
+							{{ t('employees', 'Modules') }}
 						</p>
-						<h2>{{ t('empleados', 'Installed modules') }}</h2>
+						<h2>{{ t('employees', 'Installed modules') }}</h2>
 					</div>
 				</div>
 
@@ -238,7 +238,7 @@
 						</div>
 
 						<span class="module-state" :class="{ enabled: module.enabled }">
-							{{ module.enabled ? t('empleados', 'Enabled') : t('empleados', 'Disabled') }}
+							{{ module.enabled ? t('employees', 'Enabled') : t('employees', 'Disabled') }}
 						</span>
 					</div>
 				</div>
@@ -270,9 +270,9 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 import Laptop from 'vue-material-design-icons/Laptop.vue'
 import ViewList from 'vue-material-design-icons/ViewList.vue'
 
-import inventarioService from '../../../services/inventarioService.js'
+import inventoryService from '../../../services/inventoryService.js'
 import permissionsMixin from '../../../mixins/permissions.js'
-import SoporteEquipoDashboardWidget from '../../../Dashboard/SoporteEquipoDashboardWidget.vue'
+import TeamSupportDashboardWidget from '../../../Dashboard/TeamSupportDashboardWidget.vue'
 
 export default {
 	name: 'Dashboard',
@@ -291,7 +291,7 @@ export default {
 		OfficeBuilding,
 		Reload,
 		Laptop,
-		SoporteEquipoDashboardWidget,
+		TeamSupportDashboardWidget,
 		ViewList,
 	},
 
@@ -299,7 +299,7 @@ export default {
 
 	inject: {
 		groupuser: { default: () => ({}) },
-		configuraciones: { default: () => ({}) },
+		Settings: { default: () => ({}) },
 		employee: { default: () => [] },
 		subordinates: { default: () => [] },
 	},
@@ -308,10 +308,10 @@ export default {
 		return {
 			loading: false,
 			loadingToday: false,
-			empleados: [],
+			Employee: [],
 			areas: [],
-			puestos: [],
-			equipos: [],
+			Position: [],
+			Team: [],
 			inventoryTotal: 0,
 			estadoHoy: null,
 		}
@@ -332,15 +332,15 @@ export default {
 
 		greeting() {
 			const name = this.currentEmployee?.displayname
-				|| this.currentEmployee?.Id_user
+				|| this.currentEmployee?.id_user
 				|| this.currentEmployee?.uid
 				|| ''
 
 			if (name) {
-				return t('empleados', 'Welcome, {name}', { name })
+				return t('employees', 'Welcome, {name}', { name })
 			}
 
-			return t('empleados', 'Employees workspace')
+			return t('employees', 'Employees workspace')
 		},
 
 		currentDateLabel() {
@@ -352,28 +352,28 @@ export default {
 		},
 
 		timeReportsEnabled() {
-			return this.isTruthy(this.configuraciones?.modulo_reporte_tiempos)
+			return this.isTruthy(this.Settings?.modulo_reporte_tiempos)
 		},
 
 		absencesEnabled() {
-			return this.isTruthy(this.configuraciones?.modulo_ausencias)
+			return this.isTruthy(this.Settings?.modulo_ausencias)
 		},
 
 		savingsEnabled() {
-			return this.isTruthy(this.configuraciones?.modulo_ahorro)
+			return this.isTruthy(this.Settings?.modulo_savings)
 		},
 
 		customersEnabled() {
-			return this.isTruthy(this.configuraciones?.modulo_clientes)
+			return this.isTruthy(this.Settings?.modulo_clients)
 		},
 
 		inventoryEnabled() {
-			return this.isTruthy(this.configuraciones?.modulo_inventario)
-				|| this.isTruthy(this.configuraciones?.modulo_soporte)
+			return this.isTruthy(this.Settings?.modulo_inventario)
+				|| this.isTruthy(this.Settings?.modulo_soporte)
 		},
 
 		showEquipmentSupportWidget() {
-			return this.isTruthy(this.configuraciones?.modulo_inventario)
+			return this.isTruthy(this.Settings?.modulo_inventario)
 				&& this.canSeeAny(['inventario', 'soporte'])
 		},
 
@@ -386,45 +386,45 @@ export default {
 		},
 
 		todayReportLabel() {
-			const estado = this.estadoHoy?.estado
+			const status = this.estadoHoy?.status
 
 			if (this.loadingToday) {
-				return t('empleados', 'Loading...')
+				return t('employees', 'Loading...')
 			}
 
-			if (estado === 'reportado') {
-				return t('empleados', 'Reported')
+			if (status === 'reportado') {
+				return t('employees', 'Reported')
 			}
 
-			if (estado === 'sin_empleado') {
-				return t('empleados', 'No employee profile')
+			if (status === 'sin_empleado') {
+				return t('employees', 'No employee profile')
 			}
 
-			return t('empleados', 'Pending')
+			return t('employees', 'Pending')
 		},
 
 		todayReportDescription() {
-			const estado = this.estadoHoy?.estado
+			const status = this.estadoHoy?.status
 
-			if (estado === 'reportado') {
-				return t('empleados', 'Your time report for today is complete.')
+			if (status === 'reportado') {
+				return t('employees', 'Your time report for today is complete.')
 			}
 
-			if (estado === 'sin_empleado') {
-				return t('empleados', 'Your user is not linked to an employee profile.')
+			if (status === 'sin_empleado') {
+				return t('employees', 'Your user is not linked to an employee profile.')
 			}
 
-			return t('empleados', 'You still have pending time to report today.')
+			return t('employees', 'You still have pending time to report today.')
 		},
 
 		todayReportClass() {
-			const estado = this.estadoHoy?.estado
+			const status = this.estadoHoy?.status
 
-			if (estado === 'reportado') {
+			if (status === 'reportado') {
 				return 'is-ok'
 			}
 
-			if (estado === 'sin_empleado') {
+			if (status === 'sin_empleado') {
 				return 'is-warning'
 			}
 
@@ -435,30 +435,30 @@ export default {
 			const base = [
 				{
 					key: 'employees',
-					label: t('empleados', 'Employees'),
-					value: this.isAdmin ? this.empleados.length : '-',
-					description: t('empleados', 'Registered profiles'),
+					label: t('employees', 'Employees'),
+					value: this.isAdmin ? this.employees.length : '-',
+					description: t('employees', 'Registered profiles'),
 					icon: BadgeAccountAlert,
 				},
 				{
 					key: 'departments',
-					label: t('empleados', 'Departments'),
+					label: t('employees', 'Departments'),
 					value: this.isAdmin ? this.areas.length : '-',
-					description: t('empleados', 'Company areas'),
+					description: t('employees', 'Company areas'),
 					icon: OfficeBuilding,
 				},
 				{
 					key: 'teams',
-					label: t('empleados', 'Teams'),
-					value: this.isAdmin ? this.equipos.length : '-',
-					description: t('empleados', 'Work groups'),
+					label: t('employees', 'Teams'),
+					value: this.isAdmin ? this.Team.length : '-',
+					description: t('employees', 'Work groups'),
 					icon: AccountGroup,
 				},
 				{
 					key: 'positions',
-					label: t('empleados', 'Positions'),
-					value: this.isAdmin ? this.puestos.length : '-',
-					description: t('empleados', 'Defined roles'),
+					label: t('employees', 'Positions'),
+					value: this.isAdmin ? this.Position.length : '-',
+					description: t('employees', 'Defined roles'),
 					icon: AccountTieOutline,
 				},
 			]
@@ -466,9 +466,9 @@ export default {
 			if (this.showEquipmentSupportWidget && this.isAdmin) {
 				base.push({
 					key: 'devices',
-					label: t('empleados', 'Devices'),
+					label: t('employees', 'Devices'),
 					value: this.inventoryTotal,
-					description: t('empleados', 'IT assets'),
+					description: t('employees', 'IT assets'),
 					icon: Laptop,
 				})
 			}
@@ -483,26 +483,26 @@ export default {
 				actions.push(
 					{
 						route: 'Empleados',
-						title: t('empleados', 'Employees'),
-						description: t('empleados', 'Manage employee files'),
+						title: t('employees', 'Employees'),
+						description: t('employees', 'Manage employee files'),
 						icon: BadgeAccountAlert,
 					},
 					{
 						route: 'Areas',
-						title: t('empleados', 'Departments'),
-						description: t('empleados', 'Manage company areas'),
+						title: t('employees', 'Departments'),
+						description: t('employees', 'Manage company areas'),
 						icon: OfficeBuilding,
 					},
 					{
-						route: 'Puestos',
-						title: t('empleados', 'Positions'),
-						description: t('empleados', 'Manage job positions'),
+						route: 'Positions',
+						title: t('employees', 'Positions'),
+						description: t('employees', 'Manage job positions'),
 						icon: AccountTieOutline,
 					},
 					{
-						route: 'Equipos',
-						title: t('empleados', 'Teams'),
-						description: t('empleados', 'Manage work teams'),
+						route: 'Teams',
+						title: t('employees', 'Teams'),
+						description: t('employees', 'Manage work teams'),
 						icon: AccountGroup,
 					},
 				)
@@ -510,9 +510,9 @@ export default {
 
 			if (this.inventoryEnabled && this.isAdmin) {
 				actions.push({
-					route: 'Inventario',
-					title: t('empleados', 'IT Inventory'),
-					description: t('empleados', 'Devices, models and support'),
+					route: 'Inventory',
+					title: t('employees', 'IT Inventory'),
+					description: t('employees', 'Devices, models and support'),
 					icon: Laptop,
 				})
 			}
@@ -520,8 +520,8 @@ export default {
 			if (this.absencesEnabled) {
 				actions.push({
 					route: 'Calendario',
-					title: t('empleados', 'Calendar'),
-					description: t('empleados', 'Vacations and absences'),
+					title: t('employees', 'Calendar'),
+					description: t('employees', 'Vacations and absences'),
 					icon: CalendarBlank,
 				})
 			}
@@ -529,8 +529,8 @@ export default {
 			if (this.timeReportsEnabled) {
 				actions.push({
 					route: 'Reports',
-					title: t('empleados', 'Time Reports'),
-					description: t('empleados', 'Register work time'),
+					title: t('employees', 'Time Reports'),
+					description: t('employees', 'Register work time'),
 					icon: CalendarClock,
 				})
 			}
@@ -538,8 +538,8 @@ export default {
 			if (this.savingsEnabled) {
 				actions.push({
 					route: 'Ahorros',
-					title: t('empleados', 'Savings'),
-					description: t('empleados', 'Savings requests'),
+					title: t('employees', 'Savings'),
+					description: t('employees', 'Savings requests'),
 					icon: Bank,
 				})
 			}
@@ -547,8 +547,8 @@ export default {
 			if (this.customersEnabled && this.isAdmin) {
 				actions.push({
 					route: 'CompaniesGroups',
-					title: t('empleados', 'Customers'),
-					description: t('empleados', 'Companies and groups'),
+					title: t('employees', 'Customers'),
+					description: t('employees', 'Companies and groups'),
 					icon: ViewList,
 				})
 			}
@@ -559,24 +559,24 @@ export default {
 		structureItems() {
 			return [
 				{
-					label: t('empleados', 'Registered employees'),
-					value: this.empleados.length,
-					description: t('empleados', 'Employee profiles available in the module'),
+					label: t('employees', 'Registered employees'),
+					value: this.employees.length,
+					description: t('employees', 'Employee profiles available in the module'),
 				},
 				{
-					label: t('empleados', 'Departments with records'),
+					label: t('employees', 'Departments with records'),
 					value: this.countWithEmployees(this.areas),
-					description: t('empleados', 'Departments currently linked to employees'),
+					description: t('employees', 'Departments currently linked to employees'),
 				},
 				{
-					label: t('empleados', 'Teams with members'),
-					value: this.countWithEmployees(this.equipos),
-					description: t('empleados', 'Teams currently linked to employees'),
+					label: t('employees', 'Teams with members'),
+					value: this.countWithEmployees(this.Team),
+					description: t('employees', 'Teams currently linked to employees'),
 				},
 				{
-					label: t('empleados', 'IT devices'),
+					label: t('employees', 'IT devices'),
 					value: this.showEquipmentSupportWidget ? this.inventoryTotal : '-',
-					description: t('empleados', 'Registered company devices'),
+					description: t('employees', 'Registered company devices'),
 				},
 			]
 		},
@@ -585,43 +585,43 @@ export default {
 			return [
 				{
 					key: 'human-resources',
-					title: t('empleados', 'Human Resources'),
-					description: t('empleados', 'Employees, departments, positions and teams.'),
+					title: t('employees', 'Human Resources'),
+					description: t('employees', 'Employees, departments, positions and teams.'),
 					icon: BadgeAccountAlert,
 					enabled: true,
 				},
 				{
 					key: 'time-reports',
-					title: t('empleados', 'Time Reports'),
-					description: t('empleados', 'Work time reports by client and activity.'),
+					title: t('employees', 'Time Reports'),
+					description: t('employees', 'Work time reports by client and activity.'),
 					icon: CalendarClock,
 					enabled: this.timeReportsEnabled,
 				},
 				{
 					key: 'absences',
-					title: t('empleados', 'Vacations and Absences'),
-					description: t('empleados', 'Vacation calendar and absence control.'),
+					title: t('employees', 'Vacations and Absences'),
+					description: t('employees', 'Vacation calendar and absence control.'),
 					icon: CalendarBlank,
 					enabled: this.absencesEnabled,
 				},
 				{
 					key: 'savings',
-					title: t('empleados', 'Savings'),
-					description: t('empleados', 'Employee savings requests and admin panel.'),
+					title: t('employees', 'Savings'),
+					description: t('employees', 'Employee savings requests and admin panel.'),
 					icon: Bank,
 					enabled: this.savingsEnabled,
 				},
 				{
 					key: 'customers',
-					title: t('empleados', 'Customers'),
-					description: t('empleados', 'Companies, groups and activities.'),
+					title: t('employees', 'Customers'),
+					description: t('employees', 'Companies, groups and activities.'),
 					icon: ViewList,
 					enabled: this.customersEnabled,
 				},
 				{
 					key: 'inventory',
-					title: t('empleados', 'IT Inventory'),
-					description: t('empleados', 'Computer equipment, models and support history.'),
+					title: t('employees', 'IT Inventory'),
+					description: t('employees', 'Computer equipment, models and support history.'),
 					icon: Laptop,
 					enabled: this.inventoryEnabled,
 				},
@@ -682,17 +682,17 @@ export default {
 			this.loading = true
 
 			try {
-				const [empleados, areas, puestos, equipos] = await Promise.all([
-					axios.get(generateUrl('/apps/empleados/GetEmpleadosList')),
-					axios.get(generateUrl('/apps/empleados/GetAreasList')),
-					axios.get(generateUrl('/apps/empleados/GetPuestosList')),
-					axios.get(generateUrl('/apps/empleados/GetEquiposList')),
+				const [Employee, areas, Position, Team] = await Promise.all([
+					axios.get(generateUrl('/apps/employees/GetEmpleadosList')),
+					axios.get(generateUrl('/apps/employees/GetAreasList')),
+					axios.get(generateUrl('/apps/employees/GetPositionsList')),
+					axios.get(generateUrl('/apps/employees/GetTeamsList')),
 				])
 
-				this.empleados = this.extractArray(empleados, 'Empleados')
+				this.Employee = this.extractArray(Employee, 'Empleados')
 				this.areas = this.extractArray(areas)
-				this.puestos = this.extractArray(puestos)
-				this.equipos = this.extractArray(equipos)
+				this.Position = this.extractArray(Position)
+				this.Team = this.extractArray(Team)
 
 				if (this.showEquipmentSupportWidget) {
 					await this.loadInventorySummary()
@@ -707,7 +707,7 @@ export default {
 		async loadInventorySummary() {
 			if (!this.showEquipmentSupportWidget) return
 			try {
-				const response = await inventarioService.getEquipos({ limit: 1, offset: 0 })
+				const response = await inventoryService.getTeams({ limit: 1, offset: 0 })
 				this.inventoryTotal = Number(response?.total || 0)
 			} catch (err) {
 				this.inventoryTotal = 0
@@ -718,7 +718,7 @@ export default {
 			this.loadingToday = true
 
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/estadoReporteHoy'))
+				const response = await axios.get(generateUrl('/apps/employees/estadoReporteHoy'))
 				this.estadoHoy = response?.data?.ocs?.data ?? response?.data ?? null
 			} catch (err) {
 				this.estadoHoy = null
@@ -751,7 +751,7 @@ export default {
 
 		countWithEmployees(items) {
 			return this.extractPlainArray(items).filter((item) => {
-				return Number(item.cantidad_empleados || item.total_empleados || 0) > 0
+				return Number(item.employee_count || item.total_empleados || 0) > 0
 			}).length
 		},
 
@@ -768,10 +768,10 @@ export default {
 		},
 
 		resetAdminData() {
-			this.empleados = []
+			this.Employee = []
 			this.areas = []
-			this.puestos = []
-			this.equipos = []
+			this.Position = []
+			this.Team = []
 			this.inventoryTotal = 0
 		},
 	},

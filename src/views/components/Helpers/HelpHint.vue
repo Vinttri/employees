@@ -65,13 +65,13 @@ export default {
 			pinned: false,
 			hovered: false,
 			focused: false,
-			tooltipId: `empleados-help-hint-${helpHintId}`,
+			tooltipId: `employees-help-hint-${helpHintId}`,
 			tooltipStyle: {},
 		}
 	},
 	computed: {
 		accessibleLabel() {
-			return this.label || t('empleados', 'More information')
+			return this.label || t('employees', 'More information')
 		},
 	},
 	mounted() {

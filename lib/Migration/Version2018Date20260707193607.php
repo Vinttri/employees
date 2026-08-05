@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -21,11 +21,11 @@ class Version2018Date20260707193607 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('historial_vacaciones')) {
-			$table = $schema->getTable('historial_vacaciones');
+		if ($schema->hasTable('vacation_history')) {
+			$table = $schema->getTable('vacation_history');
 
-			if (!$table->hasColumn('dias_acumulados')) {
-				$table->addColumn('dias_acumulados', Types::DECIMAL, [
+			if (!$table->hasColumn('accrued_days')) {
+				$table->addColumn('accrued_days', Types::DECIMAL, [
 					'notnull' => true,
 					'precision' => 6,
 					'scale' => 2,
@@ -33,8 +33,8 @@ class Version2018Date20260707193607 extends SimpleMigrationStep {
 				]);
 			}
 
-			if (!$table->hasColumn('dias_acumulados_restantes')) {
-				$table->addColumn('dias_acumulados_restantes', Types::DECIMAL, [
+			if (!$table->hasColumn('remaining_accrued_days')) {
+				$table->addColumn('remaining_accrued_days', Types::DECIMAL, [
 					'notnull' => true,
 					'precision' => 6,
 					'scale' => 2,
@@ -42,8 +42,8 @@ class Version2018Date20260707193607 extends SimpleMigrationStep {
 				]);
 			}
 
-			if (!$table->hasColumn('fecha_expiracion_acumulados')) {
-				$table->addColumn('fecha_expiracion_acumulados', Types::STRING, [
+			if (!$table->hasColumn('accrued_expiration_date')) {
+				$table->addColumn('accrued_expiration_date', Types::STRING, [
 					'notnull' => false,
 					'length' => 10,
 					'default' => null,
@@ -51,12 +51,12 @@ class Version2018Date20260707193607 extends SimpleMigrationStep {
 			}
 		}
 
-		// ── historial_ausencias: marca cuántos días salieron del colchón ──
-		if ($schema->hasTable('historial_ausencias')) {
-			$table = $schema->getTable('historial_ausencias');
+		// ── absence_history: brand cuántos días salieron del colchón ──
+		if ($schema->hasTable('absence_history')) {
+			$table = $schema->getTable('absence_history');
 
-			if (!$table->hasColumn('dias_de_acumulado')) {
-				$table->addColumn('dias_de_acumulado', Types::DECIMAL, [
+			if (!$table->hasColumn('days_from_accrued')) {
+				$table->addColumn('days_from_accrued', Types::DECIMAL, [
 					'notnull' => true,
 					'precision' => 6,
 					'scale' => 2,

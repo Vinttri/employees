@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,23 +16,23 @@ class Version2024Date20260717192013 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('empleados_organigrama')) {
-			$schema->dropTable('empleados_organigrama');
+		if ($schema->hasTable('employee_org_chart')) {
+			$schema->dropTable('employee_org_chart');
 		}
 
-		if ($schema->hasTable('emp_organigrama')) {
-			$schema->dropTable('emp_organigrama');
+		if ($schema->hasTable('org_chart')) {
+			$schema->dropTable('org_chart');
 		}
 
-		if ($schema->hasTable('empleados_organigrama_pos')) {
-			$schema->dropTable('empleados_organigrama_pos');
+		if ($schema->hasTable('employee_org_positions')) {
+			$schema->dropTable('employee_org_positions');
 		}
 
-		if ($schema->hasTable('emp_org_pos')) {
-			$schema->dropTable('emp_org_pos');
+		if ($schema->hasTable('org_chart_positions')) {
+			$schema->dropTable('org_chart_positions');
 		}
 
-		$table = $schema->createTable('emp_organigrama');
+		$table = $schema->createTable('org_chart');
 
 		$table->addColumn('id', Types::INTEGER, [
 			'autoincrement' => true,
@@ -40,12 +40,12 @@ class Version2024Date20260717192013 extends SimpleMigrationStep {
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_empleado', Types::INTEGER, [
+		$table->addColumn('id_employee', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_dependiente', Types::INTEGER, [
+		$table->addColumn('id_dependent', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
@@ -57,12 +57,12 @@ class Version2024Date20260717192013 extends SimpleMigrationStep {
 
 		$table->setPrimaryKey(['id']);
 
-		$table->addUniqueIndex(['id_empleado', 'id_dependiente'], 'empl_org_pair_uniq');
-		$table->addIndex(['id_dependiente'], 'empl_org_dep_idx');
+		$table->addUniqueIndex(['id_employee', 'id_dependent'], 'empl_org_pair_uniq');
+		$table->addIndex(['id_dependent'], 'empl_org_dep_idx');
 
-		$posTable = $schema->createTable('emp_org_pos');
+		$posTable = $schema->createTable('org_chart_positions');
 
-		$posTable->addColumn('id_empleado', Types::INTEGER, [
+		$posTable->addColumn('id_employee', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
@@ -75,7 +75,7 @@ class Version2024Date20260717192013 extends SimpleMigrationStep {
 			'notnull' => true,
 		]);
 
-		$posTable->setPrimaryKey(['id_empleado']);
+		$posTable->setPrimaryKey(['id_employee']);
 
 		return $schema;
 	}

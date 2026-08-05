@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /**
- * Migra el módulo de compras para soportar exportación de documentos PDF
- * tipo "Solicitud de compra personal".
+ * Migra el módulo de purchases para soportar exportación de documents PDF
+ * type "Solicitud de compra personal".
  *
  * Esta migración:
  * - Agrega snapshots del solicitante.
  * - Agrega campos administrativos y de requisición.
  * - Agrega tabla de firmas/aprobadores.
- * - Agrega tabla de documentos generados.
+ * - Agrega tabla de documents generados.
  * - No elimina datos existentes.
  */
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -44,124 +44,124 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 	}
 
 	private function updateSolicitudes(ISchemaWrapper $schema): void {
-		if (!$schema->hasTable('emp_comp_solicitudes')) {
+		if (!$schema->hasTable('purchase_requests')) {
 			return;
 		}
 
-		$table = $schema->getTable('emp_comp_solicitudes');
+		$table = $schema->getTable('purchase_requests');
 
-		$this->addColumn($table, 'solicitante_nombre', 'string', [
+		$this->addColumn($table, 'requester_name', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'solicitante_depto', 'string', [
+		$this->addColumn($table, 'requester_department', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'solicitante_cargo', 'string', [
+		$this->addColumn($table, 'requester_position', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'jefe_directo_nombre', 'string', [
+		$this->addColumn($table, 'direct_manager_name', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'tipo_compra', 'string', [
+		$this->addColumn($table, 'purchase_type', 'string', [
 			'length' => 64,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'garantia', 'integer', [
+		$this->addColumn($table, 'warranty', 'integer', [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$this->addColumn($table, 'uso_compra', 'string', [
+		$this->addColumn($table, 'purchase_use', 'string', [
 			'length' => 64,
 			'notnull' => false,
 			'default' => 'empresa',
 		]);
 
-		$this->addColumn($table, 'informacion', 'text', [
+		$this->addColumn($table, 'information', 'text', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'motivo', 'text', [
+		$this->addColumn($table, 'reason', 'text', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'proveedor_nombre', 'string', [
+		$this->addColumn($table, 'supplier_name', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'atencion', 'string', [
+		$this->addColumn($table, 'attention', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'entrega', 'string', [
+		$this->addColumn($table, 'delivery', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'marca_modelo', 'string', [
+		$this->addColumn($table, 'brand_model', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'especificaciones', 'text', [
+		$this->addColumn($table, 'specifications', 'text', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'comentarios_req', 'text', [
+		$this->addColumn($table, 'requester_comments', 'text', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'oficina_pct', 'decimal', [
+		$this->addColumn($table, 'office_percentage', 'decimal', [
 			'precision' => 5,
 			'scale' => 2,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'empleado_pct', 'decimal', [
+		$this->addColumn($table, 'employee_percentage', 'decimal', [
 			'precision' => 5,
 			'scale' => 2,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'tipo_pago', 'string', [
+		$this->addColumn($table, 'payment_type', 'string', [
 			'length' => 64,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'quincenas', 'integer', [
+		$this->addColumn($table, 'installments', 'integer', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'total_excl_iva', 'decimal', [
+		$this->addColumn($table, 'total_excluding_tax', 'decimal', [
 			'precision' => 12,
 			'scale' => 2,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'iva', 'decimal', [
+		$this->addColumn($table, 'tax_amount', 'decimal', [
 			'precision' => 12,
 			'scale' => 2,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'total_incl_iva', 'decimal', [
+		$this->addColumn($table, 'total_including_tax', 'decimal', [
 			'precision' => 12,
 			'scale' => 2,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'comentarios_admin', 'text', [
+		$this->addColumn($table, 'admin_comments', 'text', [
 			'notnull' => false,
 		]);
 
@@ -170,37 +170,37 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'pdf_nombre', 'string', [
+		$this->addColumn($table, 'pdf_name', 'string', [
 			'length' => 255,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'pdf_generado_at', 'datetime', [
+		$this->addColumn($table, 'pdf_generated_at', 'datetime', [
 			'notnull' => false,
 		]);
 
-		$this->addIndex($table, ['tipo_compra'], 'ecs_tipo_idx');
-		$this->addIndex($table, ['uso_compra'], 'ecs_uso_idx');
-		$this->addIndex($table, ['pdf_file_id'], 'ecs_pdf_idx');
+		$this->addIndex($table, ['purchase_type'], 'purchase_requests_type_idx');
+		$this->addIndex($table, ['purchase_use'], 'purchase_requests_use_idx');
+		$this->addIndex($table, ['pdf_file_id'], 'purchase_requests_pdf_idx');
 	}
 
 	private function updateDetalles(ISchemaWrapper $schema): void {
-		if (!$schema->hasTable('emp_comp_detalles')) {
+		if (!$schema->hasTable('purchase_details')) {
 			return;
 		}
 
-		$table = $schema->getTable('emp_comp_detalles');
+		$table = $schema->getTable('purchase_details');
 
-		$this->addColumn($table, 'marca_modelo', 'string', [
+		$this->addColumn($table, 'brand_model', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'especificaciones', 'text', [
+		$this->addColumn($table, 'specifications', 'text', [
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'iva', 'decimal', [
+		$this->addColumn($table, 'tax_amount', 'decimal', [
 			'precision' => 12,
 			'scale' => 2,
 			'notnull' => false,
@@ -212,41 +212,41 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'proveedor_nombre', 'string', [
+		$this->addColumn($table, 'supplier_name', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'entrega', 'string', [
+		$this->addColumn($table, 'delivery', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$this->addColumn($table, 'atencion', 'string', [
+		$this->addColumn($table, 'attention', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 	}
 
 	private function createFirmas(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_firmas')) {
+		if ($schema->hasTable('purchase_signatures')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_firmas');
+		$table = $schema->createTable('purchase_signatures');
 
-		$table->addColumn('id_firma', 'integer', [
+		$table->addColumn('id_signature', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('id_solicitud', 'integer', [
+		$table->addColumn('id_request', 'integer', [
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('rol', 'string', [
+		$table->addColumn('role', 'string', [
 			'length' => 64,
 			'notnull' => true,
 		]);
@@ -256,22 +256,22 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->addColumn('nombre', 'string', [
+		$table->addColumn('name', 'string', [
 			'length' => 190,
 			'notnull' => false,
 		]);
 
-		$table->addColumn('estado', 'string', [
+		$table->addColumn('status', 'string', [
 			'length' => 64,
 			'notnull' => true,
 			'default' => 'pendiente',
 		]);
 
-		$table->addColumn('comentario', 'text', [
+		$table->addColumn('comment', 'text', [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('fecha_firma', 'datetime', [
+		$table->addColumn('date_signature', 'datetime', [
 			'notnull' => false,
 		]);
 
@@ -285,19 +285,19 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'default' => 'CURRENT_TIMESTAMP',
 		]);
 
-		$table->setPrimaryKey(['id_firma']);
-		$table->addIndex(['id_solicitud'], 'ecf_sol_idx');
-		$table->addIndex(['rol'], 'ecf_rol_idx');
-		$table->addIndex(['uid'], 'ecf_uid_idx');
-		$table->addIndex(['estado'], 'ecf_est_idx');
+		$table->setPrimaryKey(['id_signature']);
+		$table->addIndex(['id_request'], 'purchase_signatures_request_idx');
+		$table->addIndex(['role'], 'purchase_signatures_role_idx');
+		$table->addIndex(['uid'], 'purchase_signatures_uid_idx');
+		$table->addIndex(['status'], 'purchase_signatures_status_idx');
 	}
 
 	private function createDocumentos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_docs')) {
+		if ($schema->hasTable('purchase_documents')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_docs');
+		$table = $schema->createTable('purchase_documents');
 
 		$table->addColumn('id_doc', 'integer', [
 			'autoincrement' => true,
@@ -305,12 +305,12 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => true,
 		]);
 
-		$table->addColumn('id_solicitud', 'integer', [
+		$table->addColumn('id_request', 'integer', [
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('tipo_doc', 'string', [
+		$table->addColumn('type_doc', 'string', [
 			'length' => 64,
 			'notnull' => true,
 			'default' => 'solicitud_compra',
@@ -326,7 +326,7 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->addColumn('nombre_archivo', 'string', [
+		$table->addColumn('name_file', 'string', [
 			'length' => 255,
 			'notnull' => false,
 		]);
@@ -340,21 +340,21 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->addColumn('generado_por', 'string', [
+		$table->addColumn('generated_by', 'string', [
 			'length' => 64,
 			'notnull' => false,
 		]);
 
-		$table->addColumn('generado_at', 'datetime', [
+		$table->addColumn('generated_at', 'datetime', [
 			'notnull' => true,
 			'default' => 'CURRENT_TIMESTAMP',
 		]);
 
 		$table->setPrimaryKey(['id_doc']);
-		$table->addIndex(['id_solicitud'], 'ecd_sol_idx');
-		$table->addIndex(['tipo_doc'], 'ecd_tipo_idx');
-		$table->addIndex(['file_id'], 'ecd_file_idx');
-		$table->addIndex(['token'], 'ecd_tok_idx');
+		$table->addIndex(['id_request'], 'purchase_documents_request_idx');
+		$table->addIndex(['type_doc'], 'purchase_documents_type_idx');
+		$table->addIndex(['file_id'], 'purchase_documents_file_idx');
+		$table->addIndex(['token'], 'purchase_documents_token_idx');
 	}
 
 	private function addColumn($table, string $name, string $type, array $options): void {

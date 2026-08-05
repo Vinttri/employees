@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Service;
+namespace OCA\Employees\Service;
 
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
-use OCA\Empleados\Exception\PdfGenerationException;
+use OCA\Employees\Exception\PdfGenerationException;
 use OCP\ITempManager;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -35,7 +35,7 @@ class PdfService {
 				throw new PdfGenerationException('No fue posible generar el PDF: la orientación no es válida.');
 			}
 
-			$tempDir = $this->tempManager->getTemporaryFolder('empleados-mpdf');
+			$tempDir = $this->tempManager->getTemporaryFolder('employees-mpdf');
 
 			if ($tempDir === false || !is_dir($tempDir) || !is_writable($tempDir)) {
 				throw new PdfGenerationException('No fue posible preparar el directorio temporal del PDF.');
@@ -62,7 +62,7 @@ class PdfService {
 			return $mpdf->Output('', Destination::STRING_RETURN);
 		} catch (Throwable $e) {
 			$this->logger->error('No se pudo generar el PDF con mPDF.', [
-				'app' => 'empleados',
+				'app' => 'employees',
 				'exception_class' => $e::class,
 				'exception_message' => $e->getMessage(),
 				'format' => $format,

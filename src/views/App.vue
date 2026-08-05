@@ -1,10 +1,10 @@
 <template id="content">
-	<NcContent app-name="empleados">
+	<NcContent app-name="employees">
 		<navigator v-if="hasDataManager" />
 		<router-view v-if="hasDataManager" />
 		<NcEmptyContent v-else
-			:name="t('empleados', 'Finish the initial setup')"
-			:description="t('empleados', 'Go to global settings and select the data manager.')"
+			:name="t('employees', 'Finish the initial setup')"
+			:description="t('employees', 'Go to global settings and select the data manager.')"
 			style="background-color: white;">
 			<template #icon>
 				<AlertCircleOutline />
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import navigator from './navigator/Sidenavigation.vue'
+import navigator from './navigator/SideNavigation.vue'
 import { NcContent, NcEmptyContent } from '@nextcloud/vue'
 import { translate as t } from '@nextcloud/l10n'
 
@@ -32,7 +32,7 @@ export default {
 
 	provide() {
 		return {
-			configuraciones: this.configuraciones,
+			Settings: this.Settings,
 			groupuser: this.groupsuser,
 			employee: this.employeeUser,
 			subordinates: this.subordinates,
@@ -70,7 +70,7 @@ export default {
 
 	data() {
 		return {
-			configuraciones: this.parameters,
+			Settings: this.parameters,
 			groupsuser: this.groupsUser,
 			employeeUser: this.employee,
 			subordinates: this.subordinatesGroup,
@@ -80,9 +80,9 @@ export default {
 
 	computed: {
 		hasDataManager() {
-			return this.configuraciones.usuario_almacenamiento !== null
-				&& this.configuraciones.usuario_almacenamiento !== undefined
-				&& String(this.configuraciones.usuario_almacenamiento).trim() !== ''
+			return this.Settings.usuario_almacenamiento !== null
+				&& this.Settings.usuario_almacenamiento !== undefined
+				&& String(this.Settings.usuario_almacenamiento).trim() !== ''
 		},
 	},
 

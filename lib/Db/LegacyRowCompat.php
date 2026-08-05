@@ -2,49 +2,48 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Db;
+namespace OCA\Employees\Db;
 
 /**
- * Preserve the response keys used by the legacy frontend while querying the
- * lowercase physical identifiers created on PostgreSQL.
+ * Normalize database rows while preserving the canonical English identifiers.
  */
 final class LegacyRowCompat {
 	private const LEGACY_KEYS = [
-		'id_ch' => 'Id_ch',
-		'id_conf' => 'Id_conf',
-		'id_departamento' => 'Id_departamento',
-		'id_empleado' => 'Id_empleado',
-		'id_empleados' => 'Id_empleados',
-		'id_equipo' => 'Id_equipo',
-		'id_gerente' => 'Id_gerente',
-		'id_jefe_equipo' => 'Id_jefe_equipo',
-		'id_padre' => 'Id_padre',
-		'id_puesto' => 'Id_puesto',
-		'id_puestos' => 'Id_puestos',
-		'id_socio' => 'Id_socio',
-		'id_user' => 'Id_user',
-		'contacto_emergencia' => 'Contacto_emergencia',
-		'correo_contacto' => 'Correo_contacto',
-		'curp' => 'Curp',
-		'data' => 'Data',
-		'direccion' => 'Direccion',
-		'estado' => 'Estado',
-		'estado_civil' => 'Estado_civil',
-		'fecha_nacimiento' => 'Fecha_nacimiento',
-		'fondo_ahorro' => 'Fondo_ahorro',
-		'fondo_clave' => 'Fondo_clave',
-		'genero' => 'Genero',
-		'imss' => 'Imss',
-		'ingreso' => 'Ingreso',
-		'nivel' => 'Nivel',
-		'nombre' => 'Nombre',
-		'notas' => 'Notas',
-		'numero_cuenta' => 'Numero_cuenta',
-		'numero_emergencia' => 'Numero_emergencia',
-		'numero_empleado' => 'Numero_empleado',
-		'rfc' => 'Rfc',
-		'sueldo' => 'Sueldo',
-		'telefono_contacto' => 'Telefono_contacto',
+		'human_resources_id' => 'human_resources_id',
+		'settings_id' => 'settings_id',
+		'id_department' => 'id_department',
+		'id_employee' => 'id_employee',
+		'id_employees' => 'id_employees',
+		'id_team' => 'id_team',
+		'id_manager' => 'id_manager',
+		'team_leader_id' => 'team_leader_id',
+		'id_parent' => 'id_parent',
+		'id_position' => 'id_position',
+		'id_positions' => 'id_positions',
+		'id_partner' => 'id_partner',
+		'id_user' => 'id_user',
+		'emergency_contact' => 'emergency_contact',
+		'email_contact' => 'email_contact',
+		'curp' => 'curp',
+		'data' => 'data',
+		'address' => 'address',
+		'status' => 'status',
+		'status_marital' => 'status_marital',
+		'date_birth' => 'date_birth',
+		'savings_fund' => 'savings_fund',
+		'fund_code' => 'fund_code',
+		'gender' => 'gender',
+		'imss' => 'imss',
+		'hire_date' => 'hire_date',
+		'level' => 'level',
+		'name' => 'name',
+		'notes' => 'notes',
+		'number_account' => 'number_account',
+		'emergency_phone' => 'emergency_phone',
+		'number_employee' => 'number_employee',
+		'rfc' => 'rfc',
+		'salary' => 'salary',
+		'phone_contact' => 'phone_contact',
 	];
 
 	public static function row(array|false $row): array|false {

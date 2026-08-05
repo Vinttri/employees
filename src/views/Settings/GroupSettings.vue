@@ -6,39 +6,39 @@
 			</div>
 			<div class="settings-header__content">
 				<p class="section-label">
-					{{ t('empleados', 'Access control') }}
+					{{ t('employees', 'Access control') }}
 				</p>
 				<h2 class="board-title">
-					{{ t('empleados', 'Groups and permissions') }}
+					{{ t('employees', 'Groups and permissions') }}
 				</h2>
 				<p class="settings-description">
-					{{ t('empleados', 'Manage the Nextcloud groups that can be assigned from the employees app. User membership is still stored in Nextcloud groups  this catalog only controls which groups are manageable from this module.') }}
+					{{ t('employees', 'Manage the Nextcloud groups that can be assigned from the employees app. User membership is still stored in Nextcloud groups  this catalog only controls which groups are manageable from this module.') }}
 				</p>
 			</div>
 		</div>
 
 		<NcNoteCard type="info" class="group-settings__note">
-			{{ t('empleados', 'Restricted permissions should only be assigned or removed by a Nextcloud administrator.')
+			{{ t('employees', 'Restricted permissions should only be assigned or removed by a Nextcloud administrator.')
 			}}
 		</NcNoteCard>
 
 		<div class="group-settings__toolbar">
 			<NcTextField class="group-settings__search"
 				:value.sync="search"
-				:label="t('empleados', 'Search groups or modules')" />
+				:label="t('employees', 'Search groups or modules')" />
 
 			<NcButton @click="checkStructure">
 				<template #icon>
 					<ShieldCheck :size="20" />
 				</template>
-				{{ t('empleados', 'Check group structure') }}
+				{{ t('employees', 'Check group structure') }}
 			</NcButton>
 
 			<NcButton type="primary" @click="openCreateDialog">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-				{{ t('empleados', 'Add permission group') }}
+				{{ t('employees', 'Add permission group') }}
 			</NcButton>
 		</div>
 
@@ -47,8 +47,8 @@
 		</div>
 
 		<NcEmptyContent v-else-if="filteredGroups.length === 0"
-			:name="search ? t('empleados', 'No permission groups match the search') : t('empleados', 'No permission groups configured')"
-			:description="t('empleados', 'Create the first permission group to start managing module access dynamically.')">
+			:name="search ? t('employees', 'No permission groups match the search') : t('employees', 'No permission groups configured')"
+			:description="t('employees', 'Create the first permission group to start managing module access dynamically.')">
 			<template #icon>
 				<AccountGroup :size="28" />
 			</template>
@@ -72,18 +72,18 @@
 							<h3>{{ item.label }}</h3>
 
 							<span v-if="item.enabled" class="status-badge status-badge--enabled">
-								{{ t('empleados', 'Enabled') }}
+								{{ t('employees', 'Enabled') }}
 							</span>
 							<span v-else class="status-badge status-badge--disabled">
-								{{ t('empleados', 'Disabled') }}
+								{{ t('employees', 'Disabled') }}
 							</span>
 
 							<span v-if="item.restricted" class="status-badge status-badge--restricted">
-								{{ t('empleados', 'Restricted') }}
+								{{ t('employees', 'Restricted') }}
 							</span>
 
 							<span v-if="!item.exists" class="status-badge status-badge--missing">
-								{{ t('empleados', 'Group does not exist') }}
+								{{ t('employees', 'Group does not exist') }}
 							</span>
 						</div>
 
@@ -99,7 +99,7 @@
 							{{ item.description }}
 						</p>
 						<p v-else class="permission-card__description permission-card__description--empty">
-							{{ t('empleados', 'No description provided.') }}
+							{{ t('employees', 'No description provided.') }}
 						</p>
 					</div>
 				</div>
@@ -109,21 +109,21 @@
 						<template #icon>
 							<Pencil :size="20" />
 						</template>
-						{{ t('empleados', 'Edit') }}
+						{{ t('employees', 'Edit') }}
 					</NcActionButton>
 
 					<NcActionButton v-if="item.enabled" close-after-click @click="disableGroup(item)">
 						<template #icon>
 							<EyeOff :size="20" />
 						</template>
-						{{ t('empleados', 'Disable') }}
+						{{ t('employees', 'Disable') }}
 					</NcActionButton>
 
 					<NcActionButton v-else close-after-click @click="enableGroup(item)">
 						<template #icon>
 							<Eye :size="20" />
 						</template>
-						{{ t('empleados', 'Enable') }}
+						{{ t('employees', 'Enable') }}
 					</NcActionButton>
 				</NcActions>
 			</div>
@@ -139,23 +139,23 @@
 				</NcNoteCard>
 
 				<div class="permission-form__section">
-					<h3>{{ t('empleados', 'Permission setup') }}</h3>
+					<h3>{{ t('employees', 'Permission setup') }}</h3>
 					<p>
-						{{ t('empleados', 'Choose the module, permission level and the Nextcloud group that will grant access.') }}
+						{{ t('employees', 'Choose the module, permission level and the Nextcloud group that will grant access.') }}
 					</p>
 				</div>
 
 				<div class="permission-form__grid">
 					<NcSelect :value="selectedModule"
 						:options="modulesOptions"
-						:input-label="t('empleados', 'Module')"
+						:input-label="t('employees', 'Module')"
 						label="label"
 						:clearable="false"
 						@input="onModuleSelected" />
 
 					<NcSelect :value="selectedPermission"
 						:options="permissionOptions"
-						:input-label="t('empleados', 'Permission level')"
+						:input-label="t('employees', 'Permission level')"
 						label="label"
 						:clearable="false"
 						@input="onPermissionSelected" />
@@ -163,7 +163,7 @@
 					<NcSelect v-if="!allowManualGroup"
 						:value="selectedGroup"
 						:options="nextcloudGroups"
-						:input-label="t('empleados', 'Nextcloud group')"
+						:input-label="t('employees', 'Nextcloud group')"
 						label="label"
 						:clearable="false"
 						@input="onGroupSelected"
@@ -171,13 +171,13 @@
 
 					<NcTextField v-else
 						:value.sync="form.group_id"
-						:label="t('empleados', 'New group ID')"
-						:placeholder="t('empleados', 'Example: empleados_admin')" />
+						:label="t('employees', 'New group ID')"
+						:placeholder="t('employees', 'Example: empleados_admin')" />
 
 					<NcTextField :value.sync="form.sort_order"
 						type="number"
-						:label="t('empleados', 'Sort order')"
-						:placeholder="t('empleados', 'Example: 10')" />
+						:label="t('employees', 'Sort order')"
+						:placeholder="t('employees', 'Example: 10')" />
 				</div>
 
 				<div class="permission-form__manual-toggle">
@@ -185,34 +185,34 @@
 						type="switch"
 						@update:checked="allowManualGroup = Boolean($event)">
 						<span>
-							<strong>{{ t('empleados', 'Use a new group ID') }}</strong>
-							<small>{{ t('empleados', 'Enable this if the group does not exist yet. The structure repair tool can create it later.') }}</small>
+							<strong>{{ t('employees', 'Use a new group ID') }}</strong>
+							<small>{{ t('employees', 'Enable this if the group does not exist yet. The structure repair tool can create it later.') }}</small>
 						</span>
 					</NcCheckboxRadioSwitch>
 				</div>
 
 				<div class="permission-form__section">
-					<h3>{{ t('empleados', 'Display information') }}</h3>
+					<h3>{{ t('employees', 'Display information') }}</h3>
 				</div>
 
 				<div class="permission-form__grid">
 					<NcTextField :value.sync="form.label"
-						:label="t('empleados', 'Display name')"
-						:placeholder="t('empleados', 'Example: Employees - Administrator')" />
+						:label="t('employees', 'Display name')"
+						:placeholder="t('employees', 'Example: Employees - Administrator')" />
 				</div>
 
 				<NcTextField class="permission-form__description"
 					:value.sync="form.description"
-					:label="t('empleados', 'Description')"
-					:placeholder="t('empleados', 'Describe what this permission allows.')" />
+					:label="t('employees', 'Description')"
+					:placeholder="t('employees', 'Describe what this permission allows.')" />
 
 				<div class="permission-form__switches">
 					<NcCheckboxRadioSwitch :checked="form.enabled"
 						type="switch"
 						@update:checked="form.enabled = Boolean($event)">
 						<span>
-							<strong>{{ t('empleados', 'Enabled') }}</strong>
-							<small>{{ t('empleados', 'Disabled permissions are hidden from user assignment.') }}</small>
+							<strong>{{ t('employees', 'Enabled') }}</strong>
+							<small>{{ t('employees', 'Disabled permissions are hidden from user assignment.') }}</small>
 						</span>
 					</NcCheckboxRadioSwitch>
 
@@ -220,8 +220,8 @@
 						type="switch"
 						@update:checked="form.restricted = Boolean($event)">
 						<span>
-							<strong>{{ t('empleados', 'Restricted') }}</strong>
-							<small>{{ t('empleados', 'Only Nextcloud administrators should assign or remove this permission.')
+							<strong>{{ t('employees', 'Restricted') }}</strong>
+							<small>{{ t('employees', 'Only Nextcloud administrators should assign or remove this permission.')
 							}}</small>
 						</span>
 					</NcCheckboxRadioSwitch>
@@ -230,56 +230,56 @@
 				<NcNoteCard v-if="form.group_id && !isValidGroupId(form.group_id)"
 					type="warning"
 					class="permission-form__warning">
-					{{ t('empleados', 'The group ID can only contain letters, numbers, underscore, dot, at sign or dash.') }}
+					{{ t('employees', 'The group ID can only contain letters, numbers, underscore, dot, at sign or dash.') }}
 				</NcNoteCard>
 
 				<div class="permission-form__actions">
 					<NcButton @click="closeDialog">
-						{{ t('empleados', 'Cancel') }}
+						{{ t('employees', 'Cancel') }}
 					</NcButton>
 
 					<NcButton type="primary" :disabled="saving || !isFormValid" @click="saveGroup">
 						<template #icon>
 							<ContentSave :size="20" />
 						</template>
-						{{ saving ? t('empleados', 'Saving') : t('empleados', 'Save') }}
+						{{ saving ? t('employees', 'Saving') : t('employees', 'Save') }}
 					</NcButton>
 				</div>
 			</div>
 		</NcModal>
 		<NcModal v-if="structureDialog"
 			size="large"
-			:name="t('empleados', 'Group structure check')"
+			:name="t('employees', 'Group structure check')"
 			@close="closeStructureDialog">
 			<div class="structure-check">
 				<NcNoteCard v-if="structure.summary.missing_total === 0" type="success">
-					{{ t('empleados', 'Group structure looks good. No missing groups were found.') }}
+					{{ t('employees', 'Group structure looks good. No missing groups were found.') }}
 				</NcNoteCard>
 
 				<NcNoteCard v-else type="warning">
-					{{ t('empleados', 'Some required groups or catalog entries are missing. You can repair the structure to recreate them.') }}
+					{{ t('employees', 'Some required groups or catalog entries are missing. You can repair the structure to recreate them.') }}
 				</NcNoteCard>
 
 				<div class="structure-summary">
 					<div class="structure-summary__item">
 						<strong>{{ structure.summary.base_missing }}</strong>
-						<span>{{ t('empleados', 'Missing base groups') }}</span>
+						<span>{{ t('employees', 'Missing base groups') }}</span>
 					</div>
 					<div class="structure-summary__item">
 						<strong>{{ structure.summary.catalog_missing }}</strong>
-						<span>{{ t('empleados', 'Missing permission groups') }}</span>
+						<span>{{ t('employees', 'Missing permission groups') }}</span>
 					</div>
 					<div class="structure-summary__item">
 						<strong>{{ structure.summary.catalog_entries_missing }}</strong>
-						<span>{{ t('empleados', 'Missing catalog entries') }}</span>
+						<span>{{ t('employees', 'Missing catalog entries') }}</span>
 					</div>
 					<div class="structure-summary__item">
 						<strong>{{ structure.summary.missing_total }}</strong>
-						<span>{{ t('empleados', 'Total missing') }}</span>
+						<span>{{ t('employees', 'Total missing') }}</span>
 					</div>
 				</div>
 
-				<h3>{{ t('empleados', 'Base groups') }}</h3>
+				<h3>{{ t('employees', 'Base groups') }}</h3>
 				<div class="structure-list">
 					<div v-for="group in structure.base_groups" :key="`base-${group.id}`" class="structure-row">
 						<div>
@@ -289,14 +289,14 @@
 						</div>
 
 						<span v-if="group.exists" class="status-badge status-badge--enabled">
-							{{ t('empleados', 'Exists') }}
+							{{ t('employees', 'Exists') }}
 						</span>
 						<span v-else class="status-badge status-badge--missing">
-							{{ t('empleados', 'Missing') }}
+							{{ t('employees', 'Missing') }}
 						</span>
 					</div>
 				</div>
-				<h3>{{ t('empleados', 'Required catalog entries') }}</h3>
+				<h3>{{ t('employees', 'Required catalog entries') }}</h3>
 				<div class="structure-list">
 					<div v-for="entry in structure.required_catalog_entries"
 						:key="`required-catalog-${entry.module}-${entry.permission}-${entry.group_id}`"
@@ -307,7 +307,7 @@
 							<code>{{ entry.group_id }}</code>
 							<p>
 								{{ entry.module }} · {{ entry.permission }}
-								<span v-if="entry.restricted">· {{ t('empleados', 'Restricted') }}</span>
+								<span v-if="entry.restricted">· {{ t('employees', 'Restricted') }}</span>
 							</p>
 							<p v-if="entry.description">
 								{{ entry.description }}
@@ -315,22 +315,22 @@
 						</div>
 
 						<span v-if="entry.exists" class="status-badge status-badge--enabled">
-							{{ t('empleados', 'Exists in catalog') }}
+							{{ t('employees', 'Exists in catalog') }}
 						</span>
 						<span v-else class="status-badge status-badge--missing">
-							{{ t('empleados', 'Missing in catalog') }}
+							{{ t('employees', 'Missing in catalog') }}
 						</span>
 					</div>
 
 					<NcEmptyContent v-if="structure.required_catalog_entries.length === 0"
-						:name="t('empleados', 'No required catalog entries')"
-						:description="t('empleados', 'There are no required permission definitions configured for this check.')">
+						:name="t('employees', 'No required catalog entries')"
+						:description="t('employees', 'There are no required permission definitions configured for this check.')">
 						<template #icon>
 							<AccountGroup :size="28" />
 						</template>
 					</NcEmptyContent>
 				</div>
-				<h3>{{ t('empleados', 'Permission groups') }}</h3>
+				<h3>{{ t('employees', 'Permission groups') }}</h3>
 				<div class="structure-list">
 					<div v-for="group in structure.catalog_groups"
 						:key="`catalog-${group.catalog_id}`"
@@ -341,25 +341,25 @@
 							<code>{{ group.id }}</code>
 							<p>
 								{{ group.module }} · {{ group.permission }}
-								<span v-if="!group.enabled">· {{ t('empleados', 'Disabled') }}</span>
+								<span v-if="!group.enabled">· {{ t('employees', 'Disabled') }}</span>
 							</p>
 						</div>
 
 						<span v-if="group.exists" class="status-badge status-badge--enabled">
-							{{ t('empleados', 'Exists') }}
+							{{ t('employees', 'Exists') }}
 						</span>
 						<span v-else-if="group.enabled" class="status-badge status-badge--missing">
-							{{ t('empleados', 'Missing') }}
+							{{ t('employees', 'Missing') }}
 						</span>
 						<span v-else class="status-badge status-badge--disabled">
-							{{ t('empleados', 'Disabled') }}
+							{{ t('employees', 'Disabled') }}
 						</span>
 					</div>
 				</div>
 
 				<div class="structure-actions">
 					<NcButton @click="closeStructureDialog">
-						{{ t('empleados', 'Close') }}
+						{{ t('employees', 'Close') }}
 					</NcButton>
 
 					<NcButton type="primary"
@@ -368,7 +368,7 @@
 						<template #icon>
 							<ShieldCheck :size="20" />
 						</template>
-						{{ repairingStructure ? t('empleados', 'Repairing') : t('empleados', 'Repair structure') }}
+						{{ repairingStructure ? t('employees', 'Repairing') : t('employees', 'Repair structure') }}
 					</NcButton>
 				</div>
 			</div>
@@ -470,22 +470,22 @@ export default {
 				missing_catalog_entries: [],
 			},
 			modulesOptions: [
-				{ id: 'empleados', label: t('empleados', 'Employees / HR') },
-				{ id: 'compras', label: t('empleados', 'Purchases') },
-				{ id: 'clientes', label: t('empleados', 'Customers') },
-				{ id: 'inventario', label: t('empleados', 'IT inventory') },
-				{ id: 'soporte', label: t('empleados', 'Support') },
-				{ id: 'reporte_tiempos', label: t('empleados', 'Time reports') },
-				{ id: 'ahorro', label: t('empleados', 'Savings') },
-				{ id: 'ausencias', label: t('empleados', 'Working time') },
+				{ id: 'employees', label: t('employees', 'Employees / HR') },
+				{ id: 'purchases', label: t('employees', 'Purchases') },
+				{ id: 'Client', label: t('employees', 'Customers') },
+				{ id: 'inventario', label: t('employees', 'IT inventory') },
+				{ id: 'soporte', label: t('employees', 'Support') },
+				{ id: 'reporte_tiempos', label: t('employees', 'Time reports') },
+				{ id: 'savings', label: t('employees', 'Savings') },
+				{ id: 'Absence', label: t('employees', 'Working time') },
 			],
 			permissionOptions: [
-				{ id: 'admin', label: t('empleados', 'Administrator') },
-				{ id: 'view', label: t('empleados', 'View only') },
-				{ id: 'request', label: t('empleados', 'Requester') },
-				{ id: 'approve', label: t('empleados', 'Approver') },
-				{ id: 'accounting', label: t('empleados', 'Accounting') },
-				{ id: 'hr', label: t('empleados', 'Human resources') },
+				{ id: 'admin', label: t('employees', 'Administrator') },
+				{ id: 'view', label: t('employees', 'View only') },
+				{ id: 'request', label: t('employees', 'Requester') },
+				{ id: 'approve', label: t('employees', 'Approver') },
+				{ id: 'accounting', label: t('employees', 'Accounting') },
+				{ id: 'hr', label: t('employees', 'Human resources') },
 			],
 			nextcloudGroups: [],
 			selectedModule: null,
@@ -516,8 +516,8 @@ export default {
 
 		dialogTitle() {
 			return this.formMode === 'edit'
-				? t('empleados', 'Edit permission group')
-				: t('empleados', 'Add permission group')
+				? t('employees', 'Edit permission group')
+				: t('employees', 'Add permission group')
 		},
 
 		isFormValid() {
@@ -540,16 +540,16 @@ export default {
 			this.loading = true
 
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/permisos/catalogo'))
+				const response = await axios.get(generateUrl('/apps/employees/permisos/catalogo'))
 				const payload = this.getPayload(response)
 
 				if (payload.status !== 'ok') {
-					throw new Error(payload.message || t('empleados', 'Could not load permission groups.'))
+					throw new Error(payload.message || t('employees', 'Could not load permission groups.'))
 				}
 
 				this.groups = payload.data || []
 			} catch (err) {
-				showError(t('empleados', 'Error loading permission groups: {error}', { error: String(err) }))
+				showError(t('employees', 'Error loading permission groups: {error}', { error: String(err) }))
 				console.error(err)
 			} finally {
 				this.loading = false
@@ -617,7 +617,7 @@ export default {
 			this.formError = ''
 
 			if (!this.isFormValid) {
-				this.formError = t('empleados', 'Complete the required fields before saving.')
+				this.formError = t('employees', 'Complete the required fields before saving.')
 				return
 			}
 
@@ -636,22 +636,22 @@ export default {
 				}
 
 				const url = this.formMode === 'edit'
-					? generateUrl('/apps/empleados/permisos/catalogo/{id}', { id: this.form.id })
-					: generateUrl('/apps/empleados/permisos/catalogo')
+					? generateUrl('/apps/employees/permisos/catalogo/{id}', { id: this.form.id })
+					: generateUrl('/apps/employees/permisos/catalogo')
 
 				const response = await axios.post(url, payload)
 				const data = this.getPayload(response)
 
 				if (data.status !== 'ok') {
-					throw new Error(data.message || t('empleados', 'Could not save permission group.'))
+					throw new Error(data.message || t('employees', 'Could not save permission group.'))
 				}
 
-				showSuccess(data.message || t('empleados', 'Permission group saved.'))
+				showSuccess(data.message || t('employees', 'Permission group saved.'))
 				this.closeDialog()
 				await this.loadGroups()
 			} catch (err) {
 				this.formError = String(err?.response?.data?.message || err?.response?.data?.ocs?.data?.message || err.message || err)
-				showError(t('empleados', 'Error saving permission group: {error}', { error: this.formError }))
+				showError(t('employees', 'Error saving permission group: {error}', { error: this.formError }))
 				console.error(err)
 			} finally {
 				this.saving = false
@@ -670,7 +670,7 @@ export default {
 			try {
 				const endpoint = enabled ? 'enable' : 'disable'
 				const response = await axios.post(
-					generateUrl('/apps/empleados/permisos/catalogo/{id}/{endpoint}', {
+					generateUrl('/apps/employees/permisos/catalogo/{id}/{endpoint}', {
 						id: item.id,
 						endpoint,
 					}),
@@ -679,13 +679,13 @@ export default {
 				const payload = this.getPayload(response)
 
 				if (payload.status !== 'ok') {
-					throw new Error(payload.message || t('empleados', 'Could not update permission group.'))
+					throw new Error(payload.message || t('employees', 'Could not update permission group.'))
 				}
 
-				showSuccess(payload.message || t('empleados', 'Permission group updated.'))
+				showSuccess(payload.message || t('employees', 'Permission group updated.'))
 				await this.loadGroups()
 			} catch (err) {
-				showError(t('empleados', 'Error updating permission group: {error}', { error: String(err) }))
+				showError(t('employees', 'Error updating permission group: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -701,7 +701,7 @@ export default {
 			this.checkingStructure = true
 
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/permisos/catalogo/estructura'), {
+				const response = await axios.get(generateUrl('/apps/employees/permisos/catalogo/estructura'), {
 					headers: {
 						Accept: 'application/json',
 						'OCS-APIRequest': true,
@@ -711,13 +711,13 @@ export default {
 				const payload = this.getPayload(response)
 
 				if (payload.status !== 'ok') {
-					throw new Error(payload.message || t('empleados', 'Could not check group structure.'))
+					throw new Error(payload.message || t('employees', 'Could not check group structure.'))
 				}
 
 				this.structure = this.normalizeStructure(payload.data || {})
 				this.structureDialog = true
 			} catch (err) {
-				showError(t('empleados', 'Error checking group structure: {error}', { error: String(err) }))
+				showError(t('employees', 'Error checking group structure: {error}', { error: String(err) }))
 				console.error(err)
 			} finally {
 				this.checkingStructure = false
@@ -728,7 +728,7 @@ export default {
 			this.repairingStructure = true
 
 			try {
-				const response = await axios.post(generateUrl('/apps/empleados/permisos/catalogo/estructura/reparar'), {}, {
+				const response = await axios.post(generateUrl('/apps/employees/permisos/catalogo/estructura/reparar'), {}, {
 					headers: {
 						Accept: 'application/json',
 						'OCS-APIRequest': true,
@@ -738,15 +738,15 @@ export default {
 				const payload = this.getPayload(response)
 
 				if (!['ok', 'partial'].includes(payload.status)) {
-					throw new Error(payload.message || t('empleados', 'Could not repair group structure.'))
+					throw new Error(payload.message || t('employees', 'Could not repair group structure.'))
 				}
 
-				showSuccess(payload.message || t('empleados', 'Group structure repaired.'))
+				showSuccess(payload.message || t('employees', 'Group structure repaired.'))
 
 				await this.checkStructure()
 				await this.loadGroups()
 			} catch (err) {
-				showError(t('empleados', 'Error repairing group structure: {error}', { error: String(err) }))
+				showError(t('employees', 'Error repairing group structure: {error}', { error: String(err) }))
 				console.error(err)
 			} finally {
 				this.repairingStructure = false
@@ -763,7 +763,7 @@ export default {
 
 		async loadNextcloudGroups(search = '') {
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/permisos/catalogo/grupos-nextcloud'), {
+				const response = await axios.get(generateUrl('/apps/employees/permisos/catalogo/grupos-nextcloud'), {
 					params: { search },
 					headers: {
 						Accept: 'application/json',
@@ -774,12 +774,12 @@ export default {
 				const payload = this.getPayload(response)
 
 				if (payload.status !== 'ok') {
-					throw new Error(payload.message || t('empleados', 'Could not load Nextcloud groups.'))
+					throw new Error(payload.message || t('employees', 'Could not load Nextcloud groups.'))
 				}
 
 				this.nextcloudGroups = payload.data || []
 			} catch (err) {
-				showError(t('empleados', 'Error loading Nextcloud groups: {error}', { error: String(err) }))
+				showError(t('employees', 'Error loading Nextcloud groups: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -817,7 +817,7 @@ export default {
 
 			if (!this.form.description || this.formMode === 'create') {
 				this.form.description = t(
-					'empleados',
+					'employees',
 					'Allows {permission} access to the {module} module.',
 					{
 						permission: permissionLabel.toLowerCase(),
@@ -830,7 +830,7 @@ export default {
 				this.form.group_id = `${this.form.module}_${this.form.permission}`
 				this.selectedGroup = {
 					id: this.form.group_id,
-					label: `${this.form.group_id} (${t('empleados', 'new group')})`,
+					label: `${this.form.group_id} (${t('employees', 'new group')})`,
 				}
 			}
 		},

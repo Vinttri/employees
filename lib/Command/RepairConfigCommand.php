@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace OCA\Empleados\Command;
+namespace OCA\Employees\Command;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
@@ -12,30 +12,30 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class RepairConfigCommand extends Command {
-	protected static $defaultName = 'empleados:repair-config';
+	protected static $defaultName = 'employees:repair-config';
 
-	private const APP_ID = 'empleados';
-	private const CONFIG_TABLE = 'empleados_conf';
+	private const APP_ID = 'employees';
+	private const CONFIG_TABLE = 'employee_settings';
 
 	/** Configuraciones almacenadas en oc_empleados_conf. */
 	private const REQUIRED_CONFIG = [
 		'usuario_almacenamiento' => null,
 		'automatic_save_note' => 'false',
 		'acumular_vacaciones' => 'false',
-		'modulo_ahorro' => 'false',
+		'modulo_savings' => 'false',
 		'modulo_ausencias' => 'false',
 		'ausencias_readonly' => 'false',
-		'modulo_clientes' => 'false',
+		'modulo_clients' => 'false',
 		'modulo_reporte_tiempos' => 'false',
 		'modulo_inventario' => 'false',
 		'modulo_soporte' => 'false',
-		'modulo_compras' => 'false',
+		'modulo_purchases' => 'false',
 	];
 
 	/** Configuraciones almacenadas en oc_appconfig. */
 	private const REQUIRED_APP_CONFIG = [
 		'reportes_recordatorios_enabled' => 'true',
-		'reportes_recordatorios_grupo' => 'empleados',
+		'reportes_recordatorios_grupo' => 'employees',
 		'reportes_recordatorios_hora' => '17',
 		'reportes_recordatorios_zona_horaria' => 'America/Mexico_City',
 		'reportes_recordatorios_email' => 'true',
@@ -48,38 +48,38 @@ final class RepairConfigCommand extends Command {
 	 * Los nombres deben coincidir con los usados por los mappers/controladores.
 	 */
 	private const REQUIRED_SCHEMA = [
-		'empleados_conf' => ['Id_conf', 'Nombre', 'Data'],
-		'empleados' => [
-			'Id_empleados', 'Id_user', 'Numero_empleado', 'Ingreso',
-			'Correo_contacto', 'Id_departamento', 'Id_puesto', 'Id_equipo',
-			'Id_gerente', 'Id_socio', 'Fondo_clave', 'Fondo_ahorro',
-			'Numero_cuenta', 'Equipo_asignado', 'Sueldo', 'Notas',
-			'Fecha_nacimiento', 'Estado', 'Direccion', 'Estado_civil',
-			'Telefono_contacto', 'Curp', 'Rfc', 'Imss', 'Genero',
-			'Contacto_emergencia', 'Numero_emergencia', 'created_at', 'updated_at',
+		'employee_settings' => ['settings_id', 'name', 'data'],
+		'employees' => [
+			'id_employees', 'id_user', 'number_employee', 'hire_date',
+			'email_contact', 'id_department', 'id_position', 'id_team',
+			'id_manager', 'id_partner', 'fund_code', 'savings_fund',
+			'number_account', 'team_assigned', 'salary', 'notes',
+			'date_birth', 'status', 'address', 'status_marital',
+			'phone_contact', 'curp', 'rfc', 'imss', 'gender',
+			'emergency_contact', 'emergency_phone', 'created_at', 'updated_at',
 		],
-		'departamentos' => ['Id_departamento', 'Id_padre', 'Nombre', 'created_at', 'updated_at'],
-		'puestos' => ['Id_puestos', 'Nombre', 'created_at', 'updated_at'],
-		'equipos' => ['Id_equipo', 'Id_jefe_equipo', 'Nombre', 'created_at', 'updated_at'],
-		'aniversarios' => ['id_aniversario', 'numero_aniversario', 'fecha_de', 'fecha_hasta', 'dias'],
-		'tipo_ausencia' => ['id_tipo_ausencia', 'nombre', 'descripcion', 'solicitar_archivo', 'solicitar_prima_vacacional'],
-		'ausencias' => ['id_ausencias', 'id_empleado', 'id_aniversario', 'dias_disponibles', 'prima_vacacional', 'timestamp'],
-		'historial_ausencias' => [
-			'id_historial_ausencias', 'id_ausencias', 'id_aniversario',
-			'id_tipo_ausencia', 'fecha_de', 'fecha_hasta', 'prima_vacacional',
-			'archivo', 'timestamp', 'a_socio', 'a_gerente', 'a_capital_humano', 'notas',
+		'departments' => ['id_department', 'id_parent', 'name', 'created_at', 'updated_at'],
+		'positions' => ['id_positions', 'name', 'created_at', 'updated_at'],
+		'teams' => ['id_team', 'team_leader_id', 'name', 'created_at', 'updated_at'],
+		'anniversaries' => ['id_anniversary', 'number_anniversary', 'date_from', 'date_until', 'days'],
+		'absence_types' => ['absence_type_id', 'name', 'description', 'request_file', 'request_bonus_vacation'],
+		'absences' => ['absence_id', 'id_employee', 'id_anniversary', 'days_available', 'bonus_vacation', 'timestamp'],
+		'absence_history' => [
+			'absence_history_id', 'absence_id', 'id_anniversary',
+			'absence_type_id', 'date_from', 'date_until', 'bonus_vacation',
+			'file', 'timestamp', 'is_partner', 'is_manager', 'can_access_human_resources', 'notes',
 		],
-		'user_ahorro' => ['id_ahorro', 'id_user', 'id_permision', 'state', 'last_modified'],
-		'historial_ahorro' => ['id_historial', 'id_ahorro', 'cantidad_solicitada', 'cantidad_total', 'fecha_solicitud', 'estado', 'nota'],
-		'CapitalHumano' => ['Id_ch', 'Id_empleado', 'created_at', 'updated_at'],
-		'empleados_clientes' => [
-			'id', 'nombre', 'detalles', 'lider_proyecto', 'colaboradores',
-			'razon_social', 'nombre_contacto', 'telefono', 'correo',
-			'ubicacion', 'especial', 'cliente_padre', 'estado',
+		'user_savings' => ['id_savings', 'id_user', 'id_permission', 'state', 'last_modified'],
+		'savings_history' => ['id_history', 'id_savings', 'quantity_requested', 'quantity_total', 'date_request', 'status', 'note'],
+		'human_resources' => ['human_resources_id', 'id_employee', 'created_at', 'updated_at'],
+		'clients' => [
+			'id', 'name', 'details', 'project_leader', 'collaborators',
+			'legal_name', 'name_contact', 'phone', 'email',
+			'location', 'special', 'client_parent', 'status',
 		],
-		'soporte_historial' => ['id_soporte', 'id_equipo', 'duracion_minutos'],
-		'empleados_rep_tiempos' => ['id_reporte', 'id_empleado', 'origen', 'origen_id'],
-		'empleados_actividades' => ['id_actividad', 'nombre', 'cargable', 'clave_sistema'],
+		'support_history' => ['id_support', 'id_team', 'duration_minutes'],
+		'employee_time_reports' => ['id_report', 'id_employee', 'source', 'source_id'],
+		'employee_activities' => ['id_activity', 'name', 'billable', 'system_code'],
 	];
 
 	public function __construct(
@@ -91,7 +91,7 @@ final class RepairConfigCommand extends Command {
 
 	protected function configure(): void {
 		$this
-			->setDescription('Verifica migraciones y esquema; agrega únicamente configuraciones faltantes.')
+			->setDescription('Verifica migraciones y esquema; agrega únicamente Settings faltantes.')
 			->addOption(
 				'check-only',
 				null,
@@ -141,7 +141,7 @@ final class RepairConfigCommand extends Command {
 
 		if ($configErrors === []) {
 			$output->writeln('');
-			$output->writeln('<info>No hay configuraciones faltantes.</info>');
+			$output->writeln('<info>No hay Settings faltantes.</info>');
 			return Command::SUCCESS;
 		}
 
@@ -168,7 +168,7 @@ final class RepairConfigCommand extends Command {
 		return Command::SUCCESS;
 	}
 
-	/** Descubre automáticamente todos los archivos lib/Migration/Version*.php. */
+	/** Descubre automáticamente todos los files lib/Migration/Version*.php. */
 	private function discoverRequiredMigrations(): array {
 		$migrationDirectory = dirname(__DIR__) . '/Migration';
 		$files = glob($migrationDirectory . '/Version*.php');
@@ -195,7 +195,7 @@ final class RepairConfigCommand extends Command {
 		try {
 			$required = $this->discoverRequiredMigrations();
 			if ($required === []) {
-				return ['No se encontraron archivos Version*.php en lib/Migration.'];
+				return ['No se encontraron files Version*.php en lib/Migration.'];
 			}
 
 			$qb = $this->db->getQueryBuilder();
@@ -256,7 +256,7 @@ final class RepairConfigCommand extends Command {
 
 	private function verifyConfiguration(OutputInterface $output): array {
 		$output->writeln('');
-		$output->writeln('<info>Verificando configuraciones...</info>');
+		$output->writeln('<info>Verificando Settings...</info>');
 		$errors = [];
 
 		foreach (self::REQUIRED_CONFIG as $key => $defaultValue) {
@@ -341,7 +341,7 @@ final class RepairConfigCommand extends Command {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select($qb->createFunction('COUNT(*)'))
 			->from(self::CONFIG_TABLE)
-			->where($qb->expr()->eq('Nombre', $qb->createNamedParameter($key)));
+			->where($qb->expr()->eq('name', $qb->createNamedParameter($key)));
 
 		$result = $qb->executeQuery();
 		$count = (int)$result->fetchOne();
@@ -357,8 +357,8 @@ final class RepairConfigCommand extends Command {
 
 		$qb->insert(self::CONFIG_TABLE)
 			->values([
-				'Nombre' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-				'Data' => $parameter,
+				'name' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+				'data' => $parameter,
 			])
 			->executeStatement();
 	}

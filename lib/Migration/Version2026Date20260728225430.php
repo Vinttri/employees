@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,11 +16,11 @@ class Version2026Date20260728225430 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('tipo_ausencia')) {
-			$table = $schema->getTable('tipo_ausencia');
+		if ($schema->hasTable('absence_types')) {
+			$table = $schema->getTable('absence_types');
 
-			if (!$table->hasColumn('privado')) {
-				$table->addColumn('privado', Types::INTEGER, [
+			if (!$table->hasColumn('private')) {
+				$table->addColumn('private', Types::INTEGER, [
 					'notnull' => true,
 					'unsigned' => true,
 					'default' => 0,

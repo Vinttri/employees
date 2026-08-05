@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Command;
+namespace OCA\Employees\Command;
 
-use OCA\Empleados\Db\InventarioComputoMapper;
-use OCA\Empleados\Db\reportetiempoMapper;
-use OCA\Empleados\Db\SoporteHistorialMapper;
-use OCA\Empleados\Service\SoporteReporteTiempoService;
+use OCA\Employees\Db\ComputerInventoryMapper;
+use OCA\Employees\Db\TimeReportMapper;
+use OCA\Employees\Db\SupportHistoryMapper;
+use OCA\Employees\Service\TimeReportSupportService;
 use OCP\IDBConnection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,13 +15,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncSupportTimeCommand extends Command {
-	protected static $defaultName = 'empleados:sync-support-time';
+	protected static $defaultName = 'employees:sync-support-time';
 
 	public function __construct(
-		private SoporteHistorialMapper $soportes,
-		private InventarioComputoMapper $equipos,
-		private reportetiempoMapper $reportes,
-		private SoporteReporteTiempoService $integration,
+		private SupportHistoryMapper $soportes,
+		private ComputerInventoryMapper $Team,
+		private TimeReportMapper $reportes,
+		private TimeReportSupportService $integration,
 		private IDBConnection $db,
 	) {
 		parent::__construct();
@@ -45,7 +45,7 @@ class SyncSupportTimeCommand extends Command {
 			if (!$repair) continue;
 			try {
 				$this->db->beginTransaction();
-				$device = $this->equipos->findById((int)$support['id_equipo']);
+				$device = $this->Team->findById((int)$support['id_team']);
 				if ($device === null) throw new \RuntimeException('Equipo inexistente.');
 				$this->integration->crearDesdeSoporte($support, $device);
 				$this->db->commit();
@@ -53,7 +53,7 @@ class SyncSupportTimeCommand extends Command {
 			} catch (\Throwable $e) {
 				$this->db->rollBack();
 				$errors++;
-				$output->warning(sprintf('Soporte #%d: %s', $support['id_soporte'], $e->getMessage()));
+				$output->warning(sprintf('Soporte #%d: %s', $support['id_support'], $e->getMessage()));
 			}
 		}
 

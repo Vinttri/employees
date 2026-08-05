@@ -10,7 +10,7 @@
 			<template #subname>
 				{{ subnameText }}
 				<span v-if="isInternalReport" class="origin-badge">{{ originLabel }}</span>
-				<span v-if="isInternalReport" class="billable-badge">{{ t('empleados', 'Non-billable') }}</span>
+				<span v-if="isInternalReport" class="billable-badge">{{ t('employees', 'Non-billable') }}</span>
 			</template>
 
 			<template #indicator>
@@ -26,7 +26,7 @@
 					<template #icon>
 						<DeleteAlert :size="20" />
 					</template>
-					{{ t('empleados', 'Edit') }}
+					{{ t('employees', 'Edit') }}
 				</NcActionButton>
 				<NcActionButton v-if="editable"
 					:close-after-click="true"
@@ -34,25 +34,25 @@
 					<template #icon>
 						<DeleteAlert :size="20" />
 					</template>
-					{{ t('empleados', 'Delete') }}
+					{{ t('employees', 'Delete') }}
 				</NcActionButton>
-				<NcActionButton v-if="isSupportReport && source.id_equipo" @click="viewSupport">
+				<NcActionButton v-if="isSupportReport && source.id_team" @click="viewSupport">
 					<template #icon>
 						<OpenInNew :size="20" />
 					</template>
-					{{ t('empleados', 'View support') }}
+					{{ t('employees', 'View support') }}
 				</NcActionButton>
 			</template>
 		</NcListItem>
 		<NcDialog
 			:open.sync="showDialog"
-			:name="t('empleados', 'Confirm')"
-			:message="t('empleados', 'Do you want to delete this item?')"
+			:name="t('employees', 'Confirm')"
+			:message="t('employees', 'Do you want to delete this item?')"
 			:buttons="buttons" />
 		<NcModal
 			v-if="ShowEdit"
 			ref="modalRef"
-			:name="t('empleados', 'Report')"
+			:name="t('employees', 'Report')"
 			@close="closeEdit">
 			<div class="modal__content">
 				<form>
@@ -63,7 +63,7 @@
 							style="position:absolute;opacity:0;height:0;width:0;pointer-events:none;">
 						<NcSelect
 							v-model="activity_selected"
-							:input-label="t('empleados', 'Proyect')"
+							:input-label="t('employees', 'Proyect')"
 							:options="editActivities"
 							class="fit"
 							:open="false"
@@ -81,7 +81,7 @@
 									required
 									:value.sync="time_activity"
 									type="number"
-									:label="t('empleados', 'Estimate time')"
+									:label="t('employees', 'Estimate time')"
 									:disabled="!editable" />
 							</div>
 							<div class="radios">
@@ -89,27 +89,27 @@
 									v-model="type_time"
 									:button-variant="true"
 									value="minutos"
-									:name="t('empleados', 'Minutes')"
+									:name="t('employees', 'Minutes')"
 									type="radio"
 									button-variant-grouped="horizontal"
 									:disabled="!editable">
-									{{ t('empleados', 'Minutes') }}
+									{{ t('employees', 'Minutes') }}
 								</NcCheckboxRadioSwitch>
 								<NcCheckboxRadioSwitch
 									v-model="type_time"
 									:button-variant="true"
 									value="horas"
-									:name="t('empleados', 'Hours')"
+									:name="t('employees', 'Hours')"
 									type="radio"
 									button-variant-grouped="horizontal"
 									:disabled="!editable">
-									{{ t('empleados', 'Hours') }}
+									{{ t('employees', 'Hours') }}
 								</NcCheckboxRadioSwitch>
 							</div>
 						</div>
 						<NcSelect
 							v-model="listas_selected"
-							:input-label="t('empleados', 'Activity')"
+							:input-label="t('employees', 'Activity')"
 							:options="editActivities"
 							class="fit"
 							:disabled="!editable" />
@@ -119,16 +119,16 @@
 							resize="vertical"
 							:value.sync="description_activity"
 							class="top"
-							:label="t('empleados', 'Description activity')"
+							:label="t('employees', 'Description activity')"
 							:disabled="!editable" />
 						<div class="save top">
 							<NcButton
 								class=""
-								:aria-label="t('empleados', 'Edit Activity')"
+								:aria-label="t('employees', 'Edit Activity')"
 								type="primary"
 								:disabled="!editable"
 								@click="modify()">
-								{{ t('empleados', 'Edit Activity') }}
+								{{ t('employees', 'Edit Activity') }}
 							</NcButton>
 						</div>
 					</div>
@@ -181,7 +181,7 @@ export default {
 	props: {
 		source: { type: Object, required: true },
 		index: { type: Number, required: false, default: null },
-		actividades: { type: Array, required: false, default: () => [] },
+		Activity: { type: Array, required: false, default: () => [] },
 		listas: { type: Array, required: false, default: () => [] },
 	},
 	data() {
@@ -204,17 +204,17 @@ export default {
 		buttons() {
 			return [
 				{
-					label: this.t('empleados', 'Cancelar'),
+					label: this.t('employees', 'Cancelar'),
 					callback: () => { this.lastResponse = 'Pressed "Cancel"' },
 				},
 				{
-					label: this.t('empleados', 'Eliminar'),
+					label: this.t('employees', 'Eliminar'),
 					type: 'primary',
 					callback: () => { this.delete() },
 				},
 			]
 		},
-		// created_at viene tipo "2025-12-30 17:12:52"
+		// created_at viene type "2025-12-30 17:12:52"
 		createdDate() {
 			const s = this.source?.created_at || this.source?.createdAt || ''
 			if (!s) return null
@@ -234,51 +234,51 @@ export default {
 			return this.minutosTranscurridos < MIN_EDITABLE
 		},
 		isSupportReport() {
-			return this.source?.origen === 'soporte_ti'
+			return this.source?.source === 'soporte_ti'
 		},
 		isAbsenceReport() {
-			return this.source?.tipo_trabajo === 'ausencia'
-				|| Number(this.source?.id_cliente) === 99999
-				|| Number(this.source?.id_actividad) === 99999
+			return this.source?.type_work === 'ausencia'
+				|| Number(this.source?.id_client) === 99999
+				|| Number(this.source?.id_activity) === 99999
 		},
 		isAutomaticReport() {
-			const origin = String(this.source?.origen || '')
+			const origin = String(this.source?.source || '')
 			return origin !== '' && !['manual', 'manual_interno'].includes(origin)
 		},
 		isInternalReport() {
-			return this.source?.tipo_trabajo === 'interno' || (this.source?.id_cliente == null && this.source?.tipo_trabajo !== 'ausencia')
+			return this.source?.type_work === 'interno' || (this.source?.id_client == null && this.source?.type_work !== 'ausencia')
 		},
 		originLabel() {
-			if (this.isSupportReport) return t('empleados', 'Support TI')
-			if (this.source?.origen === 'manual_interno' || !this.source?.origen) return t('empleados', 'Manual internal report')
-			return String(this.source.origen)
+			if (this.isSupportReport) return t('employees', 'Support TI')
+			if (this.source?.source === 'manual_interno' || !this.source?.source) return t('employees', 'Manual internal report')
+			return String(this.source.source)
 		},
 		editActivities() {
 			const type = this.isInternalReport ? 'interno' : 'cliente'
-			return this.listas.filter(activity => (activity.tipo_actividad || 'cliente') === type)
+			return this.listas.filter(activity => (activity.type_activity || 'cliente') === type)
 		},
 		indicatorColor() {
 			// rojo editable, verde bloqueado
 			return this.editable ? 'red' : 'green'
 		},
 		counterText() {
-			const v = this.source?.tiempo_registrado ?? this.source?.tiempoRegistrado ?? 0
+			const v = this.source?.recorded_time ?? this.source?.recordedTime ?? 0
 			const mins = Number.isFinite(Number(v)) ? Math.trunc(Number(v)) : 0
 			return `${mins} min`
 		},
 		detailsText() {
-			return this.source?.fecha_registro ?? this.source?.fechaRegistro ?? ''
+			return this.source?.date_recorded ?? this.source?.dateRecorded ?? ''
 		},
 		titleText() {
 			return this.isInternalReport
-				? `${t('empleados', 'Internal work')} · ${this.source?.actividadNombre || ''}`
+				? `${t('employees', 'Internal work')} · ${this.source?.activityName || ''}`
 				: (this.source?.clienteNombre || '')
 		},
 		subnameText() {
-			if (!this.isInternalReport) return this.source?.actividadNombre || ''
-			const activity = this.listas.find(item => Number(item.id) === Number(this.source?.id_actividad))
-			const areas = (activity?.areas || []).map(area => area.nombre).filter(Boolean).join(', ')
-			return areas ? `${t('empleados', 'Specific areas')}: ${areas}` : t('empleados', 'Entire company')
+			if (!this.isInternalReport) return this.source?.activityName || ''
+			const activity = this.listas.find(item => Number(item.id) === Number(this.source?.id_activity))
+			const areas = (activity?.areas || []).map(area => area.name).filter(Boolean).join(', ')
+			return areas ? `${t('employees', 'Specific areas')}: ${areas}` : t('employees', 'Entire company')
 		},
 	},
 	mounted() {
@@ -304,57 +304,57 @@ export default {
 			if (!this.isAutomaticReport && !this.isAbsenceReport) this.edit()
 		},
 		viewSupport() {
-			this.$router.push({ name: 'Inventario', query: { deviceId: String(this.source.id_equipo) } })
+			this.$router.push({ name: 'Inventory', query: { deviceId: String(this.source.id_team) } })
 		},
 
 		async delete() {
 			try {
-				await axios.post(generateUrl('/apps/empleados/deleteReport'), {
+				await axios.post(generateUrl('/apps/employees/deleteReport'), {
 					id: parseInt(this.reportid),
 				}).then(
 					() => {
-						showSuccess(t('empleados', 'Se ha eliminadon exitosamente'))
+						showSuccess(t('employees', 'Se ha eliminadon exitosamente'))
 						this.$bus.emit('gethistorial')
 						this.closeEdit()
 					},
 					(err) => { showError(this.backendError(err)) },
 				)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
 			}
 			this.showDialog = false
 		},
 		edit() {
 			this.activity_selected = this.source.clienteNombre
-			this.listas_selected = this.source.actividadNombre
-			this.id_activity = this.source.id_actividad
-			this.description_activity = this.source.descripcion
-			this.time_activity = this.source.tiempo_registrado
+			this.listas_selected = this.source.activityName
+			this.id_activity = this.source.id_activity
+			this.description_activity = this.source.description
+			this.time_activity = this.source.recorded_time
 			this.type_time = 'minutos'
-			this.time = new Date(this.source.fecha_registro)
+			this.time = new Date(this.source.date_recorded)
 			this.ShowEdit = true
 		},
 		async modify() {
 			try {
-				await axios.post(generateUrl('/apps/empleados/modificarReporte'), {
-					id_reporte: parseInt(this.source.id),
-					id_actividad: this.listas_selected.id ?? this.id_activity,
-					tipo_trabajo: this.source.tipo_trabajo || (this.isInternalReport ? 'interno' : 'cliente'),
-					id_cliente: this.isInternalReport ? null : this.source.id_cliente,
+				await axios.post(generateUrl('/apps/employees/modificarReporte'), {
+					id_report: parseInt(this.source.id),
+					id_activity: this.listas_selected.id ?? this.id_activity,
+					type_work: this.source.type_work || (this.isInternalReport ? 'interno' : 'cliente'),
+					id_client: this.isInternalReport ? null : this.source.id_client,
 					tiemporegistrado: Number(this.time_activity ?? 0),
-					descripcion: this.description_activity,
-					tipo: this.type_time,
+					description: this.description_activity,
+					type: this.type_time,
 					fecharegistrada: this.time.toISOString().slice(0, 10),
 				}).then(
 					() => {
-						showSuccess(t('empleados', 'Datos actualizados correctamente'))
+						showSuccess(t('employees', 'Datos actualizados correctamente'))
 						this.$bus.emit('gethistorial')
 						this.closeEdit()
 					},
 					(err) => { showError(this.backendError(err)) },
 				)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
 			}
 		},
 		closeEdit() {

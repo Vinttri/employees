@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * Migración base para OCA\Empleados.
+ * Migración base para OCA\Employees.
  *
  * Esta migración es idempotente:
  * - Crea las tablas que no existen.
  * - Omite las tablas existentes.
- * - Inserta configuraciones base solo si no existen.
+ * - Inserta Settings base solo si no existen.
  *
  * No elimina ni modifica datos existentes.
  */
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -40,23 +40,23 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$this->createEmpleados($schema);
-		$this->createPuestos($schema);
+		$this->createPositions($schema);
 		$this->createDepartamentos($schema);
 		$this->createEmpleadosConf($schema);
 
 		$this->createAniversarios($schema);
 		$this->createTipoAusencia($schema);
 		$this->createAusencias($schema);
-		$this->createHistorialAusencias($schema);
+		$this->createHistoryAusencias($schema);
 
-		$this->createEquipos($schema);
+		$this->createTeams($schema);
 		$this->createUserAhorro($schema);
-		$this->createHistorialAhorro($schema);
+		$this->createHistoryAhorro($schema);
 
 		$this->createCapitalHumano($schema);
 
 		$this->createEmpleadosClientes($schema);
-		$this->createEmpleadosActividades($schema);
+		$this->createEmpleadosActivities($schema);
 		$this->createEmpleadosRepTiempos($schema);
 
 		return $schema;
@@ -67,412 +67,413 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 			'usuario_almacenamiento' => null,
 			'automatic_save_note' => null,
 			'acumular_vacaciones' => null,
-			'modulo_ahorro' => null,
+			'modulo_savings' => null,
 			'modulo_ausencias' => null,
 			'ausencias_readonly' => null,
-			'modulo_clientes' => 'false',
+			'modulo_clients' => 'false',
 			'modulo_reporte_tiempos' => 'false',
 		];
 
-		foreach ($configs as $nombre => $data) {
-			$created = $this->insertConfig($nombre, $data);
+		foreach ($configs as $name => $data) {
+			$created = $this->insertConfig($name, $data);
 
 			if ($created) {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' insertado.");
+				$output->info("Seed employee_settings.name='{$name}' insertado.");
 			} else {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' ya existía, omitido.");
+				$output->info("Seed employee_settings.name='{$name}' ya existía, omitido.");
 			}
 		}
 	}
 
 	private function createEmpleados(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('empleados')) {
+		if ($schema->hasTable('employees')) {
 			return;
 		}
 
-		$table = $schema->createTable('empleados');
+		$table = $schema->createTable('employees');
 
-		$table->addColumn('Id_empleados', 'integer', [
+		$table->addColumn('id_employees', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Id_user', 'string', ['notnull' => true, 'length' => 64]);
-		$table->addColumn('Numero_empleado', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Ingreso', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Correo_contacto', 'string', ['notnull' => false, 'length' => 190]);
-		$table->addColumn('Id_departamento', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Id_puesto', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Id_equipo', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Id_gerente', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Id_socio', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Fondo_clave', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Fondo_ahorro', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Numero_cuenta', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Equipo_asignado', 'string', ['notnull' => false, 'length' => 190]);
-		$table->addColumn('Sueldo', 'decimal', ['notnull' => false, 'precision' => 12, 'scale' => 2]);
-		$table->addColumn('Notas', 'text', ['notnull' => false]);
-		$table->addColumn('Fecha_nacimiento', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Estado', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Direccion', 'string', ['notnull' => false, 'length' => 190]);
-		$table->addColumn('Estado_civil', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Telefono_contacto', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Curp', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Rfc', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Imss', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Genero', 'string', ['notnull' => false, 'length' => 32]);
-		$table->addColumn('Contacto_emergencia', 'string', ['notnull' => false, 'length' => 190]);
-		$table->addColumn('Numero_emergencia', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_user', 'string', ['notnull' => true, 'length' => 64]);
+		$table->addColumn('number_employee', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('hire_date', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('email_contact', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('id_department', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_position', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_team', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_manager', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_partner', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('fund_code', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('savings_fund', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('number_account', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('team_assigned', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('salary', 'decimal', ['notnull' => false, 'precision' => 12, 'scale' => 2]);
+		$table->addColumn('notes', 'text', ['notnull' => false]);
+		$table->addColumn('date_birth', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('status', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('address', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('status_marital', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('phone_contact', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('curp', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('rfc', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('imss', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('gender', 'string', ['notnull' => false, 'length' => 32]);
+		$table->addColumn('emergency_contact', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('emergency_phone', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['Id_empleados']);
-		$table->addIndex(['Id_empleados'], 'Id_empleados');
-		$table->addIndex(['Id_user'], 'idx_id_user');
-		$table->addIndex(['Numero_empleado'], 'idx_numero_empleado');
-		$table->addIndex(['Correo_contacto'], 'idx_correo_contacto');
-		$table->addIndex(['Id_departamento'], 'idx_id_departamento');
-		$table->addIndex(['Id_puesto'], 'idx_id_puesto');
-		$table->addIndex(['Id_equipo'], 'idx_id_equipo');
-		$table->addIndex(['Id_gerente'], 'idx_id_gerente');
-		$table->addIndex(['Id_socio'], 'idx_id_socio');
+		$table->setPrimaryKey(['id_employees']);
+		$table->addIndex(['id_employees'], 'id_employees');
+		$table->addIndex(['id_user'], 'idx_id_user');
+		$table->addIndex(['number_employee'], 'idx_employee_number');
+		$table->addIndex(['email_contact'], 'idx_contact_email');
+		$table->addIndex(['id_department'], 'idx_department_id');
+		$table->addIndex(['id_position'], 'idx_position_id');
+		$table->addIndex(['id_team'], 'idx_team_id');
+		$table->addIndex(['id_manager'], 'idx_manager_id');
+		$table->addIndex(['id_partner'], 'idx_partner_id');
 	}
 
-	private function createPuestos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('puestos')) {
+	private function createPositions(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('positions')) {
 			return;
 		}
 
-		$table = $schema->createTable('puestos');
+		$table = $schema->createTable('positions');
 
-		$table->addColumn('Id_puestos', 'integer', [
+		$table->addColumn('id_positions', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Nombre', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('name', 'string', ['notnull' => false, 'length' => 190]);
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['Id_puestos']);
-		$table->addIndex(['Id_puestos'], 'Id_puestos');
-		$table->addIndex(['Nombre'], 'idx_puestos_nombre');
+		$table->setPrimaryKey(['id_positions']);
+		$table->addIndex(['id_positions'], 'id_positions');
+		$table->addIndex(['name'], 'idx_positions_name');
 	}
 
 	private function createDepartamentos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('departamentos')) {
+		if ($schema->hasTable('departments')) {
 			return;
 		}
 
-		$table = $schema->createTable('departamentos');
+		$table = $schema->createTable('departments');
 
-		$table->addColumn('Id_departamento', 'integer', [
+		$table->addColumn('id_department', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Id_padre', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Nombre', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('id_parent', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('name', 'string', ['notnull' => false, 'length' => 190]);
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['Id_departamento']);
-		$table->addIndex(['Id_departamento'], 'Id_departamento');
-		$table->addIndex(['Nombre'], 'idx_departamentos_nombre');
-		$table->addIndex(['Id_padre'], 'idx_departamentos_padre');
+		$table->setPrimaryKey(['id_department']);
+		$table->addIndex(['id_department'], 'id_department');
+		$table->addIndex(['name'], 'idx_departments_name');
+		$table->addIndex(['id_parent'], 'idx_departments_parent');
 	}
 
 	private function createEmpleadosConf(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('empleados_conf')) {
+		if ($schema->hasTable('employee_settings')) {
 			return;
 		}
 
-		$table = $schema->createTable('empleados_conf');
+		$table = $schema->createTable('employee_settings');
 
-		$table->addColumn('Id_conf', 'integer', [
+		$table->addColumn('settings_id', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Nombre', 'string', ['length' => 190, 'notnull' => true]);
-		$table->addColumn('Data', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('name', 'string', ['length' => 190, 'notnull' => true]);
+		$table->addColumn('data', 'string', ['length' => 255, 'notnull' => false]);
 
-		$table->setPrimaryKey(['Id_conf']);
-		$table->addUniqueIndex(['Nombre'], 'uq_empleados_conf_nombre');
+		$table->setPrimaryKey(['settings_id']);
+		$table->addUniqueIndex(['name'], 'uq_employee_settings_name');
 	}
 
 	private function createAniversarios(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('aniversarios')) {
+		if ($schema->hasTable('anniversaries')) {
 			return;
 		}
 
-		$table = $schema->createTable('aniversarios');
+		$table = $schema->createTable('anniversaries');
 
-		$table->addColumn('id_aniversario', 'integer', [
+		$table->addColumn('id_anniversary', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('numero_aniversario', 'integer', ['notnull' => true]);
-		$table->addColumn('fecha_de', 'datetime', ['notnull' => false]);
-		$table->addColumn('fecha_hasta', 'datetime', ['notnull' => false]);
-		$table->addColumn('dias', 'decimal', ['precision' => 5, 'scale' => 2, 'notnull' => true]);
+		$table->addColumn('number_anniversary', 'integer', ['notnull' => true]);
+		$table->addColumn('date_from', 'datetime', ['notnull' => false]);
+		$table->addColumn('date_until', 'datetime', ['notnull' => false]);
+		$table->addColumn('days', 'decimal', ['precision' => 5, 'scale' => 2, 'notnull' => true]);
 
-		$table->setPrimaryKey(['id_aniversario']);
-		$table->addIndex(['numero_aniversario'], 'aniv_idx_numero');
+		$table->setPrimaryKey(['id_anniversary']);
+		$table->addIndex(['number_anniversary'], 'anniversary_number_idx');
 	}
 
 	private function createTipoAusencia(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('tipo_ausencia')) {
+		if ($schema->hasTable('absence_types')) {
 			return;
 		}
 
-		$table = $schema->createTable('tipo_ausencia');
+		$table = $schema->createTable('absence_types');
 
-		$table->addColumn('id_tipo_ausencia', 'integer', [
+		$table->addColumn('absence_type_id', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('nombre', 'string', ['length' => 255, 'notnull' => true]);
-		$table->addColumn('descripcion', 'text', ['notnull' => false]);
-		$table->addColumn('solicitar_archivo', 'integer', ['notnull' => true]);
-		$table->addColumn('solicitar_prima_vacacional', 'integer', ['notnull' => true, 'default' => 0]);
+		$table->addColumn('name', 'string', ['length' => 255, 'notnull' => true]);
+		$table->addColumn('description', 'text', ['notnull' => false]);
+		$table->addColumn('request_file', 'integer', ['notnull' => true]);
+		$table->addColumn('request_bonus_vacation', 'integer', ['notnull' => true, 'default' => 0]);
 
-		$table->setPrimaryKey(['id_tipo_ausencia']);
-		$table->addIndex(['nombre'], 'tipo_idx_nombre');
+		$table->setPrimaryKey(['absence_type_id']);
+		$table->addIndex(['name'], 'absence_type_name_idx');
 	}
 
 	private function createAusencias(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('ausencias')) {
+		if ($schema->hasTable('absences')) {
 			return;
 		}
 
-		$table = $schema->createTable('ausencias');
+		$table = $schema->createTable('absences');
 
-		$table->addColumn('id_ausencias', 'integer', [
+		$table->addColumn('absence_id', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_empleado', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_aniversario', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('dias_disponibles', 'decimal', [
+		$table->addColumn('id_employee', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('id_anniversary', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('days_available', 'decimal', [
 			'precision' => 5,
 			'scale' => 2,
 			'notnull' => false,
 			'default' => 0.00,
 		]);
-		$table->addColumn('prima_vacacional', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('number_absences', 'integer', ['notnull' => false]);
+		$table->addColumn('bonus_vacation', 'boolean', ['notnull' => false, 'default' => false]);
 		$table->addColumn('timestamp', 'datetime', [
 			'notnull' => true,
 			'default' => 'CURRENT_TIMESTAMP',
 		]);
 
-		$table->setPrimaryKey(['id_ausencias']);
-		$table->addUniqueIndex(['id_empleado'], 'uniq_aus_empleado');
-		$table->addIndex(['id_aniversario'], 'aus_idx_aniv');
+		$table->setPrimaryKey(['absence_id']);
+		$table->addUniqueIndex(['id_employee'], 'uniq_absence_employee');
+		$table->addIndex(['id_anniversary'], 'absences_anniversary_idx');
 	}
 
-	private function createHistorialAusencias(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('historial_ausencias')) {
+	private function createHistoryAusencias(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('absence_history')) {
 			return;
 		}
 
-		$table = $schema->createTable('historial_ausencias');
+		$table = $schema->createTable('absence_history');
 
-		$table->addColumn('id_historial_ausencias', 'integer', [
+		$table->addColumn('absence_history_id', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_ausencias', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_aniversario', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('id_tipo_ausencia', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('fecha_de', 'datetime', ['notnull' => true]);
-		$table->addColumn('fecha_hasta', 'datetime', ['notnull' => true]);
-		$table->addColumn('prima_vacacional', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('archivo', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('absence_id', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('id_anniversary', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('absence_type_id', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('date_from', 'datetime', ['notnull' => true]);
+		$table->addColumn('date_until', 'datetime', ['notnull' => true]);
+		$table->addColumn('bonus_vacation', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('file', 'string', ['length' => 255, 'notnull' => false]);
 		$table->addColumn('timestamp', 'datetime', [
 			'notnull' => true,
 			'default' => 'CURRENT_TIMESTAMP',
 		]);
-		$table->addColumn('a_socio', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('a_gerente', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('a_capital_humano', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('notas', 'string', ['notnull' => false, 'length' => 255]);
+		$table->addColumn('is_partner', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('is_manager', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('can_access_human_resources', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('notes', 'string', ['notnull' => false, 'length' => 255]);
 
-		$table->setPrimaryKey(['id_historial_ausencias']);
-		$table->addIndex(['id_ausencias'], 'hist_idx_aus');
-		$table->addIndex(['id_tipo_ausencia'], 'hist_idx_tipo');
-		$table->addIndex(['id_aniversario'], 'hist_idx_aniv');
+		$table->setPrimaryKey(['absence_history_id']);
+		$table->addIndex(['absence_id'], 'absence_history_absence_idx');
+		$table->addIndex(['absence_type_id'], 'absence_history_type_idx');
+		$table->addIndex(['id_anniversary'], 'absence_history_anniversary_idx');
 	}
 
-	private function createEquipos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('equipos')) {
+	private function createTeams(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('teams')) {
 			return;
 		}
 
-		$table = $schema->createTable('equipos');
+		$table = $schema->createTable('teams');
 
-		$table->addColumn('Id_equipo', 'integer', [
+		$table->addColumn('id_team', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Id_jefe_equipo', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('Nombre', 'string', ['notnull' => false, 'length' => 190]);
+		$table->addColumn('team_leader_id', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('name', 'string', ['notnull' => false, 'length' => 190]);
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['Id_equipo']);
-		$table->addIndex(['Id_equipo'], 'Id_equipo');
-		$table->addIndex(['Id_jefe_equipo'], 'idx_id_jefe_equipo');
-		$table->addIndex(['Nombre'], 'idx_nombre_equipo');
+		$table->setPrimaryKey(['id_team']);
+		$table->addIndex(['id_team'], 'id_team');
+		$table->addIndex(['team_leader_id'], 'idx_team_leader_id');
+		$table->addIndex(['name'], 'idx_team_name');
 	}
 
 	private function createUserAhorro(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('user_ahorro')) {
+		if ($schema->hasTable('user_savings')) {
 			return;
 		}
 
-		$table = $schema->createTable('user_ahorro');
+		$table = $schema->createTable('user_savings');
 
-		$table->addColumn('id_ahorro', 'integer', [
+		$table->addColumn('id_savings', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
 		$table->addColumn('id_user', 'integer', ['notnull' => true]);
-		$table->addColumn('id_permision', 'string', ['notnull' => true, 'length' => 190]);
+		$table->addColumn('id_permission', 'string', ['notnull' => true, 'length' => 190]);
 		$table->addColumn('state', 'string', ['notnull' => true, 'length' => 64]);
 		$table->addColumn('last_modified', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['id_ahorro']);
-		$table->addIndex(['id_user'], 'user_ahorro_uid');
-		$table->addIndex(['id_permision'], 'user_ahorro_perm');
-		$table->addIndex(['state'], 'user_ahorro_state');
+		$table->setPrimaryKey(['id_savings']);
+		$table->addIndex(['id_user'], 'user_savings_uid');
+		$table->addIndex(['id_permission'], 'user_savings_perm');
+		$table->addIndex(['state'], 'user_savings_state');
 	}
 
-	private function createHistorialAhorro(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('historial_ahorro')) {
+	private function createHistoryAhorro(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('savings_history')) {
 			return;
 		}
 
-		$table = $schema->createTable('historial_ahorro');
+		$table = $schema->createTable('savings_history');
 
-		$table->addColumn('id_historial', 'integer', [
+		$table->addColumn('id_history', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_ahorro', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('cantidad_solicitada', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('cantidad_total', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('fecha_solicitud', 'string', ['notnull' => false, 'length' => 32]);
-		$table->addColumn('estado', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('nota', 'string', ['notnull' => false, 'length' => 255]);
+		$table->addColumn('id_savings', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('quantity_requested', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('quantity_total', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('date_request', 'string', ['notnull' => false, 'length' => 32]);
+		$table->addColumn('status', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('note', 'string', ['notnull' => false, 'length' => 255]);
 
-		$table->setPrimaryKey(['id_historial']);
-		$table->addIndex(['id_ahorro'], 'hist_ahorro_id');
-		$table->addIndex(['estado'], 'hist_ahorro_estado');
-		$table->addIndex(['fecha_solicitud'], 'hist_ahorro_fecha');
+		$table->setPrimaryKey(['id_history']);
+		$table->addIndex(['id_savings'], 'hist_savings_id');
+		$table->addIndex(['status'], 'savings_history_status_idx');
+		$table->addIndex(['date_request'], 'savings_history_date_idx');
 	}
 
 	private function createCapitalHumano(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('CapitalHumano')) {
+		if ($schema->hasTable('human_resources')) {
 			return;
 		}
 
-		$table = $schema->createTable('CapitalHumano');
+		$table = $schema->createTable('human_resources');
 
-		$table->addColumn('Id_ch', 'integer', [
+		$table->addColumn('human_resources_id', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('Id_empleado', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_employee', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
-		$table->setPrimaryKey(['Id_ch']);
-		$table->addIndex(['Id_ch'], 'Id_ch');
-		$table->addIndex(['Id_empleado'], 'CapitalHumano_Id_empleado');
+		$table->setPrimaryKey(['human_resources_id']);
+		$table->addIndex(['human_resources_id'], 'human_resources_id');
+		$table->addIndex(['id_employee'], 'human_resources_employee_id_idx');
 	}
 
 	private function createEmpleadosClientes(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('empleados_clientes')) {
+		if ($schema->hasTable('clients')) {
 			return;
 		}
 
-		$table = $schema->createTable('empleados_clientes');
+		$table = $schema->createTable('clients');
 
-		$table->addColumn('id_cliente', 'integer', [
+		$table->addColumn('id_client', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('nombre', 'string', ['length' => 200, 'notnull' => true]);
-		$table->addColumn('detalles', 'text', ['notnull' => false]);
-		$table->addColumn('cliente_padre', 'integer', ['notnull' => false]);
+		$table->addColumn('name', 'string', ['length' => 200, 'notnull' => true]);
+		$table->addColumn('details', 'text', ['notnull' => false]);
+		$table->addColumn('client_parent', 'integer', ['notnull' => false]);
 		$table->addColumn('timestamp', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_cliente']);
-		$table->addIndex(['nombre'], 'emp_clientes_nombre');
-		$table->addIndex(['cliente_padre'], 'emp_clientes_padre');
+		$table->setPrimaryKey(['id_client']);
+		$table->addIndex(['name'], 'employee_clients_name_idx');
+		$table->addIndex(['client_parent'], 'employee_clients_parent_idx');
 	}
 
-	private function createEmpleadosActividades(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('empleados_actividades')) {
+	private function createEmpleadosActivities(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('employee_activities')) {
 			return;
 		}
 
-		$table = $schema->createTable('empleados_actividades');
+		$table = $schema->createTable('employee_activities');
 
-		$table->addColumn('id_actividad', 'integer', [
+		$table->addColumn('id_activity', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('nombre', 'string', ['length' => 200, 'notnull' => true]);
-		$table->addColumn('detalles', 'text', ['notnull' => false]);
-		$table->addColumn('tiempo_estimado', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('tiempo_real', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('name', 'string', ['length' => 200, 'notnull' => true]);
+		$table->addColumn('details', 'text', ['notnull' => false]);
+		$table->addColumn('time_estimated', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('time_actual', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => false]);
 
-		$table->setPrimaryKey(['id_actividad']);
-		$table->addIndex(['nombre'], 'emp_actividades_nombre');
+		$table->setPrimaryKey(['id_activity']);
+		$table->addIndex(['name'], 'employee_activities_name_idx');
 	}
 
 	private function createEmpleadosRepTiempos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('empleados_rep_tiempos')) {
+		if ($schema->hasTable('employee_time_reports')) {
 			return;
 		}
 
-		$table = $schema->createTable('empleados_rep_tiempos');
+		$table = $schema->createTable('employee_time_reports');
 
-		$table->addColumn('id_reporte', 'integer', [
+		$table->addColumn('id_report', 'integer', [
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_empleado', 'string', ['length' => 64, 'notnull' => true]);
-		$table->addColumn('id_cliente', 'integer', ['notnull' => false]);
-		$table->addColumn('id_actividad', 'integer', ['notnull' => false]);
-		$table->addColumn('descripcion', 'text', ['notnull' => false]);
-		$table->addColumn('tiempo_registrado', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => true]);
-		$table->addColumn('fecha_registro', 'date', ['notnull' => true]);
+		$table->addColumn('id_employee', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('id_client', 'integer', ['notnull' => false]);
+		$table->addColumn('id_activity', 'integer', ['notnull' => false]);
+		$table->addColumn('description', 'text', ['notnull' => false]);
+		$table->addColumn('recorded_time', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => true]);
+		$table->addColumn('date_recorded', 'date', ['notnull' => true]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_reporte']);
-		$table->addIndex(['id_empleado'], 'emp_rep_tiempos_empleado');
-		$table->addIndex(['id_cliente'], 'emp_rep_tiempos_cliente');
-		$table->addIndex(['id_actividad'], 'emp_rep_tiempos_actividad');
-		$table->addIndex(['fecha_registro'], 'emp_rep_tiempos_fecha');
+		$table->setPrimaryKey(['id_report']);
+		$table->addIndex(['id_employee'], 'employee_time_reports_employee_idx');
+		$table->addIndex(['id_client'], 'employee_time_reports_client_idx');
+		$table->addIndex(['id_activity'], 'employee_time_reports_activity_idx');
+		$table->addIndex(['date_recorded'], 'employee_time_reports_date_idx');
 	}
 
-	private function insertConfig(string $nombre, ?string $data): bool {
+	private function insertConfig(string $name, ?string $data): bool {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Id_conf')
-			->from('empleados_conf')
+		$qb->select('settings_id')
+			->from('employee_settings')
 			->where($qb->expr()->eq(
-				'Nombre',
-				$qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR)
+				'name',
+				$qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)
 			))
 			->setMaxResults(1);
 
@@ -487,14 +488,14 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$qb = $this->db->getQueryBuilder();
 
 		$values = [
-			'Nombre' => $qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR),
+			'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
 		];
 
 		if ($data !== null) {
-			$values['Data'] = $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR);
+			$values['data'] = $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR);
 		}
 
-		$qb->insert('empleados_conf')
+		$qb->insert('employee_settings')
 			->values($values);
 
 		if (method_exists($qb, 'executeStatement')) {

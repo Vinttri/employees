@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -17,119 +17,119 @@ class Version2010Date20260618234100 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		// Eliminar tablas si existen
-		if ($schema->hasTable('empleados_honorarios_p')) {
-			$schema->dropTable('empleados_honorarios_p');
+		if ($schema->hasTable('fee_payments')) {
+			$schema->dropTable('fee_payments');
 		}
 
-		if ($schema->hasTable('empleados_honorarios_parcialidades')) {
-			$schema->dropTable('empleados_honorarios_parcialidades');
+		if ($schema->hasTable('fee_installments')) {
+			$schema->dropTable('fee_installments');
 		}
 
-		if ($schema->hasTable('empleados_honorarios')) {
-			$schema->dropTable('empleados_honorarios');
+		if ($schema->hasTable('professional_fees')) {
+			$schema->dropTable('professional_fees');
 		}
 
-		// ── empleados_honorarios ───────────────────────────
-		$table = $schema->createTable('empleados_honorarios');
+		// ── professional_fees ───────────────────────────
+		$table = $schema->createTable('professional_fees');
 
-		$table->addColumn('id_honorario', Types::INTEGER, [
+		$table->addColumn('id_fee', Types::INTEGER, [
 			'autoincrement' => true,
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_cliente', Types::INTEGER, [
+		$table->addColumn('id_client', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('importe_total', Types::FLOAT, [
+		$table->addColumn('amount_total', Types::FLOAT, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('tipo_moneda', Types::STRING, [
+		$table->addColumn('type_currency', Types::STRING, [
 			'notnull' => true,
 			'length' => 16,
 			'default' => 'MXN',
 		]);
 
-		$table->addColumn('fecha_inicio', Types::STRING, [
+		$table->addColumn('date_start', Types::STRING, [
 			'notnull' => false,
 			'length' => 16,
 		]);
 
-		$table->addColumn('fecha_fin', Types::STRING, [
+		$table->addColumn('date_end', Types::STRING, [
 			'notnull' => false,
 			'length' => 16,
 		]);
 
-		$table->addColumn('numero_parcialidades', Types::INTEGER, [
+		$table->addColumn('number_installments', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('tipo_servicio', Types::STRING, [
+		$table->addColumn('service_type', Types::STRING, [
 			'notnull' => false,
 			'length' => 255,
 		]);
 
-		$table->addColumn('activo', Types::INTEGER, [
+		$table->addColumn('active', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 1,
 			'length' => 1,
 		]);
 
-		$table->setPrimaryKey(['id_honorario']);
-		$table->addIndex(['id_cliente'], 'hon_cliente_idx');
+		$table->setPrimaryKey(['id_fee']);
+		$table->addIndex(['id_client'], 'professional_fees_client_idx');
 
-		// ── empleados_honorarios_p ───────────────────────────
-		$table = $schema->createTable('empleados_honorarios_p');
+		// ── fee_payments ───────────────────────────
+		$table = $schema->createTable('fee_payments');
 
-		$table->addColumn('id_parcialidad', Types::INTEGER, [
+		$table->addColumn('id_installment', Types::INTEGER, [
 			'autoincrement' => true,
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_honorario', Types::INTEGER, [
+		$table->addColumn('id_fee', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('numero_parcialidad', Types::INTEGER, [
+		$table->addColumn('number_installment', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('pfecha_inicio', Types::STRING, [
+		$table->addColumn('installment_start_date', Types::STRING, [
 			'notnull' => false,
 			'length' => 16,
 		]);
 
-		$table->addColumn('pfecha_fin', Types::STRING, [
+		$table->addColumn('installment_end_date', Types::STRING, [
 			'notnull' => false,
 			'length' => 16,
 		]);
 
-		$table->addColumn('importe_parcialidad', Types::FLOAT, [
+		$table->addColumn('amount_installment', Types::FLOAT, [
 			'notnull' => true,
 			'default' => 0,
 		]);
 
-		$table->addColumn('pagado', Types::INTEGER, [
+		$table->addColumn('paid', Types::INTEGER, [
 			'notnull' => true,
 			'default' => 0,
 			'length' => 1,
 		]);
 
-		$table->addColumn('fecha_pago', Types::STRING, [
+		$table->addColumn('date_payment', Types::STRING, [
 			'notnull' => false,
 			'length' => 16,
 		]);
 
-		$table->setPrimaryKey(['id_parcialidad']);
-		$table->addIndex(['id_honorario'], 'parc_honorario_idx');
+		$table->setPrimaryKey(['id_installment']);
+		$table->addIndex(['id_fee'], 'fee_payments_fee_idx');
 
 		return $schema;
 	}

@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\Empleados;
+namespace OCA\Employees;
 
 class UploadException extends \Exception {
 }

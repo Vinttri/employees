@@ -4,7 +4,7 @@
 			<div class="search-contacts-field">
 				<div class="container-search">
 					<div class="input-container">
-						<input v-model="query" type="text" :placeholder="t('empleados', 'Search...')">
+						<input v-model="query" type="text" :placeholder="t('employees', 'Search...')">
 					</div>
 					<slot name="custombuttons" />
 					<div v-if="defaultbuttons" class="button-container">
@@ -12,18 +12,18 @@
 							<template #icon>
 								<Cog :size="20" />
 							</template>
-							<NcActionButton @click="AgregarNuevo()">
+							<NcActionButton @click="AgregarNew()">
 								<template #icon>
 									<AccountMultiplePlusOutline :size="20" />
 								</template>
-								{{ t('empleados', 'Add new') }}
+								{{ t('employees', 'Add new') }}
 							</NcActionButton>
 
 							<NcActionButton @click="Exportar()">
 								<template #icon>
 									<DatabaseExport :size="20" />
 								</template>
-								{{ t('empleados', 'Export list') }}
+								{{ t('employees', 'Export list') }}
 							</NcActionButton>
 
 							<NcActionSeparator />
@@ -32,7 +32,7 @@
 								<template #icon>
 									<Upload :size="20" />
 								</template>
-								{{ t('empleados', 'Import data from template') }}
+								{{ t('employees', 'Import data from template') }}
 							</NcActionButton>
 						</NcActions>
 					</div>
@@ -130,7 +130,7 @@ export default {
 			this.$root.$emit('importlist')
 		},
 
-		AgregarNuevo() {
+		AgregarNew() {
 			this.toggle()
 			this.$root.$emit('new', true)
 		},

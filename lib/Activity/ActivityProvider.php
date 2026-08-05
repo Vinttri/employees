@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Activity;
+namespace OCA\Employees\Activity;
 
 use OCP\Activity\IProvider;
 use OCP\Activity\IEvent;
 use OCP\Activity\Exceptions\UnknownActivityException;
-use OCA\Empleados\Activity\ActivityExtension;
+use OCA\Employees\Activity\ActivityExtension;
 
 class ActivityProvider implements IProvider {
     public function parse($language, IEvent $event, ?IEvent $previousEvent = null): IEvent {
-        if ($event->getApp() !== 'empleados') {
+        if ($event->getApp() !== 'employees') {
             throw new UnknownActivityException();
         }
 
@@ -22,9 +22,9 @@ class ActivityProvider implements IProvider {
         $subjectFinal = $this->render($template, $parameters);
 
         $event->setParsedSubject($subjectFinal);
-        $event->setParsedMessage($event->getMessage() ?: 'Nueva actividad registrada en el módulo de empleados.');
+        $event->setParsedMessage($event->getMessage() ?: 'Nueva actividad registrada en el módulo de Employee.');
         $event->setIcon('avatar/luis/64?v=29');
-        $event->setLink('/apps/empleados/');
+        $event->setLink('/apps/employees/');
 
         return $event;
     }
@@ -35,9 +35,9 @@ class ActivityProvider implements IProvider {
     private function getTemplateForSubject(string $subjectID): string {
         switch ($subjectID) {
             case 'ausencia_registrada':
-                return '{nombre} ha solicitado "{tipo_ausencia}"';
+                return '{name} ha solicitado "{absence_types}"';
             case 'test':
-                return '{nombre} ha realizado una prueba actualizado';
+                return '{name} ha realizado una prueba actualizado';
             // Puedes seguir agregando casos aquí.
             default:
                 return $subjectID; // En caso de no tener plantilla, usa el ID literal como fallback.
@@ -59,7 +59,7 @@ class ActivityProvider implements IProvider {
     }
 
     public function getID(): string {
-        return 'empleados';
+        return 'employees';
     }
 
     public function getName(): string {
@@ -67,6 +67,6 @@ class ActivityProvider implements IProvider {
     }
 
     public function getTypes(): array {
-        return ['empleados'];
+        return ['employees'];
     }
 }

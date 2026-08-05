@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -24,11 +24,11 @@ class Version2014Date20260701020000 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$permissions = [
 			[
-				'module' => 'clientes',
+				'module' => 'Client',
 				'permission' => 'admin',
-				'group_id' => 'clientes_admin',
+				'group_id' => 'clients_admin',
 				'label' => 'Clientes - Administradores',
-				'description' => 'Puede administrar clientes, grupos empresariales y actividades.',
+				'description' => 'Puede administrar Client, grupos empresariales y Activity.',
 				'restricted' => 1,
 				'sort_order' => 60,
 			],
@@ -37,7 +37,7 @@ class Version2014Date20260701020000 extends SimpleMigrationStep {
 				'permission' => 'admin',
 				'group_id' => 'ti_admin',
 				'label' => 'TI - Administradores',
-				'description' => 'Puede administrar inventario, equipos y solicitudes de soporte.',
+				'description' => 'Puede administrar inventario, Team y solicitudes de soporte.',
 				'restricted' => 1,
 				'sort_order' => 70,
 			],
@@ -51,29 +51,29 @@ class Version2014Date20260701020000 extends SimpleMigrationStep {
 				'sort_order' => 80,
 			],
 			[
-				'module' => 'ahorro',
+				'module' => 'savings',
 				'permission' => 'admin',
-				'group_id' => 'ahorro_admin',
+				'group_id' => 'savings_admin',
 				'label' => 'Ahorro - Administradores',
-				'description' => 'Puede administrar solicitudes y panel del fondo de ahorro.',
+				'description' => 'Puede administrar solicitudes y panel del fondo de savings.',
 				'restricted' => 1,
 				'sort_order' => 90,
 			],
 			[
-				'module' => 'ausencias',
+				'module' => 'absences',
 				'permission' => 'admin',
 				'group_id' => 'ausencias_admin',
 				'label' => 'Ausencias - Administradores',
-				'description' => 'Puede administrar ausencias, vacaciones y calendario laboral.',
+				'description' => 'Puede administrar Absence, vacaciones y calendar laboral.',
 				'restricted' => 1,
 				'sort_order' => 100,
 			],
 			[
-				'module' => 'empleados',
+				'module' => 'employees',
 				'permission' => 'admin',
 				'group_id' => 'empleados_admin',
 				'label' => 'Empleados - Administradores',
-				'description' => 'Puede administrar empleados, áreas, puestos y equipos sin requerir acceso total de Recursos Humanos.',
+				'description' => 'Puede administrar Employee, áreas, Position y Team sin requerir acceso total de Recursos Humanos.',
 				'restricted' => 1,
 				'sort_order' => 110,
 			],
@@ -88,7 +88,7 @@ class Version2014Date20260701020000 extends SimpleMigrationStep {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('id')
-			->from('emp_perm_groups')
+			->from('permission_groups')
 			->where($qb->expr()->eq('module', $qb->createNamedParameter($permission['module'])))
 			->andWhere($qb->expr()->eq('permission', $qb->createNamedParameter($permission['permission'])))
 			->andWhere($qb->expr()->eq('group_id', $qb->createNamedParameter($permission['group_id'])))
@@ -104,7 +104,7 @@ class Version2014Date20260701020000 extends SimpleMigrationStep {
 
 		$insert = $this->db->getQueryBuilder();
 
-		$insert->insert('emp_perm_groups')
+		$insert->insert('permission_groups')
 			->values([
 				'module' => $insert->createNamedParameter($permission['module']),
 				'permission' => $insert->createNamedParameter($permission['permission']),

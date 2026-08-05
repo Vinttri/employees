@@ -8,7 +8,7 @@
 
 ## 📄 Descripción general
 
-Este módulo ERP para Nextcloud permite a las empresas gestionar de forma integral la información de empleados, departamentos, puestos, equipos y beneficios, con una integración nativa en el ecosistema Nextcloud.
+Este módulo ERP para Nextcloud permite a las empresas gestionar de forma integral la información de Employee, Department, Position, Team y beneficios, con una integración nativa en el ecosistema Nextcloud.
 
 Diseñado para PyMEs, despachos y organizaciones que buscan soberanía digital y personalización, evitando los altos costos de SaaS comerciales.
 
@@ -21,34 +21,34 @@ Diseñado para PyMEs, despachos y organizaciones que buscan soberanía digital y
 * **Empleados**
 
   * Datos generales, bancarios y laborales.
-  * Historial de vacaciones.
-  * Fondo de ahorro.
+  * History de vacaciones.
+  * Fondo de savings.
   * Estructura laboral (Socio / Gerente / Empleado).
-  * Asignación a departamentos y puestos.
+  * Asignación a Department y Position.
   * Notas internas.
   * Documentos (expedientes, memorándums, identificaciones).
 
 * **Departamentos**
 
-  * Creación y asignación de empleados a departamentos.
+  * Creación y asignación de Employee a Department.
 
-* **Puestos**
+* **Positions**
 
-  * Gestión de puestos de trabajo.
+  * Gestión de Position de trabajo.
 
-* **Equipos**
+* **Teams**
 
-  * Agrupación de empleados bajo líderes o gerentes.
+  * Agrupación de Employee bajo líderes o gerentes.
 
 ### 🔹 Módulo de Ahorro (Ahorro Gossler)
 
-* Solicitud y gestión del fondo de ahorro por parte de los empleados.
-* Historial de solicitudes.
+* Solicitud y gestión del fondo de savings por parte de los Employee.
+* History de solicitudes.
 * Panel de administración para revisar y autorizar solicitudes.
 
 ### 🔹 Tiempo Laboral
 
-* Calendario de ausencias y vacaciones.
+* Calendario de Absence y vacaciones.
 * Cálculo automático de días de vacaciones conforme a la Ley Federal del Trabajo (México).
 
 ---
@@ -56,37 +56,37 @@ Diseñado para PyMEs, despachos y organizaciones que buscan soberanía digital y
 ## 🖼️ Interfaz de usuario
 
 **Vista general del empleado:**
-![Empleado](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/empleado_general.png)
+![Empleado](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/employee_general.png)
 
 **Notas personales:**
-![Notas](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/notas.png)
+![Notas](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/notes.png)
 
 **Datos personales (RFC, IMSS, CURP):**
 ![Personal](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/personal.png)
 
 **Archivos y expedientes:**
-![Archivos](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/archivos.png)
+![Archivos](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/files.png)
 
-**Departamentos y puestos:**
-![Áreas y puestos](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/areas_puestos.png)
+**Departamentos y Position:**
+![Áreas y Position](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/areas_positions.png)
 
-**Equipos de trabajo:**
-![Equipos](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/equipos.png)
+**Teams de trabajo:**
+![Teams](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/Team.png)
 
-**Solicitud de ahorro:**
-![Solicitud](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/solicitud_ahorro.png)
+**Solicitud de savings:**
+![Solicitud](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/savings_request.png)
 
 **Panel de administración de solicitudes:**
-![Panel Ahorro](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/panel_ahorro.png)
+![Panel Ahorro](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/savings_panel.png)
 
 **Calendario de vacaciones:**
-![Calendario](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/calendario.png)
+![Calendario](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/calendar.png)
 
-**Tabla de aniversarios y ausencias:**
-![Aniversarios y ausencias](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/aniversarios_ausencias.png)
+**Tabla de aniversarios y Absence:**
+![Aniversarios y Absence](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/anniversaries_absences.png)
 
 **Configuraciones globales del módulo:**
-![Configuraciones](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/configuraciones.png)
+![Configuraciones](https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/Settings.png)
 
 ---
 
@@ -101,7 +101,7 @@ Diseñado para PyMEs, despachos y organizaciones que buscan soberanía digital y
 
 ## 🔄 Próximos pasos en el Roadmap
 
-1. Completar el flujo completo de vacaciones y ausencias.
+1. Completar el flujo completo de vacaciones y Absence.
 2. Reportes descargables en Excel/PDF.
 3. Roles y permisos refinados.
 4. Desarrollo de manuales técnicos y de usuario.

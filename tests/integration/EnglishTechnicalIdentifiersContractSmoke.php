@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $failures = [];
-
 $info = file_get_contents($root . '/appinfo/info.xml');
-foreach (['<id>employees</id>', '<namespace>Employees</namespace>', '<id>employees</id>', '<route>employees.page.index</route>'] as $required) {
+
+foreach (['<id>employees</id>', '<namespace>Employees</namespace>', '<route>employees.page.index</route>'] as $required) {
 	if (!str_contains($info, $required)) {
 		$failures[] = "missing metadata: {$required}";
 	}
@@ -19,12 +19,15 @@ $spanishTokens = [
 	'ahorro', 'cliente', 'honorario', 'inventario', 'mantenimiento', 'actividad', 'permiso',
 	'festivo', 'vacacion', 'reporte', 'archivo', 'capitalhumano', 'capital_humano', 'solicitud',
 	'movimiento', 'departamento', 'compra', 'autorizacion', 'historial', 'contactoemergencia',
-	'contacto_emergencia', 'prima_vacacional', 'tipoausencia', 'tipo_ausencia', 'soporte',
+	'contact_emergency', 'prima_vacacional', 'tipoausencia', 'tipo_ausencia', 'soporte',
+	'nombre', 'fecha', 'estado', 'correo', 'telefono', 'direccion', 'numero', 'dias', 'monto',
+	'importe', 'usuario', 'proveedor', 'descripcion', 'detalle', 'observacion', 'manualmente',
+	'acumulado', 'minutos', 'carpeta', 'dispositivo', 'sistema', 'serie', 'proxima', 'seleccionado',
+	'ayuda', 'cambio', 'servicio', 'gerente', 'socio', 'marca', 'modelo', 'nivel',
 ];
 $tokenPattern = '/(?:' . implode('|', array_map('preg_quote', $spanishTokens)) . ')/i';
 
-$sourceRoots = ['lib', 'src', 'templates'];
-foreach ($sourceRoots as $sourceRoot) {
+foreach (['appinfo', 'lib', 'src', 'templates', 'tests'] as $sourceRoot) {
 	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $sourceRoot));
 	foreach ($iterator as $file) {
 		if (!$file->isFile()) {
@@ -48,7 +51,14 @@ foreach ($sourceRoots as $sourceRoot) {
 	}
 }
 
-$dbCallPattern = '/(?:from|insert|update|delete|createTable|getTable|hasTable|dropTable|addColumn|hasColumn|dropColumn)\(\s*[\'\"]([A-Za-z0-9_]+)[\'\"]/';
+$patterns = [
+	'/(?:from|insert|update|delete|createTable|getTable|hasTable|dropTable|addColumn|hasColumn|dropColumn)\(\s*[\'\"]([A-Za-z0-9_]+)[\'\"]/',
+	'/(?:innerJoin|leftJoin|rightJoin)\(\s*[^,]+,\s*[\'\"]([A-Za-z0-9_]+)[\'\"]/',
+	'/parent::__construct\(\s*\$db\s*,\s*[\'\"]([A-Za-z0-9_]+)[\'\"]/',
+	'/(?:addIndex|addUniqueIndex)\([^;]*[\'\"]([A-Za-z0-9_]+)[\'\"]\s*\)/',
+	'/setPrimaryKey\([^;]*,\s*[\'\"]([A-Za-z0-9_]+)[\'\"]\s*\)/',
+	'/(?:`|\\\")([A-Za-z_][A-Za-z0-9_]*)(?:`|\\\")/',
+];
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/lib'));
 foreach ($iterator as $file) {
 	if (!$file->isFile() || $file->getExtension() !== 'php') {
@@ -56,10 +66,13 @@ foreach ($iterator as $file) {
 	}
 	$relative = substr($file->getPathname(), strlen($root) + 1);
 	$source = file_get_contents($file->getPathname());
-	if (!preg_match_all($dbCallPattern, $source, $matches)) {
-		continue;
+	$identifiers = [];
+	foreach ($patterns as $pattern) {
+		if (preg_match_all($pattern, $source, $matches)) {
+			array_push($identifiers, ...$matches[1]);
+		}
 	}
-	foreach ($matches[1] as $identifier) {
+	foreach ($identifiers as $identifier) {
 		if ($identifier !== strtolower($identifier)) {
 			$failures[] = "non-lowercase DB identifier: {$relative}:{$identifier}";
 		}
@@ -69,13 +82,27 @@ foreach ($iterator as $file) {
 	}
 }
 
-$technicalFiles = [
-	'appinfo/routes.php', 'composer.json', 'package.json', 'webpack.config.js', 'src/main.js',
-];
-foreach ($technicalFiles as $relative) {
+foreach (['appinfo/routes.php', 'composer.json', 'package.json', 'webpack.js', 'src/main.js'] as $relative) {
 	$path = $root . '/' . $relative;
 	if (is_file($path) && preg_match('/OCA\\\\Empleados|[\'\"]empleados[\'\"]|\/apps\/empleados|empleados\./', file_get_contents($path))) {
 		$failures[] = "retired app identity remains: {$relative}";
+	}
+}
+
+foreach (['appinfo', 'lib', 'src', 'templates', 'tests'] as $sourceRoot) {
+	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $sourceRoot));
+	foreach ($iterator as $file) {
+		if (!$file->isFile() || !preg_match('/\.(?:php|js|mjs|vue)$/', $file->getFilename())) {
+			continue;
+		}
+		$relative = substr($file->getPathname(), strlen($root) + 1);
+		if ($relative === 'tests/integration/EnglishTechnicalIdentifiersContractSmoke.php') {
+			continue;
+		}
+		$source = file_get_contents($file->getPathname());
+		if (preg_match('/\/apps\/(?:Employee|empleados)(?:\/|\$\{|[\'"`])|employees-soporte-equipo|OCA\\\\Empleados/', $source)) {
+			$failures[] = "retired technical identity remains: {$relative}";
+		}
 	}
 }
 

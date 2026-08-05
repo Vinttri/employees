@@ -1,5 +1,5 @@
 <template id="content">
-	<NcAppContent :name="t('empleados', 'Employees - Activities')">
+	<NcAppContent :name="t('employees', 'Employees - Activities')">
 		<div v-if="loading">
 			<div class="center">
 				<NcLoadingIcon :size="64" appearance="dark" name="Loading on light background" />
@@ -13,25 +13,25 @@
 						<div class="filters-header">
 							<div class="filters-title">
 								<p class="section-label">
-									{{ t('empleados', 'Time reports') }}
+									{{ t('employees', 'Time reports') }}
 								</p>
-								<h2>{{ t('empleados', 'My reports') }}</h2>
-								<p>{{ t('empleados', 'Review my reports') }}</p>
+								<h2>{{ t('employees', 'My reports') }}</h2>
+								<p>{{ t('employees', 'Review my reports') }}</p>
 							</div>
 
 							<div class="filters-stats">
 								<div class="filters-stat">
-									<span>{{ t('empleados', 'Reports') }}</span>
+									<span>{{ t('employees', 'Reports') }}</span>
 									<strong>{{ historialFiltrado.length }}</strong>
 								</div>
 
 								<div class="filters-stat">
-									<span>{{ t('empleados', 'Total hours') }}</span>
+									<span>{{ t('employees', 'Total hours') }}</span>
 									<strong>{{ totalHorasFiltradas }}</strong>
 								</div>
 
 								<div class="filters-stat">
-									<span>{{ t('empleados', 'Fortnight') }}</span>
+									<span>{{ t('employees', 'Fortnight') }}</span>
 									<strong>{{ quincenaHorasTexto }}</strong>
 								</div>
 							</div>
@@ -40,66 +40,66 @@
 						<div class="filters-panel">
 							<div class="filters-toolbar">
 								<div>
-									<strong>{{ t('empleados', 'Filters') }}</strong>
+									<strong>{{ t('employees', 'Filters') }}</strong>
 									<span>
 										{{ activeFiltersCount > 0
-											? t('empleados', '{count} active', { count: activeFiltersCount })
-											: t('empleados', 'No active filters') }}
+											? t('employees', '{count} active', { count: activeFiltersCount })
+											: t('employees', 'No active filters') }}
 									</span>
 								</div>
 
 								<NcButton
-									:aria-label="t('empleados', 'Clear filters')"
+									:aria-label="t('employees', 'Clear filters')"
 									:disabled="activeFiltersCount === 0"
 									@click="clearFilters">
-									{{ t('empleados', 'Clear filters') }}
+									{{ t('employees', 'Clear filters') }}
 								</NcButton>
 							</div>
 
 							<div class="filters-grid">
 								<NcSelect
 									v-model="filter_tipo_trabajo"
-									:input-label="t('empleados', 'Work type')"
+									:input-label="t('employees', 'Work type')"
 									:options="workTypeFilterOptions"
 									class="filter-control" />
 								<NcSelect
 									v-model="filter_origen"
-									:input-label="t('empleados', 'Origin')"
+									:input-label="t('employees', 'Origin')"
 									:options="originFilterOptions"
 									class="filter-control" />
 								<NcSelect
 									v-model="filter_cargable"
-									:input-label="t('empleados', 'Billable classification')"
+									:input-label="t('employees', 'Billable classification')"
 									:options="billableFilterOptions"
 									class="filter-control" />
 								<NcDateTimePicker
 									v-model="filter_fecha_inicio"
 									class="filter-control"
 									type="date"
-									:placeholder="t('empleados', 'From date')" />
+									:placeholder="t('employees', 'From date')" />
 
 								<NcDateTimePicker
 									v-model="filter_fecha_fin"
 									class="filter-control"
 									type="date"
-									:placeholder="t('empleados', 'To date')" />
+									:placeholder="t('employees', 'To date')" />
 
 								<NcSelect
 									v-model="filter_cliente"
-									:input-label="t('empleados', 'Project')"
-									:options="actividades"
+									:input-label="t('employees', 'Project')"
+									:options="Activity"
 									class="filter-control" />
 
 								<NcSelect
 									v-model="filter_actividad"
-									:input-label="t('empleados', 'Activity')"
+									:input-label="t('employees', 'Activity')"
 									:options="listas"
 									class="filter-control" />
 
 								<NcTextField
 									class="filter-control filter-search"
 									:value.sync="filter_busqueda"
-									:label="t('empleados', 'Search description, project or activity')" />
+									:label="t('employees', 'Search description, project or activity')" />
 							</div>
 						</div>
 					</div>
@@ -112,36 +112,36 @@
 						:data-component="rowComponent"
 						:keeps="24"
 						:estimate-size="52"
-						:extra-props="{ listas, actividades }" />
+						:extra-props="{ listas, Activity }" />
 
 					<div v-else class="empty-state">
-						{{ t('empleados', 'No reports found.') }}
+						{{ t('employees', 'No reports found.') }}
 					</div>
 				</section>
 
 				<aside class="reports-side">
 					<section class="quick-card">
 						<div>
-							<h3>{{ t('empleados', 'New report') }}</h3>
-							<p>{{ t('empleados', 'Create report') }}</p>
+							<h3>{{ t('employees', 'New report') }}</h3>
+							<p>{{ t('employees', 'Create report') }}</p>
 						</div>
 
 						<NcButton
-							:aria-label="t('empleados', 'Create report')"
+							:aria-label="t('employees', 'Create report')"
 							type="primary"
 							wide
 							@click="openModal()">
 							<template #icon>
 								<Check :size="20" />
 							</template>
-							{{ t('empleados', 'Create report') }}
+							{{ t('employees', 'Create report') }}
 						</NcButton>
 					</section>
 
 					<section class="compliance-card" :class="semaforoClass">
 						<div class="semaforo-header">
 							<div>
-								<h3>{{ t('empleados', 'Fortnight compliance') }}</h3>
+								<h3>{{ t('employees', 'Fortnight compliance') }}</h3>
 								<p>{{ quincenaPeriodoTexto }}</p>
 							</div>
 							<span class="semaforo-light" />
@@ -152,7 +152,7 @@
 						</div>
 
 						<div class="semaforo-meta">
-							<span>{{ t('empleados', 'Goal') }}: {{ quincenaMetaTexto }}</span>
+							<span>{{ t('employees', 'Goal') }}: {{ quincenaMetaTexto }}</span>
 							<strong>{{ quincenaPorcentajeTexto }}%</strong>
 						</div>
 
@@ -209,7 +209,7 @@ export default {
 		ReportTimeModal,
 	},
 	inject: {
-		configuraciones: {
+		Settings: {
 			default: () => ({}),
 		},
 	},
@@ -221,7 +221,7 @@ export default {
 			historial: [],
 			modal: false,
 			listas: [],
-			actividades: [],
+			Activity: [],
 			temp_listas: [],
 			filter_fecha_inicio: null,
 			filter_fecha_fin: null,
@@ -236,30 +236,30 @@ export default {
 	computed: {
 		workTypeFilterOptions() {
 			return [
-				{ id: 'todos', label: t('empleados', 'All') },
-				{ id: 'cliente', label: t('empleados', 'Client work') },
-				{ id: 'interno', label: t('empleados', 'Internal work') },
-				{ id: 'ausencia', label: t('empleados', 'Absences') },
+				{ id: 'todos', label: t('employees', 'All') },
+				{ id: 'cliente', label: t('employees', 'Client work') },
+				{ id: 'interno', label: t('employees', 'Internal work') },
+				{ id: 'ausencia', label: t('employees', 'Absences') },
 			]
 		},
 		originFilterOptions() {
-			const origins = new Set(this.historial.map(report => report.origen || 'legado'))
+			const origins = new Set(this.historial.map(report => report.source || 'legado'))
 			return Array.from(origins).map(origin => ({
 				id: origin,
 				label: origin === 'manual_interno'
-					? t('empleados', 'Manual internal report')
-					: origin === 'soporte_ti' ? t('empleados', 'Support TI') : origin,
+					? t('employees', 'Manual internal report')
+					: origin === 'soporte_ti' ? t('employees', 'Support TI') : origin,
 			}))
 		},
 		billableFilterOptions() {
 			return [
-				{ id: '1', label: t('empleados', 'Billable') },
-				{ id: '0', label: t('empleados', 'Non-billable') },
+				{ id: '1', label: t('employees', 'Billable') },
+				{ id: '0', label: t('employees', 'Non-billable') },
 			]
 		},
 		historialFiltrado() {
-			const fechaInicio = this.normalizeDateOnly(this.filter_fecha_inicio)
-			const fechaFin = this.normalizeDateOnly(this.filter_fecha_fin)
+			const startDate = this.normalizeDateOnly(this.filter_fecha_inicio)
+			const endDate = this.normalizeDateOnly(this.filter_fecha_fin)
 
 			const clienteId = this.getOptionId(this.filter_cliente)
 			const actividadId = this.getOptionId(this.filter_actividad)
@@ -270,13 +270,13 @@ export default {
 			const busqueda = String(this.filter_busqueda || '').trim().toLowerCase()
 
 			return this.historial.filter((reporte) => {
-				const fechaReporte = this.normalizeDateOnly(reporte.fecha_registro)
+				const fechaReporte = this.normalizeDateOnly(reporte.date_recorded)
 
-				if (fechaInicio && fechaReporte && fechaReporte < fechaInicio) {
+				if (startDate && fechaReporte && fechaReporte < startDate) {
 					return false
 				}
 
-				if (fechaFin && fechaReporte && fechaReporte > fechaFin) {
+				if (endDate && fechaReporte && fechaReporte > endDate) {
 					return false
 				}
 
@@ -288,17 +288,17 @@ export default {
 					return false
 				}
 
-				if (workType !== null && reporte.tipo_trabajo !== workType) return false
-				if (origin !== null && (reporte.origen || 'legado') !== origin) return false
-				if (billable !== null && Number(reporte.cargable || 0) !== Number(billable)) return false
+				if (workType !== null && reporte.type_work !== workType) return false
+				if (origin !== null && (reporte.source || 'legado') !== origin) return false
+				if (billable !== null && Number(reporte.billable || 0) !== Number(billable)) return false
 
 				if (busqueda) {
 					const texto = [
-						reporte.descripcion,
+						reporte.description,
 						reporte.clienteNombre,
-						reporte.actividadNombre,
-						reporte.fecha_registro,
-						reporte.tiempo_registrado,
+						reporte.activityName,
+						reporte.date_recorded,
+						reporte.recorded_time,
 					].join(' ').toLowerCase()
 
 					if (!texto.includes(busqueda)) {
@@ -337,14 +337,14 @@ export default {
 
 		semaforoLabel() {
 			if (this.quincenaPorcentaje >= 100) {
-				return t('empleados', 'On track')
+				return t('employees', 'On track')
 			}
 
 			if (this.quincenaPorcentaje >= 70) {
-				return t('empleados', 'Close to goal')
+				return t('employees', 'Close to goal')
 			}
 
-			return t('empleados', 'Needs attention')
+			return t('employees', 'Needs attention')
 		},
 
 		quincenaPeriodoTexto() {
@@ -358,7 +358,7 @@ export default {
 
 		totalMinutosFiltrados() {
 			return this.historialFiltrado.reduce((total, reporte) => {
-				const minutos = Number(reporte.tiempo_registrado)
+				const minutos = Number(reporte.recorded_time)
 
 				return total + (
 					Number.isFinite(minutos) && minutos > 0
@@ -402,7 +402,7 @@ export default {
 			const { startKey, todayKey } = this.quincenaActual
 
 			return this.historial.reduce((total, reporte) => {
-				const fechaReporte = this.normalizeDateOnly(reporte.fecha_registro)
+				const fechaReporte = this.normalizeDateOnly(reporte.date_recorded)
 
 				// Para cumplimiento solo contamos desde el inicio
 				// de la quincena hasta el día actual.
@@ -414,7 +414,7 @@ export default {
 					return total
 				}
 
-				const minutos = Number(reporte.tiempo_registrado)
+				const minutos = Number(reporte.recorded_time)
 
 				return total + (
 					Number.isFinite(minutos) && minutos > 0
@@ -434,8 +434,8 @@ export default {
 
 		horasMinimasDiarias() {
 			const configured = Number(
-				this.configuraciones?.Reportes?.horas_minimas
-				?? this.configuraciones?.reportes_horas_minimas
+				this.Settings?.Reportes?.horas_minimas
+				?? this.Settings?.reportes_horas_minimas
 				?? 0,
 			)
 
@@ -514,7 +514,7 @@ export default {
 		try {
 			await Promise.all([
 				await this.GetCompaniesGroups(),
-				await this.GetActividades(),
+				await this.GetActivities(),
 			])
 			await this.gethistorial()
 		} finally {
@@ -537,79 +537,79 @@ export default {
 
 		async gethistorial() {
 			try {
-				const response = await axios.get(generateUrl('/apps/empleados/GetReportesAll'))
+				const response = await axios.get(generateUrl('/apps/employees/GetReportesAll'))
 				const data = response?.data?.ocs?.data
 				const arr = Array.isArray(data) ? data : []
 
 				const actividadesMap = new Map(
-					(this.listas || []).map(c => [Number(c.id), c.name || c.nombre || c.label]),
+					(this.listas || []).map(c => [Number(c.id), c.name || c.name || c.label]),
 				)
 
-				const clientesMap = new Map(
-					(this.temp_listas || []).map(a => [Number(a.id), a.label || a.nombre || a.name]),
+				const clientsMap = new Map(
+					(this.temp_listas || []).map(a => [Number(a.id), a.label || a.name || a.name]),
 				)
 
 				this.historial = arr
 					.filter(r => r && typeof r === 'object')
 					.map((r, i) => {
-						// fuerza PK real (id_reporte) y siempre string
-						const rawId = r.id_reporte ?? r.idReporte ?? r.Id_reporte ?? r.id ?? i
+						// fuerza PK real (id_report) y siempre string
+						const rawId = r.id_report ?? r.idReport ?? r.Id_reporte ?? r.id ?? i
 						const id = String(rawId)
 
-						const idCliente = r.id_cliente ?? r.idCliente ?? r.Id_cliente ?? null
-						const idActividad = r.id_actividad ?? r.idActividad ?? r.Id_actividad ?? null
+						const idClient = r.id_client ?? r.idClient ?? r.Id_cliente ?? null
+						const idActivity = r.id_activity ?? r.idActivity ?? r.Id_actividad ?? null
 
-						const tipoTrabajo = r.tipo_trabajo || (Number(idCliente) === 99999 ? 'ausencia' : (idCliente == null ? 'interno' : 'cliente'))
-						const esAusencia = tipoTrabajo === 'ausencia'
-						const esInterno = tipoTrabajo === 'interno'
-						const esSoporte = r.origen === 'soporte_ti'
-						const tipoAusenciaTexto = String(r.descripcion || '').trim()
+						const workType = r.type_work || (Number(idClient) === 99999 ? 'ausencia' : (idClient == null ? 'interno' : 'cliente'))
+						const esAusencia = workType === 'ausencia'
+						const esInterno = workType === 'interno'
+						const esSoporte = r.source === 'soporte_ti'
+						const tipoAusenciaTexto = String(r.description || '').trim()
 						const clienteNombre = esInterno
-							? t('empleados', 'Internal work')
+							? t('employees', 'Internal work')
 							: esAusencia
-								? `${t('empleados', 'Absence -')} ${tipoAusenciaTexto || t('empleados', 'Vacation')}`
-								: (clientesMap.get(Number(idCliente)) || `Cliente ${idCliente ?? ''}`.trim())
-						const actividadNombre = esSoporte
-							? (r.actividad_nombre || t('empleados', 'Support TI'))
+								? `${t('employees', 'Absence -')} ${tipoAusenciaTexto || t('employees', 'Vacation')}`
+								: (clientsMap.get(Number(idClient)) || `Cliente ${idClient ?? ''}`.trim())
+						const activityName = esSoporte
+							? (r.activity_name || t('employees', 'Support TI'))
 							: esAusencia
-								? t('empleados', 'No Cargable')
-								: (actividadesMap.get(Number(idActividad)) || `Actividad ${idActividad ?? ''}`.trim())
+								? t('employees', 'No Cargable')
+								: (actividadesMap.get(Number(idActivity)) || `Actividad ${idActivity ?? ''}`.trim())
 						return {
 							...r,
 							id,
-							idCliente,
-							idActividad,
+							idClient,
+							idActivity,
 							clienteNombre,
-							actividadNombre,
+							activityName,
 							esAusencia,
 							esSoporte,
 							esInterno,
-							tipo_trabajo: tipoTrabajo,
+							type_work: workType,
 						}
 					})
 
 			} catch (e) {
-				showError(t('ahorrosgossler', e.message))
+				showError(t('savingsgossler', e.message))
 			} finally {
 				this.loading = false
 			}
 		},
 
-		async GetActividades() {
+		async GetActivities() {
 			try {
-				await axios.get(generateUrl('/apps/empleados/GetActividades'), { params: { manual: 1 } })
+				await axios.get(generateUrl('/apps/employees/GetActivities'), { params: { manual: 1 } })
 					.then(
 						(response) => {
 							if (response?.data?.ocs?.meta?.status !== 'ok') {
 								showError(response?.data?.ocs?.meta?.message)
 								this.loading = false
-								window.location.href = '/apps/empleados/#/'
+								window.location.href = '/apps/employees/#/'
 								return
 							}
 							const keyMap = {
-								id_actividad: 'id',
-								nombre: 'label',
-								tiempo_real: 'count',
+								id_activity: 'id',
+								name: 'label',
+								time_actual: 'count',
 							}
 
 							const renameKeys = (obj, map) =>
@@ -626,25 +626,25 @@ export default {
 						},
 					)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
 			}
 		},
 
 		async GetCompaniesGroups() {
 			try {
-				await axios.get(generateUrl('/apps/empleados/GetCompaniesGroups'))
+				await axios.get(generateUrl('/apps/employees/GetCompaniesGroups'))
 					.then(
 						(response) => {
 							if (response?.data?.ocs?.meta?.status !== 'ok') {
 								showError(response?.data?.ocs?.meta?.message)
 								this.loading = false
-								window.location.href = '/apps/empleados/#/'
+								window.location.href = '/apps/employees/#/'
 								return
 							}
 							const keyMap = {
 								id: 'id',
-								nombre: 'name',
-								cliente_padre: 'count',
+								name: 'name',
+								client_parent: 'count',
 							}
 
 							const renameKeys = (obj, map) =>
@@ -659,14 +659,14 @@ export default {
 							// Lista para tu <List>
 							this.temp_listas = data.map(o => ({
 								id: o.id,
-								name: o.nombre,
+								name: o.name,
 								count: o.child_count,
 							}))
 
 							// Opciones para <NcSelect>
-							this.actividades = data.map(o => ({
+							this.Activity = data.map(o => ({
 								id: o.id,
-								label: o.nombre,
+								label: o.name,
 							}))
 
 							this.loading = false
@@ -676,17 +676,17 @@ export default {
 						},
 					)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
 			}
 		},
 
 		formatDate(val) {
 			// Si viene ya formateada, la mostramos; si es ISO, la convertimos.
 			if (!val) return ''
-			// intenta parsear fecha conocida
+			// intenta parsear date conocida
 			const d = new Date(val)
 			if (!isNaN(d.getTime())) {
-				// Muestra fecha y hora locales (MX)
+				// Muestra date y hora locales (MX)
 				return new Intl.DateTimeFormat('es-MX', {
 					year: 'numeric',
 					month: '2-digit',
@@ -718,16 +718,16 @@ export default {
 		},
 
 		getReportClientId(reporte) {
-			return reporte.idCliente
-				?? reporte.id_cliente
+			return reporte.idClient
+				?? reporte.id_client
 				?? reporte.Id_cliente
 				?? reporte.IdCliente
 				?? null
 		},
 
 		getReportActivityId(reporte) {
-			return reporte.idActividad
-				?? reporte.id_actividad
+			return reporte.idActivity
+				?? reporte.id_activity
 				?? reporte.Id_actividad
 				?? reporte.IdActividad
 				?? null

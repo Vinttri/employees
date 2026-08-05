@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Service;
+namespace OCA\Employees\Service;
 
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 
 class LogoService {
 
-	private const FOLDER = 'compras';
-	private const FILES = ['logo-documento.png', 'logo-documento.jpg'];
+	private const FOLDER = 'purchases';
+	private const FILES = ['logo-document.png', 'logo-document.jpg'];
 
 	private IAppData $appData;
 

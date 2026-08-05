@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Command;
+namespace OCA\Employees\Command;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -13,9 +13,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class ResetBetaSchemaCommand extends Command {
-	protected static $defaultName = 'empleados:reset-beta-schema';
+	protected static $defaultName = 'employees:reset-beta-schema';
 
-	private const APP_ID = 'empleados';
+	private const APP_ID = 'employees';
 
 	/**
 	 * Tablas base conocidas.
@@ -24,42 +24,42 @@ final class ResetBetaSchemaCommand extends Command {
 	 * esta lista sirve como respaldo para instalaciones beta antiguas.
 	 */
 	private const FALLBACK_TABLES = [
-		'empleados',
-		'puestos',
-		'departamentos',
-		'empleados_conf',
-		'aniversarios',
-		'tipo_ausencia',
-		'ausencias',
-		'historial_ausencias',
-		'equipos',
-		'user_ahorro',
-		'historial_ahorro',
-		'CapitalHumano',
+		'employees',
+		'positions',
+		'departments',
+		'employee_settings',
+		'anniversaries',
+		'absence_types',
+		'absences',
+		'absence_history',
+		'teams',
+		'user_savings',
+		'savings_history',
+		'human_resources',
 
-		'empleados_clientes',
-		'empleados_actividades',
-		'empleados_rep_tiempos',
+		'clients',
+		'employee_activities',
+		'employee_time_reports',
 
-		'empleados_honorarios',
-		'empleados_honorarios_p',
-		'empleados_honorarios_parcialidades',
-		'empleados_festivos',
+		'professional_fees',
+		'fee_payments',
+		'fee_installments',
+		'holidays',
 
-		'inventario_modelos',
-		'inventario_computo',
-		'soporte_historial',
+		'inventory_models',
+		'computer_inventory',
+		'support_history',
 
-		'emp_comp_solicitudes',
-		'emp_comp_detalles',
-		'emp_comp_proveedores',
-		'emp_comp_cotizaciones',
-		'emp_comp_autoriza',
-		'emp_comp_adjuntos',
-		'emp_comp_ordenes',
-		'emp_comp_historial',
-		'emp_comp_firmas',
-		'emp_comp_docs',
+		'purchase_requests',
+		'purchase_details',
+		'purchase_suppliers',
+		'purchase_quotes',
+		'purchase_authorizations',
+		'purchase_attachments',
+		'purchase_orders',
+		'purchase_history',
+		'purchase_signatures',
+		'purchase_documents',
 	];
 
 	/**
@@ -153,11 +153,11 @@ final class ResetBetaSchemaCommand extends Command {
 
 		/*
 		 * MigrationService es una clase interna de Nextcloud, pero es la misma
-		 * utilizada por el comando oficial migrations:migrate.
+		 * utilizada por el comando official migrations:migrate.
 		 */
 		if (!$this->repairCommandExists()) {
 			$output->writeln(
-				'<error>No se encuentra el comando empleados:repair-config.</error>'
+				'<error>No se encuentra el comando Employee:repair-config.</error>'
 			);
 
 			return Command::FAILURE;
@@ -192,7 +192,7 @@ final class ResetBetaSchemaCommand extends Command {
 			}
 
 			$output->writeln('');
-			$output->writeln('<info>4. Reparando configuraciones...</info>');
+			$output->writeln('<info>4. Reparando Settings...</info>');
 
 			$repairResult = $this->runRepairConfig($output);
 
@@ -259,10 +259,10 @@ final class ResetBetaSchemaCommand extends Command {
 			}
 
 			/*
-			 * Ejemplos detectados:
+			 * Examples detectados:
 			 *
-			 * $schema->createTable('empleados');
-			 * $schema->dropTable('empleados_clientes');
+			 * $schema->createTable('employees');
+			 * $schema->dropTable('clients');
 			 */
 			$matchesFound = preg_match_all(
 				'/->\s*(?:createTable|dropTable)\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/',
@@ -387,7 +387,7 @@ final class ResetBetaSchemaCommand extends Command {
 		OutputInterface $output,
 	): void {
 		/*
-		 * Las tablas se eliminan en orden inverso a su creación para reducir
+		 * Las tablas se eliminan en order inverso a su creación para reducir
 		 * problemas con dependencias entre tablas.
 		 */
 		foreach (array_reverse($tables) as $table) {
@@ -422,7 +422,7 @@ final class ResetBetaSchemaCommand extends Command {
 		$application = $this->getApplication();
 
 		return $application !== null
-			&& $application->has('empleados:repair-config');
+			&& $application->has('employees:repair-config');
 	}
 
 	private function runRepairConfig(OutputInterface $output): int {
@@ -432,10 +432,10 @@ final class ResetBetaSchemaCommand extends Command {
 			return Command::FAILURE;
 		}
 
-		$command = $application->find('empleados:repair-config');
+		$command = $application->find('employees:repair-config');
 
 		$repairInput = new ArrayInput([
-			'command' => 'empleados:repair-config',
+			'command' => 'employees:repair-config',
 		]);
 
 		$repairInput->setInteractive(false);

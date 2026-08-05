@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -13,39 +13,39 @@ class Version2031Date20260802090000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('soporte_historial')) {
-			$soporte = $schema->getTable('soporte_historial');
-			if (!$soporte->hasColumn('duracion_minutos')) {
-				$soporte->addColumn('duracion_minutos', 'integer', [
+		if ($schema->hasTable('support_history')) {
+			$soporte = $schema->getTable('support_history');
+			if (!$soporte->hasColumn('duration_minutes')) {
+				$soporte->addColumn('duration_minutes', 'integer', [
 					'unsigned' => true,
 					'notnull' => false,
 				]);
 			}
 		}
 
-		if ($schema->hasTable('empleados_rep_tiempos')) {
-			$reportes = $schema->getTable('empleados_rep_tiempos');
-			if (!$reportes->hasColumn('origen')) {
-				$reportes->addColumn('origen', 'string', ['length' => 40, 'notnull' => false]);
+		if ($schema->hasTable('employee_time_reports')) {
+			$reportes = $schema->getTable('employee_time_reports');
+			if (!$reportes->hasColumn('source')) {
+				$reportes->addColumn('source', 'string', ['length' => 40, 'notnull' => false]);
 			}
-			if (!$reportes->hasColumn('origen_id')) {
-				$reportes->addColumn('origen_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+			if (!$reportes->hasColumn('source_id')) {
+				$reportes->addColumn('source_id', 'integer', ['unsigned' => true, 'notnull' => false]);
 			}
-			if (!$reportes->hasIndex('emp_rep_origen_idx')) {
-				$reportes->addIndex(['origen', 'origen_id'], 'emp_rep_origen_idx');
+			if (!$reportes->hasIndex('employee_time_reports_source_idx')) {
+				$reportes->addIndex(['source', 'source_id'], 'employee_time_reports_source_idx');
 			}
-			if (!$reportes->hasIndex('emp_rep_origen_unique')) {
-				$reportes->addUniqueIndex(['origen', 'origen_id'], 'emp_rep_origen_unique');
+			if (!$reportes->hasIndex('employee_time_reports_source_uq')) {
+				$reportes->addUniqueIndex(['source', 'source_id'], 'employee_time_reports_source_uq');
 			}
 		}
 
-		if ($schema->hasTable('empleados_actividades')) {
-			$actividades = $schema->getTable('empleados_actividades');
-			if (!$actividades->hasColumn('clave_sistema')) {
-				$actividades->addColumn('clave_sistema', 'string', ['length' => 64, 'notnull' => false]);
+		if ($schema->hasTable('employee_activities')) {
+			$Activity = $schema->getTable('employee_activities');
+			if (!$Activity->hasColumn('system_code')) {
+				$Activity->addColumn('system_code', 'string', ['length' => 64, 'notnull' => false]);
 			}
-			if (!$actividades->hasIndex('emp_actividad_clave_unique')) {
-				$actividades->addUniqueIndex(['clave_sistema'], 'emp_actividad_clave_unique');
+			if (!$Activity->hasIndex('employee_activities_code_unique')) {
+				$Activity->addUniqueIndex(['system_code'], 'employee_activities_code_unique');
 			}
 		}
 

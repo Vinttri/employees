@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Exception;
+namespace OCA\Employees\Exception;
 
 use RuntimeException;
 

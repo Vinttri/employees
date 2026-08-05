@@ -12,7 +12,7 @@
 		<div>
 			<h2 class="board-title">
 				<AccountGroup :size="20" decorative class="icon" />
-				<span>{{ t('empleados', 'Global settings') }}</span>
+				<span>{{ t('employees', 'Global settings') }}</span>
 			</h2>
 		</div>
 
@@ -20,25 +20,25 @@
 			<section class="settings-category settings-category-wide">
 				<div class="category-header">
 					<p class="section-label">
-						{{ t('empleados', 'General') }}
+						{{ t('employees', 'General') }}
 					</p>
-					<h3>{{ t('empleados', 'Base behavior') }}</h3>
-					<p>{{ t('empleados', 'Settings that affect core employee workflows and shared files.') }}</p>
+					<h3>{{ t('employees', 'Base behavior') }}</h3>
+					<p>{{ t('employees', 'Settings that affect core employee workflows and shared files.') }}</p>
 				</div>
 
 				<div class="settings-grid">
 					<div class="settings-card">
 						<div class="setting-row">
 							<div>
-								<strong>{{ t('empleados', 'Automatic note saving') }}</strong>
-								<span>{{ t('empleados', 'Save employee notes without requiring a manual action.') }}</span>
+								<strong>{{ t('employees', 'Automatic note saving') }}</strong>
+								<span>{{ t('employees', 'Save employee notes without requiring a manual action.') }}</span>
 							</div>
 
 							<NcCheckboxRadioSwitch
-								:checked="guardado_notas"
+								:checked="guardado_notes"
 								type="switch"
 								@update:checked="onChangeGuardadoNotas">
-								{{ guardado_notas ? t('empleados', 'Enabled') : t('empleados', 'Disabled') }}
+								{{ guardado_notes ? t('employees', 'Enabled') : t('employees', 'Disabled') }}
 							</NcCheckboxRadioSwitch>
 						</div>
 					</div>
@@ -46,15 +46,15 @@
 					<div class="settings-card">
 						<div class="setting-row">
 							<div>
-								<strong>{{ t('empleados', 'Vacation accrual') }}</strong>
-								<span>{{ t('empleados', 'Allow all users to accrue vacation automatically.') }}</span>
+								<strong>{{ t('employees', 'Vacation accrual') }}</strong>
+								<span>{{ t('employees', 'Allow all users to accrue vacation automatically.') }}</span>
 							</div>
 
 							<NcCheckboxRadioSwitch
 								:checked="acumular_vacaciones"
 								type="switch"
 								@update:checked="onChangeacumular_vacaciones">
-								{{ acumular_vacaciones ? t('empleados', 'Enabled') : t('empleados', 'Disabled') }}
+								{{ acumular_vacaciones ? t('employees', 'Enabled') : t('employees', 'Disabled') }}
 							</NcCheckboxRadioSwitch>
 						</div>
 					</div>
@@ -64,115 +64,115 @@
 			<section class="settings-category settings-category-wide">
 				<div class="category-header">
 					<p class="section-label">
-						{{ t('empleados', 'Modules') }}
+						{{ t('employees', 'Modules') }}
 					</p>
-					<h3>{{ t('empleados', 'Available app areas') }}</h3>
-					<p>{{ t('empleados', 'Enable or hide functional areas from the employee navigation.') }}</p>
+					<h3>{{ t('employees', 'Available app areas') }}</h3>
+					<p>{{ t('employees', 'Enable or hide functional areas from the employee navigation.') }}</p>
 				</div>
 
 				<div class="modules-grid">
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','Purchases module') }}</strong>
-							<span>{{ t('empleados', 'Purchase requests, approvals, suppliers and tracking.') }}</span>
+							<strong>{{ t('employees','Purchases module') }}</strong>
+							<span>{{ t('employees', 'Purchase requests, approvals, suppliers and tracking.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
-							:checked="modulo_compras"
+							:checked="modulo_purchases"
 							type="switch"
-							@update:checked="onChangemodulo_compras">
-							{{ t('empleados', 'Enable purchases module') }}
+							@update:checked="onChangemodulo_purchases">
+							{{ t('employees', 'Enable purchases module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','Savings module') }}</strong>
-							<span>{{ t('empleados', 'Savings menu and related user status.') }}</span>
+							<strong>{{ t('employees','Savings module') }}</strong>
+							<span>{{ t('employees', 'Savings menu and related user status.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
-							:checked="modulo_ahorro"
+							:checked="modulo_savings"
 							type="switch"
-							@update:checked="onChangemodulo_ahorro">
-							{{ t('empleados', 'Enable savings module') }}
+							@update:checked="onChangemodulo_savings">
+							{{ t('employees', 'Enable savings module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','Absences module') }}</strong>
-							<span>{{ t('empleados', 'Absence requests and availability controls.') }}</span>
+							<strong>{{ t('employees','Absences module') }}</strong>
+							<span>{{ t('employees', 'Absence requests and availability controls.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
 							:checked="modulo_ausencias"
 							type="switch"
 							@update:checked="onChangemodulo_ausencias">
-							{{ t('empleados', 'Enable absences module') }}
+							{{ t('employees', 'Enable absences module') }}
 						</NcCheckboxRadioSwitch>
 
 						<NcCheckboxRadioSwitch
 							:checked="modulo_ausencias_readonly"
 							type="switch"
 							@update:checked="onChangemodulo_ausencias_readonly">
-							{{ t('empleados', 'Read-only mode') }}
+							{{ t('employees', 'Read-only mode') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','Customers module') }}</strong>
-							<span>{{ t('empleados', 'Customer groups and companies for time reports.') }}</span>
+							<strong>{{ t('employees','Customers module') }}</strong>
+							<span>{{ t('employees', 'Customer groups and companies for time reports.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
-							:checked="modulo_clientes"
+							:checked="modulo_clients"
 							type="switch"
-							@update:checked="onChangemodulo_clientes">
-							{{ t('empleados', 'Enable customers module') }}
+							@update:checked="onChangemodulo_clients">
+							{{ t('employees', 'Enable customers module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','Report times module') }}</strong>
-							<span>{{ t('empleados', 'Time reporting and compliance views.') }}</span>
+							<strong>{{ t('employees','Report times module') }}</strong>
+							<span>{{ t('employees', 'Time reporting and compliance views.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
 							:checked="modulo_reporte_tiempos"
 							type="switch"
 							@update:checked="onChangemodulo_reporte_tiempos">
-							{{ t('empleados', 'Enable report times module') }}
+							{{ t('employees', 'Enable report times module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','IT Inventory module') }}</strong>
-							<span>{{ t('empleados', 'Computer equipment, hardware models and assignments.') }}</span>
+							<strong>{{ t('employees','IT Inventory module') }}</strong>
+							<span>{{ t('employees', 'Computer equipment, hardware models and assignments.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
 							:checked="modulo_inventario"
 							type="switch"
 							@update:checked="onChangemodulo_inventario">
-							{{ t('empleados', 'Enable IT inventory module') }}
+							{{ t('employees', 'Enable IT inventory module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-card">
 						<div class="module-card-header">
-							<strong>{{ t('empleados','IT Support module') }}</strong>
-							<span>{{ t('empleados', 'Technical support and device maintenance history.') }}</span>
+							<strong>{{ t('employees','IT Support module') }}</strong>
+							<span>{{ t('employees', 'Technical support and device maintenance history.') }}</span>
 						</div>
 
 						<NcCheckboxRadioSwitch
 							:checked="modulo_soporte"
 							type="switch"
 							@update:checked="onChangemodulo_soporte">
-							{{ t('empleados', 'Enable IT support module') }}
+							{{ t('employees', 'Enable IT support module') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 				</div>
@@ -181,10 +181,10 @@
 			<section class="settings-category settings-category-wide">
 				<div class="category-header">
 					<p class="section-label">
-						{{ t('empleados', 'Purchases') }}
+						{{ t('employees', 'Purchases') }}
 					</p>
-					<h3>{{ t('empleados', 'Purchase document logo') }}</h3>
-					<p>{{ t('empleados', 'Configure the logo used in generated purchase request PDFs.') }}</p>
+					<h3>{{ t('employees', 'Purchase document logo') }}</h3>
+					<p>{{ t('employees', 'Configure the logo used in generated purchase request PDFs.') }}</p>
 				</div>
 
 				<div class="settings-card settings-form-card">
@@ -196,14 +196,14 @@
 								@error="logoDocumentoUrl = ''">
 
 							<span v-else>
-								{{ t('empleados', 'No logo configured') }}
+								{{ t('employees', 'No logo configured') }}
 							</span>
 						</div>
 
 						<div class="logo-settings-content">
-							<strong>{{ t('empleados', 'Document logo') }}</strong>
+							<strong>{{ t('employees', 'Document logo') }}</strong>
 							<span>
-								{{ t('empleados', 'Use a PNG or JPG image. This logo will appear in generated purchase request PDFs.') }}
+								{{ t('employees', 'Use a PNG or JPG image. This logo will appear in generated purchase request PDFs.') }}
 							</span>
 
 							<input ref="logoDocumentoInput"
@@ -214,12 +214,12 @@
 
 							<div class="actions-row logo-actions">
 								<NcButton :disabled="loadingLogoDocumento" @click="$refs.logoDocumentoInput.click()">
-									{{ t('empleados', 'Upload logo') }}
+									{{ t('employees', 'Upload logo') }}
 								</NcButton>
 
 								<NcButton :disabled="loadingLogoDocumento || !logoDocumentoUrl"
 									@click="eliminarLogoDocumento">
-									{{ t('empleados', 'Remove logo') }}
+									{{ t('employees', 'Remove logo') }}
 								</NcButton>
 							</div>
 						</div>
@@ -230,10 +230,10 @@
 			<section class="settings-category settings-category-wide">
 				<div class="category-header">
 					<p class="section-label">
-						{{ t('empleados', 'Time reports') }}
+						{{ t('employees', 'Time reports') }}
 					</p>
-					<h3>{{ t('empleados','Report times settings') }}</h3>
-					<p>{{ t('empleados', 'Reminder and compliance settings for the time reports module.') }}</p>
+					<h3>{{ t('employees','Report times settings') }}</h3>
+					<p>{{ t('employees', 'Reminder and compliance settings for the time reports module.') }}</p>
 				</div>
 
 				<div class="settings-card settings-form-card">
@@ -242,52 +242,52 @@
 							:checked="reportes_recordatorios_enabled"
 							type="switch"
 							@update:checked="reportes_recordatorios_enabled = !reportes_recordatorios_enabled">
-							{{ t('empleados', 'Enable automatic reminders') }}
+							{{ t('employees', 'Enable automatic reminders') }}
 						</NcCheckboxRadioSwitch>
 
 						<NcCheckboxRadioSwitch
 							:checked="reportes_recordatorios_email"
 							type="switch"
 							@update:checked="reportes_recordatorios_email = !reportes_recordatorios_email">
-							{{ t('empleados', 'Send reminders by email') }}
+							{{ t('employees', 'Send reminders by email') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<div class="settings-grid">
 						<NcTextField
 							:value.sync="reportes_recordatorios_grupo"
-							:label="t('empleados', 'Group required to report')" />
+							:label="t('employees', 'Group required to report')" />
 
 						<NcTextField
 							:value.sync="reportes_recordatorios_hora"
 							type="number"
 							min="0"
 							max="23"
-							:label="t('empleados', 'Reminder hour')" />
+							:label="t('employees', 'Reminder hour')" />
 
 						<NcTextField
 							:value.sync="reportes_recordatorios_zona_horaria"
-							:label="t('empleados', 'Time zone')" />
+							:label="t('employees', 'Time zone')" />
 
 						<NcTextField
 							:value.sync="reportes_horas_minimas"
 							type="number"
 							min="0"
-							:label="t('empleados', 'Minimum hours to consider reported')" />
+							:label="t('employees', 'Minimum hours to consider reported')" />
 
 						<NcSelect
 							v-model="selected_admin_reports_group"
-							:input-label="t('empleados', 'Group with access to admin reports and compliance tracking')"
+							:input-label="t('employees', 'Group with access to admin reports and compliance tracking')"
 							:options="optionsGroups"
 							class="fit" />
 					</div>
 
 					<div class="actions-row">
 						<NcButton
-							:aria-label="t('empleados','Apply changes')"
+							:aria-label="t('employees','Apply changes')"
 							type="primary"
 							@click="saveConfiguracionReportes">
-							{{ t('empleados','Apply changes') }}
+							{{ t('employees','Apply changes') }}
 						</NcButton>
 					</div>
 				</div>
@@ -296,46 +296,46 @@
 			<section class="settings-category settings-category-wide">
 				<div class="category-header">
 					<p class="section-label">
-						{{ t('empleados', 'Files and security') }}
+						{{ t('employees', 'Files and security') }}
 					</p>
-					<h3>{{ t('empleados', 'Data manager and provisioning') }}</h3>
-					<p>{{ t('empleados', 'Control the account used for shared employee files and the provisioning token.') }}</p>
+					<h3>{{ t('employees', 'data manager and provisioning') }}</h3>
+					<p>{{ t('employees', 'Control the account used for shared employee files and the provisioning token.') }}</p>
 				</div>
 
 				<div class="settings-grid">
 					<div class="settings-card settings-form-card">
-						<NcNoteCard v-if="selected_user" :type="'warning'" :heading="t('empleados','ATTENTION')">
+						<NcNoteCard v-if="selected_user" :type="'warning'" :heading="t('employees','ATTENTION')">
 							<p>
-								{{ t('empleados', 'If you change the file manager user after it has already been set, file loss may occur. Consider making a backup before proceeding.') }}
+								{{ t('employees', 'If you change the file manager user after it has already been set, file loss may occur. Consider making a backup before proceeding.') }}
 							</p>
 						</NcNoteCard>
 
 						<NcSelect
 							v-model="selected_user"
-							:input-label="t('empleados','Data manager user')"
+							:input-label="t('employees','data manager user')"
 							:options="optionsGestor"
 							:user-select="true" />
 
 						<div class="actions-row">
 							<NcButton
-								:aria-label="t('empleados','Apply changes')"
+								:aria-label="t('employees','Apply changes')"
 								type="primary"
 								@click="saveGestor">
-								{{ t('empleados','Apply changes') }}
+								{{ t('employees','Apply changes') }}
 							</NcButton>
 						</div>
 					</div>
 
 					<div class="settings-card settings-form-card">
 						<NcPasswordField :value.sync="secrettoken"
-							:label="t('empleados', 'Secret token to admin moves')"
+							:label="t('employees', 'Secret token to admin moves')"
 							as-text />
 						<div class="actions-row">
 							<NcButton
-								:aria-label="t('empleados','Apply changes')"
+								:aria-label="t('employees','Apply changes')"
 								type="primary"
 								@click="saveSecretToken">
-								{{ t('empleados','Apply changes') }}
+								{{ t('employees','Apply changes') }}
 							</NcButton>
 						</div>
 					</div>
@@ -384,18 +384,18 @@ export default {
 			loading: true,
 
 			// General configurations
-			configuraciones: [],
+			Settings: [],
 
-			// Users list (from GetConfigurations) used for Data Manager selector
+			// Users list (from GetConfigurations) used for data Manager selector
 			optionsGestor: [],
 
-			selected_user: null, // Selected Data Manager
-			guardado_notas: false,
+			selected_user: null, // Selected data Manager
+			guardado_notes: false,
 			acumular_vacaciones: false,
-			modulo_ahorro: false,
+			modulo_savings: false,
 			modulo_ausencias: false,
 			modulo_ausencias_readonly: false,
-			modulo_clientes: false,
+			modulo_clients: false,
 			modulo_reporte_tiempos: false,
 
 			modulo_inventario: false,
@@ -403,7 +403,7 @@ export default {
 			secrettoken: null,
 
 			reportes_recordatorios_enabled: true,
-			reportes_recordatorios_grupo: 'empleados',
+			reportes_recordatorios_grupo: 'employees',
 			reportes_recordatorios_hora: 17,
 			reportes_recordatorios_zona_horaria: 'America/Mexico_City',
 			reportes_recordatorios_email: true,
@@ -411,7 +411,7 @@ export default {
 			optionsGroups: [],
 			selected_admin_reports_group: null,
 			reportes_admin_reports_group: '',
-			modulo_compras: false,
+			modulo_purchases: false,
 			logoDocumentoUrl: '',
 			loadingLogoDocumento: false,
 		}
@@ -429,31 +429,31 @@ export default {
 	methods: {
 		t,
 		/**
-		 * Load global configuration, including "Users" for Data Manager.
+		 * Load global configuration, including "Users" for data Manager.
 		 */
 		async getall() {
 			try {
 				this.loading = true
-				const response = await axios.get(generateUrl('/apps/empleados/GetConfigurations'))
+				const response = await axios.get(generateUrl('/apps/employees/GetConfigurations'))
 
 				this.optionsGestor = response.data.Users
 				this.selected_user = response.data.Gestor_actual
 
-				this.guardado_notas = (response.data.Guardado_notas === 'true')
+				this.guardado_notes = (response.data.Guardado_notes === 'true')
 				this.acumular_vacaciones = (response.data.Acumular_vacaciones === 'true')
-				this.modulo_ahorro = (response.data.modulo_ahorro === 'true')
+				this.modulo_savings = (response.data.modulo_savings === 'true')
 				this.modulo_ausencias = (response.data.modulo_ausencias === 'true')
 				this.modulo_ausencias_readonly = (response.data.modulo_ausencias_readonly === 'true')
-				this.modulo_clientes = (response.data.modulo_clientes === 'true')
+				this.modulo_clients = (response.data.modulo_clients === 'true')
 				this.modulo_reporte_tiempos = (response.data.modulo_reporte_tiempos === 'true')
 				this.modulo_inventario = (response.data.modulo_inventario === 'true')
 				this.modulo_soporte = (response.data.modulo_soporte === 'true')
-				this.modulo_compras = (response.data.modulo_compras === 'true')
+				this.modulo_purchases = (response.data.modulo_purchases === 'true')
 
 				const reportes = response.data.Reportes || {}
 
 				this.reportes_recordatorios_enabled = String(reportes.recordatorios_enabled ?? 'true') === 'true'
-				this.reportes_recordatorios_grupo = reportes.recordatorios_grupo || 'empleados'
+				this.reportes_recordatorios_grupo = reportes.recordatorios_grupo || 'employees'
 				this.reportes_recordatorios_hora = Number(reportes.recordatorios_hora ?? 17)
 				this.reportes_recordatorios_zona_horaria = reportes.recordatorios_zona_horaria || 'America/Mexico_City'
 				this.reportes_recordatorios_email = String(reportes.recordatorios_email ?? 'true') === 'true'
@@ -477,27 +477,27 @@ export default {
 				this.loading = false
 			} catch (err) {
 				this.loading = false
-				showError(t('empleados', 'Exception [GetConfigurations]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [GetConfigurations]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
 
 		/**
-		 * Update selected Data Manager
+		 * Update selected data Manager
 		 */
 		async saveGestor() {
 			if (!this.selected_user || !this.selected_user.id) {
-				showError(t('empleados', 'No Data Manager selected'))
+				showError(t('employees', 'No data Manager selected'))
 				return
 			}
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarGestor'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarGestor'), {
 					id_gestor: this.selected_user.id,
 				})
-				showSuccess(t('empleados', 'Manager updated'))
+				showSuccess(t('employees', 'Manager updated'))
 				this.$bus?.emit('GetDataManager') // Notify other components
 			} catch (err) {
-				showError(t('empleados', 'Error updating manager: {error}', { error: String(err) }))
+				showError(t('employees', 'Error updating manager: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -506,16 +506,16 @@ export default {
 		 * Toggle: Automatic note saving
 		 */
 		async onChangeGuardadoNotas() {
-			this.guardado_notas = !this.guardado_notas
+			this.guardado_notes = !this.guardado_notes
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'automatic_save_note',
-					data: this.guardado_notas.toString(),
+					data: this.guardado_notes.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 				this.$bus?.emit('GetDataManager') // Notify other components
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -523,16 +523,16 @@ export default {
 		/**
 		 * Toggle: Customers module
 		 */
-		async onChangemodulo_clientes() {
-			this.modulo_clientes = !this.modulo_clientes
+		async onChangemodulo_clients() {
+			this.modulo_clients = !this.modulo_clients
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_clientes',
-					data: this.modulo_clientes.toString(),
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
+					id_configuracion: 'modulo_clients',
+					data: this.modulo_clients.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -543,13 +543,13 @@ export default {
 		async onChangemodulo_reporte_tiempos() {
 			this.modulo_reporte_tiempos = !this.modulo_reporte_tiempos
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'modulo_reporte_tiempos',
 					data: this.modulo_reporte_tiempos.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -561,14 +561,14 @@ export default {
 			this.modulo_inventario = !this.modulo_inventario
 
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'modulo_inventario',
 					data: this.modulo_inventario.toString(),
 				})
 
-				showSuccess(t('empleados', 'Configuration updated. Refresh the page to update the navigation menu.'))
+				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -580,14 +580,14 @@ export default {
 			this.modulo_soporte = !this.modulo_soporte
 
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'modulo_soporte',
 					data: this.modulo_soporte.toString(),
 				})
 
-				showSuccess(t('empleados', 'Configuration updated. Refresh the page to update the navigation menu.'))
+				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -598,13 +598,13 @@ export default {
 		async onChangeacumular_vacaciones() {
 			this.acumular_vacaciones = !this.acumular_vacaciones
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'acumular_vacaciones',
 					data: this.acumular_vacaciones.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -612,16 +612,16 @@ export default {
 		/**
 		 * Toggle: Savings module
 		 */
-		async onChangemodulo_ahorro() {
-			this.modulo_ahorro = !this.modulo_ahorro
+		async onChangemodulo_savings() {
+			this.modulo_savings = !this.modulo_savings
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_ahorro',
-					data: this.modulo_ahorro.toString(),
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
+					id_configuracion: 'modulo_savings',
+					data: this.modulo_savings.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -632,13 +632,13 @@ export default {
 		async onChangemodulo_ausencias() {
 			this.modulo_ausencias = !this.modulo_ausencias
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'modulo_ausencias',
 					data: this.modulo_ausencias.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -649,13 +649,13 @@ export default {
 		async onChangemodulo_ausencias_readonly() {
 			this.modulo_ausencias_readonly = !this.modulo_ausencias_readonly
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
 					id_configuracion: 'ausencias_readonly',
 					data: this.modulo_ausencias_readonly.toString(),
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -666,18 +666,18 @@ export default {
 		async saveSecretToken() {
 			this.modulo_ausencias = !this.modulo_ausencias
 			try {
-				await axios.post(generateUrl('/apps/empleados/provisioning'), {
+				await axios.post(generateUrl('/apps/employees/provisioning'), {
 					secret: this.secrettoken,
 				})
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
 		async saveConfiguracionReportes() {
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracionReportes'), {
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracionReportes'), {
 					recordatorios_enabled: this.reportes_recordatorios_enabled.toString(),
 					recordatorios_grupo: this.reportes_recordatorios_grupo,
 					recordatorios_hora: Number(this.reportes_recordatorios_hora),
@@ -687,27 +687,27 @@ export default {
 					admin_reports_group: this.selected_admin_reports_group?.id || this.reportes_admin_reports_group,
 				})
 
-				showSuccess(t('empleados', 'Configuration updated'))
+				showSuccess(t('employees', 'Configuration updated'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateReportSettings]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateReportSettings]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
 		/**
 		 * Toggle: Purchases module
 		 */
-		async onChangemodulo_compras() {
-			this.modulo_compras = !this.modulo_compras
+		async onChangemodulo_purchases() {
+			this.modulo_purchases = !this.modulo_purchases
 
 			try {
-				await axios.post(generateUrl('/apps/empleados/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_compras',
-					data: this.modulo_compras.toString(),
+				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
+					id_configuracion: 'modulo_purchases',
+					data: this.modulo_purchases.toString(),
 				})
 
-				showSuccess(t('empleados', 'Configuration updated. Refresh the page to update the navigation menu.'))
+				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
 			} catch (err) {
-				showError(t('empleados', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
+				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
@@ -725,7 +725,7 @@ export default {
 
 			try {
 				const response = await axios.get(
-					generateUrl('/apps/empleados/compras/settings/logo'),
+					generateUrl('/apps/employees/purchases/settings/logo'),
 					{
 						responseType: 'blob',
 						headers: {
@@ -757,13 +757,13 @@ export default {
 			}
 
 			if (!['image/png', 'image/jpeg'].includes(file.type)) {
-				showError(t('empleados', 'Only PNG or JPG logos are allowed.'))
+				showError(t('employees', 'Only PNG or JPG logos are allowed.'))
 				event.target.value = ''
 				return
 			}
 
 			if (file.size > 2 * 1024 * 1024) {
-				showError(t('empleados', 'The logo must not exceed 2 MB.'))
+				showError(t('employees', 'The logo must not exceed 2 MB.'))
 				event.target.value = ''
 				return
 			}
@@ -775,7 +775,7 @@ export default {
 				formData.append('logo', file)
 
 				const response = await axios.post(
-					generateUrl('/apps/empleados/compras/settings/logo'),
+					generateUrl('/apps/employees/purchases/settings/logo'),
 					formData,
 					{
 						headers: {
@@ -787,14 +787,14 @@ export default {
 				const payload = response.data
 
 				if (!payload.success) {
-					throw new Error(payload.message || t('empleados', 'Could not upload logo.'))
+					throw new Error(payload.message || t('employees', 'Could not upload logo.'))
 				}
 
-				showSuccess(payload.message || t('empleados', 'Logo uploaded successfully.'))
+				showSuccess(payload.message || t('employees', 'Logo uploaded successfully.'))
 				await this.refreshLogoDocumento()
 			} catch (error) {
 				console.error(error)
-				showError(t('empleados', 'Error uploading logo: {error}', { error: String(error) }))
+				showError(t('employees', 'Error uploading logo: {error}', { error: String(error) }))
 			} finally {
 				this.loadingLogoDocumento = false
 				event.target.value = ''
@@ -806,20 +806,20 @@ export default {
 
 			try {
 				const response = await axios.delete(
-					generateUrl('/apps/empleados/compras/settings/logo'),
+					generateUrl('/apps/employees/purchases/settings/logo'),
 				)
 
 				const payload = response.data
 
 				if (!payload.success) {
-					throw new Error(payload.message || t('empleados', 'Could not remove logo.'))
+					throw new Error(payload.message || t('employees', 'Could not remove logo.'))
 				}
 
-				showSuccess(payload.message || t('empleados', 'Logo removed successfully.'))
+				showSuccess(payload.message || t('employees', 'Logo removed successfully.'))
 				this.revokeLogoDocumentoUrl()
 			} catch (error) {
 				console.error(error)
-				showError(t('empleados', 'Error removing logo: {error}', { error: String(error) }))
+				showError(t('employees', 'Error removing logo: {error}', { error: String(error) }))
 			} finally {
 				this.loadingLogoDocumento = false
 			}

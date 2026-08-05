@@ -1,9 +1,9 @@
 <?php
 
 declare(strict_types=1);
-namespace OCA\Empleados\Controller;
+namespace OCA\Employees\Controller;
 
-use OCA\Empleados\AppInfo\Application;
+use OCA\Employees\AppInfo\Application;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -13,13 +13,13 @@ use OCP\ISession;
 use OCP\IUserSession;
 use OCP\IUserManager;
 use OCP\IGroupManager;
-use OCA\Empleados\Db\empleadosMapper;
-use OCA\Empleados\Db\configuracionesMapper;
+use OCA\Employees\Db\EmployeeMapper;
+use OCA\Employees\Db\SettingsMapper;
 
 class PageController extends BaseController {
 
-    protected $empleadosMapper;
-	protected $configuracionesMapper;
+    protected $EmployeeMapper;
+	protected $SettingsMapper;
 	protected $session;
 
 	public function __construct(
@@ -27,15 +27,15 @@ class PageController extends BaseController {
 		ISession $session, 
 		IUserSession $userSession, 
 		IUserManager $userManager,
-        empleadosMapper $empleadosMapper,
-		configuracionesMapper $configuracionesMapper, 
+        EmployeeMapper $EmployeeMapper,
+		SettingsMapper $SettingsMapper,
 		IGroupManager $groupManager
 	) {
-		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $empleadosMapper, $configuracionesMapper);
+		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
 		$this->session = $session;
-		$this->configuracionesMapper = $configuracionesMapper;
-		$this->empleadosMapper = $empleadosMapper;
+		$this->SettingsMapper = $SettingsMapper;
+		$this->EmployeeMapper = $EmployeeMapper;
 	}
 
 	#[UseSession]

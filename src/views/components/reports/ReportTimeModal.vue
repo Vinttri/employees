@@ -1,5 +1,5 @@
 <template>
-	<NcModal :name="t('empleados', 'Add new activity')" @close="closeModal">
+	<NcModal :name="t('employees', 'Add new activity')" @close="closeModal">
 		<div class="modal__content">
 			<div class="form-group">
 				<input ref="trapFocus"
@@ -7,7 +7,7 @@
 					style="position:absolute;opacity:0;height:0;width:0;pointer-events:none;">
 
 				<span class="field-label">
-					{{ t('empleados', 'Work type') }}
+					{{ t('employees', 'Work type') }}
 				</span>
 
 				<div class="radios work-type-radios">
@@ -15,24 +15,24 @@
 						value="cliente"
 						type="radio"
 						:disabled="saving">
-						{{ t('empleados', 'Client work') }}
+						{{ t('employees', 'Client work') }}
 					</NcCheckboxRadioSwitch>
 
 					<NcCheckboxRadioSwitch v-model="workType"
 						value="interno"
 						type="radio"
 						:disabled="saving">
-						{{ t('empleados', 'Internal work') }}
+						{{ t('employees', 'Internal work') }}
 					</NcCheckboxRadioSwitch>
 				</div>
 
 				<p v-if="workType === 'interno'" class="internal-hint">
-					{{ t('empleados', 'Internal activities are non-billable') }}
+					{{ t('employees', 'Internal activities are non-billable') }}
 				</p>
 
 				<NcSelect v-if="workType === 'cliente'"
 					v-model="selectedClient"
-					:input-label="t('empleados', 'Project')"
+					:input-label="t('employees', 'Project')"
 					:options="clients"
 					:disabled="loadingCatalogs || saving"
 					class="fit" />
@@ -51,34 +51,34 @@
 							type="number"
 							min="1"
 							:disabled="saving"
-							:label="t('empleados', 'Estimate time')" />
+							:label="t('employees', 'Estimate time')" />
 					</div>
 
 					<div class="radios time-unit-radios">
 						<NcCheckboxRadioSwitch v-model="timeUnit"
 							:button-variant="true"
 							value="minutos"
-							:name="t('empleados', 'Minutes')"
+							:name="t('employees', 'Minutes')"
 							type="radio"
 							:disabled="saving"
 							button-variant-grouped="horizontal">
-							{{ t('empleados', 'Minutes') }}
+							{{ t('employees', 'Minutes') }}
 						</NcCheckboxRadioSwitch>
 
 						<NcCheckboxRadioSwitch v-model="timeUnit"
 							:button-variant="true"
 							value="horas"
-							:name="t('empleados', 'Hours')"
+							:name="t('employees', 'Hours')"
 							type="radio"
 							:disabled="saving"
 							button-variant-grouped="horizontal">
-							{{ t('empleados', 'Hours') }}
+							{{ t('employees', 'Hours') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 				</div>
 
 				<NcSelect v-model="selectedActivity"
-					:input-label="t('empleados', 'Activity')"
+					:input-label="t('employees', 'Activity')"
 					:options="availableActivities"
 					:disabled="loadingCatalogs || saving"
 					class="fit" />
@@ -88,16 +88,16 @@
 					:value.sync="description"
 					:disabled="saving"
 					class="top"
-					:label="t('empleados', 'Description activity')" />
+					:label="t('employees', 'Description activity')" />
 
 				<div class="save top">
-					<NcButton :aria-label="t('empleados', 'Create Activity')"
+					<NcButton :aria-label="t('employees', 'Create Activity')"
 						type="primary"
 						:disabled="saving || loadingCatalogs || !isFormValid"
 						@click="createReport">
 						{{ saving
-							? t('empleados', 'Saving')
-							: t('empleados', 'Create Activity') }}
+							? t('employees', 'Saving')
+							: t('employees', 'Create Activity') }}
 					</NcButton>
 				</div>
 			</div>
@@ -156,7 +156,7 @@ export default {
 	computed: {
 		availableActivities() {
 			return this.activities.filter((activity) => {
-				const type = activity.tipo_actividad || 'cliente'
+				const type = activity.type_activity || 'cliente'
 
 				return type === this.workType
 			})
@@ -192,7 +192,7 @@ export default {
 
 			if (
 				this.selectedActivity
-                && (this.selectedActivity.tipo_actividad || 'cliente') !== this.workType
+                && (this.selectedActivity.type_activity || 'cliente') !== this.workType
 			) {
 				this.selectedActivity = null
 			}
@@ -230,7 +230,7 @@ export default {
 		async loadActivities() {
 			try {
 				const response = await axios.get(
-					generateUrl('/apps/empleados/GetActividades'),
+					generateUrl('/apps/employees/GetActivities'),
 					{
 						params: {
 							manual: 1,
@@ -241,7 +241,7 @@ export default {
 				if (response?.data?.ocs?.meta?.status !== 'ok') {
 					throw new Error(
 						response?.data?.ocs?.meta?.message
-                        || t('empleados', 'Activities could not be loaded'),
+                        || t('employees', 'Activities could not be loaded'),
 					)
 				}
 
@@ -251,9 +251,9 @@ export default {
 
 				this.activities = data.map(item => ({
 					...item,
-					id: item.id_actividad ?? item.id,
-					label: item.nombre ?? item.label,
-					tipo_actividad: item.tipo_actividad || 'cliente',
+					id: item.id_activity ?? item.id,
+					label: item.name ?? item.label,
+					type_activity: item.type_activity || 'cliente',
 				}))
 			} catch (error) {
 				showError(this.backendError(error))
@@ -263,13 +263,13 @@ export default {
 		async loadClients() {
 			try {
 				const response = await axios.get(
-					generateUrl('/apps/empleados/GetCompaniesGroups'),
+					generateUrl('/apps/employees/GetCompaniesGroups'),
 				)
 
 				if (response?.data?.ocs?.meta?.status !== 'ok') {
 					throw new Error(
 						response?.data?.ocs?.meta?.message
-                        || t('empleados', 'Projects could not be loaded'),
+                        || t('employees', 'Projects could not be loaded'),
 					)
 				}
 
@@ -279,7 +279,7 @@ export default {
 
 				this.clients = data.map(item => ({
 					id: item.id,
-					label: item.nombre,
+					label: item.name,
 				}))
 			} catch (error) {
 				showError(this.backendError(error))
@@ -290,7 +290,7 @@ export default {
 			if (!this.isFormValid || this.saving) {
 				showError(
 					t(
-						'empleados',
+						'employees',
 						'Completa todos los campos obligatorios con valores válidos.',
 					),
 				)
@@ -302,14 +302,14 @@ export default {
 				: new Date(this.reportDate)
 
 			const payload = {
-				tipo_trabajo: this.workType,
-				id_cliente: this.workType === 'interno'
+				type_work: this.workType,
+				id_client: this.workType === 'interno'
 					? null
 					: this.selectedClient.id,
-				id_actividad: this.selectedActivity.id,
+				id_activity: this.selectedActivity.id,
 				tiemporegistrado: Number(this.reportedTime),
-				descripcion: String(this.description || '').trim(),
-				tipo: this.timeUnit,
+				description: String(this.description || '').trim(),
+				type: this.timeUnit,
 				time: this.formatLocalDateKey(date),
 			}
 
@@ -317,12 +317,12 @@ export default {
 
 			try {
 				await axios.post(
-					generateUrl('/apps/empleados/crearReporte'),
+					generateUrl('/apps/employees/crearReporte'),
 					payload,
 				)
 
 				showSuccess(
-					t('empleados', 'Report created successfully'),
+					t('employees', 'Report created successfully'),
 				)
 
 				this.$emit('created')

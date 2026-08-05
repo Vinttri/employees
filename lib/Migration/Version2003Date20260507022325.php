@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * Migración para agregar el módulo de compras a OCA\Empleados.
+ * Migración para agregar el módulo de purchases a OCA\Employees.
  *
  * Esta migración es idempotente:
- * - Crea las tablas de compras si no existen.
- * - Inserta configuraciones base solo si no existen.
+ * - Crea las tablas de purchases si no existen.
+ * - Inserta Settings base solo si no existen.
  * - No elimina ni modifica datos existentes.
  */
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -37,302 +37,302 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$this->createComprasSolicitudes($schema);
-		$this->createComprasDetalles($schema);
-		$this->createComprasProveedores($schema);
-		$this->createComprasCotizaciones($schema);
-		$this->createComprasAutorizaciones($schema);
-		$this->createComprasAdjuntos($schema);
-		$this->createComprasOrdenes($schema);
-		$this->createComprasHistorial($schema);
+		$this->createPurchasesSolicitudes($schema);
+		$this->createPurchasesDetalles($schema);
+		$this->createPurchasesProveedores($schema);
+		$this->createPurchasesCotizaciones($schema);
+		$this->createPurchasesAutorizaciones($schema);
+		$this->createPurchasesAdjuntos($schema);
+		$this->createPurchasesOrdenes($schema);
+		$this->createPurchasesHistory($schema);
 
 		return $schema;
 	}
 
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$configs = [
-			'modulo_compras' => 'false',
-			'compras_requiere_autorizacion' => 'true',
-			'compras_moneda_default' => 'MXN',
-			'compras_requiere_cotizacion' => 'false',
-			'compras_numero_cotizaciones' => '1',
-			'compras_monto_autorizacion_doble' => '5000',
-			'compras_grupo_solicitantes' => 'compras_solicitantes',
-			'compras_grupo_autorizadores' => 'compras_autorizadores',
-			'compras_grupo_admin' => 'compras_admin',
-			'compras_grupo_contabilidad' => 'compras_contabilidad',
+			'modulo_purchases' => 'false',
+			'purchases_requiere_autorizacion' => 'true',
+			'purchases_moneda_default' => 'MXN',
+			'purchases_requiere_cotizacion' => 'false',
+			'purchases_numero_cotizaciones' => '1',
+			'purchases_monto_autorizacion_doble' => '5000',
+			'purchases_grupo_solicitantes' => 'purchases_solicitantes',
+			'purchases_grupo_autorizadores' => 'purchases_autorizadores',
+			'purchases_grupo_admin' => 'purchases_admin',
+			'purchases_grupo_contabilidad' => 'purchases_contabilidad',
 		];
 
-		foreach ($configs as $nombre => $data) {
-			$created = $this->insertConfig($nombre, $data);
+		foreach ($configs as $name => $data) {
+			$created = $this->insertConfig($name, $data);
 
 			if ($created) {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' insertado.");
+				$output->info("Seed employee_settings.name='{$name}' insertado.");
 			} else {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' ya existía, omitido.");
+				$output->info("Seed employee_settings.name='{$name}' ya existía, omitido.");
 			}
 		}
 	}
 
-	private function createComprasSolicitudes(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_solicitudes')) {
+	private function createPurchasesSolicitudes(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_requests')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_solicitudes');
+		$table = $schema->createTable('purchase_requests');
 
-		$table->addColumn('id_solicitud', 'integer', [
+		$table->addColumn('id_request', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('folio', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('reference', 'string', ['length' => 64, 'notnull' => true]);
 		$table->addColumn('id_user', 'string', ['length' => 64, 'notnull' => true]);
-		$table->addColumn('id_empleado', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('id_departamento', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('id_equipo', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('id_cliente', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('titulo', 'string', ['length' => 190, 'notnull' => true]);
-		$table->addColumn('descripcion', 'text', ['notnull' => false]);
-		$table->addColumn('justificacion', 'text', ['notnull' => false]);
-		$table->addColumn('monto_estimado', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('monto_final', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('moneda', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
-		$table->addColumn('prioridad', 'string', ['length' => 32, 'notnull' => true, 'default' => 'normal']);
-		$table->addColumn('estado', 'string', ['length' => 64, 'notnull' => true, 'default' => 'borrador']);
-		$table->addColumn('fecha_requerida', 'date', ['notnull' => false]);
-		$table->addColumn('fecha_envio', 'datetime', ['notnull' => false]);
-		$table->addColumn('fecha_autorizacion', 'datetime', ['notnull' => false]);
-		$table->addColumn('fecha_cierre', 'datetime', ['notnull' => false]);
-		$table->addColumn('proveedor_seleccionado', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_employee', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('id_department', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('id_team', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('id_client', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('title', 'string', ['length' => 190, 'notnull' => true]);
+		$table->addColumn('description', 'text', ['notnull' => false]);
+		$table->addColumn('justification', 'text', ['notnull' => false]);
+		$table->addColumn('amount_estimated', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('amount_final', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('currency', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
+		$table->addColumn('priority', 'string', ['length' => 32, 'notnull' => true, 'default' => 'normal']);
+		$table->addColumn('status', 'string', ['length' => 64, 'notnull' => true, 'default' => 'borrador']);
+		$table->addColumn('date_required', 'date', ['notnull' => false]);
+		$table->addColumn('date_sent', 'datetime', ['notnull' => false]);
+		$table->addColumn('date_authorization', 'datetime', ['notnull' => false]);
+		$table->addColumn('date_closing', 'datetime', ['notnull' => false]);
+		$table->addColumn('selected_supplier', 'integer', ['unsigned' => true, 'notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('created_by', 'string', ['length' => 64, 'notnull' => true]);
 		$table->addColumn('updated_by', 'string', ['length' => 64, 'notnull' => false]);
 
-		$table->setPrimaryKey(['id_solicitud']);
-		$table->addUniqueIndex(['folio'], 'comp_sol_folio_uq');
-		$table->addIndex(['id_user'], 'comp_sol_user_idx');
-		$table->addIndex(['id_empleado'], 'comp_sol_emp_idx');
-		$table->addIndex(['id_departamento'], 'comp_sol_depto_idx');
-		$table->addIndex(['id_equipo'], 'comp_sol_equipo_idx');
-		$table->addIndex(['id_cliente'], 'comp_sol_cliente_idx');
-		$table->addIndex(['estado'], 'comp_sol_estado_idx');
-		$table->addIndex(['prioridad'], 'comp_sol_prior_idx');
-		$table->addIndex(['fecha_requerida'], 'comp_sol_fecha_req_idx');
-		$table->addIndex(['proveedor_seleccionado'], 'comp_sol_prov_idx');
+		$table->setPrimaryKey(['id_request']);
+		$table->addUniqueIndex(['reference'], 'purchase_requests_reference_uq');
+		$table->addIndex(['id_user'], 'purchase_requests_user_idx');
+		$table->addIndex(['id_employee'], 'purchase_requests_employee_idx');
+		$table->addIndex(['id_department'], 'purchase_requests_department_idx');
+		$table->addIndex(['id_team'], 'purchase_requests_team_idx');
+		$table->addIndex(['id_client'], 'purchase_requests_client_idx');
+		$table->addIndex(['status'], 'purchase_requests_status_idx');
+		$table->addIndex(['priority'], 'purchase_requests_priority_idx');
+		$table->addIndex(['date_required'], 'purchase_requests_required_date_idx');
+		$table->addIndex(['selected_supplier'], 'purchase_requests_supplier_idx');
 	}
 
-	private function createComprasDetalles(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_detalles')) {
+	private function createPurchasesDetalles(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_details')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_detalles');
+		$table = $schema->createTable('purchase_details');
 
-		$table->addColumn('id_detalle', 'integer', [
+		$table->addColumn('id_detail', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('descripcion', 'text', ['notnull' => true]);
-		$table->addColumn('cantidad', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => true, 'default' => 1.00]);
-		$table->addColumn('unidad', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('precio_estimado', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('description', 'text', ['notnull' => true]);
+		$table->addColumn('quantity', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => true, 'default' => 1.00]);
+		$table->addColumn('unit', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('price_estimated', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
 		$table->addColumn('subtotal', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('notas', 'text', ['notnull' => false]);
+		$table->addColumn('notes', 'text', ['notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_detalle']);
-		$table->addIndex(['id_solicitud'], 'comp_det_sol_idx');
+		$table->setPrimaryKey(['id_detail']);
+		$table->addIndex(['id_request'], 'purchase_details_request_idx');
 	}
 
-	private function createComprasProveedores(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_proveedores')) {
+	private function createPurchasesProveedores(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_suppliers')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_proveedores');
+		$table = $schema->createTable('purchase_suppliers');
 
-		$table->addColumn('id_proveedor', 'integer', [
+		$table->addColumn('id_supplier', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('nombre', 'string', ['length' => 190, 'notnull' => true]);
+		$table->addColumn('name', 'string', ['length' => 190, 'notnull' => true]);
 		$table->addColumn('rfc', 'string', ['length' => 32, 'notnull' => false]);
-		$table->addColumn('correo', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('telefono', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('contacto', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('direccion', 'text', ['notnull' => false]);
-		$table->addColumn('notas', 'text', ['notnull' => false]);
-		$table->addColumn('activo', 'integer', ['notnull' => true, 'default' => 1]);
+		$table->addColumn('email', 'string', ['length' => 190, 'notnull' => false]);
+		$table->addColumn('phone', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('contact', 'string', ['length' => 190, 'notnull' => false]);
+		$table->addColumn('address', 'text', ['notnull' => false]);
+		$table->addColumn('notes', 'text', ['notnull' => false]);
+		$table->addColumn('active', 'integer', ['notnull' => true, 'default' => 1]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_proveedor']);
-		$table->addIndex(['nombre'], 'comp_prov_nombre_idx');
-		$table->addIndex(['rfc'], 'comp_prov_rfc_idx');
-		$table->addIndex(['activo'], 'comp_prov_activo_idx');
+		$table->setPrimaryKey(['id_supplier']);
+		$table->addIndex(['name'], 'purchase_suppliers_name_idx');
+		$table->addIndex(['rfc'], 'purchase_suppliers_tax_id_idx');
+		$table->addIndex(['active'], 'purchase_suppliers_active_idx');
 	}
 
-	private function createComprasCotizaciones(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_cotizaciones')) {
+	private function createPurchasesCotizaciones(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_quotes')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_cotizaciones');
+		$table = $schema->createTable('purchase_quotes');
 
-		$table->addColumn('id_cotizacion', 'integer', [
+		$table->addColumn('id_quote', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_proveedor', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('monto', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('moneda', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
-		$table->addColumn('archivo_file_id', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('archivo_nombre', 'string', ['length' => 255, 'notnull' => false]);
-		$table->addColumn('seleccionada', 'integer', ['notnull' => true, 'default' => 0]);
-		$table->addColumn('notas', 'text', ['notnull' => false]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('id_supplier', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('amount', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('currency', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
+		$table->addColumn('attached_file_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('file_name', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('selected', 'integer', ['notnull' => true, 'default' => 0]);
+		$table->addColumn('notes', 'text', ['notnull' => false]);
 		$table->addColumn('created_by', 'string', ['length' => 64, 'notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_cotizacion']);
-		$table->addIndex(['id_solicitud'], 'comp_cot_sol_idx');
-		$table->addIndex(['id_proveedor'], 'comp_cot_prov_idx');
-		$table->addIndex(['archivo_file_id'], 'comp_cot_file_idx');
-		$table->addIndex(['seleccionada'], 'comp_cot_sel_idx');
+		$table->setPrimaryKey(['id_quote']);
+		$table->addIndex(['id_request'], 'purchase_quotes_request_idx');
+		$table->addIndex(['id_supplier'], 'purchase_quotes_supplier_idx');
+		$table->addIndex(['attached_file_id'], 'purchase_quotes_file_idx');
+		$table->addIndex(['selected'], 'purchase_quotes_selected_idx');
 	}
 
-	private function createComprasAutorizaciones(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_autoriza')) {
+	private function createPurchasesAutorizaciones(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_authorizations')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_autoriza');
+		$table = $schema->createTable('purchase_authorizations');
 
-		$table->addColumn('id_autorizacion', 'integer', [
+		$table->addColumn('id_authorization', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('id_autorizador', 'string', ['length' => 64, 'notnull' => true]);
-		$table->addColumn('id_empleado_autorizador', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('nivel', 'integer', ['notnull' => true, 'default' => 1]);
-		$table->addColumn('estado', 'string', ['length' => 64, 'notnull' => true, 'default' => 'pendiente']);
-		$table->addColumn('comentario', 'text', ['notnull' => false]);
-		$table->addColumn('fecha_autorizacion', 'datetime', ['notnull' => false]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('id_authorizer', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('id_employee_authorizer', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('level', 'integer', ['notnull' => true, 'default' => 1]);
+		$table->addColumn('status', 'string', ['length' => 64, 'notnull' => true, 'default' => 'pendiente']);
+		$table->addColumn('comment', 'text', ['notnull' => false]);
+		$table->addColumn('date_authorization', 'datetime', ['notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_autorizacion']);
-		$table->addIndex(['id_solicitud'], 'comp_aut_sol_idx');
-		$table->addIndex(['id_autorizador'], 'comp_aut_user_idx');
-		$table->addIndex(['id_empleado_autorizador'], 'comp_aut_emp_idx');
-		$table->addIndex(['estado'], 'comp_aut_estado_idx');
-		$table->addIndex(['nivel'], 'comp_aut_nivel_idx');
+		$table->setPrimaryKey(['id_authorization']);
+		$table->addIndex(['id_request'], 'purchase_authorizations_request_idx');
+		$table->addIndex(['id_authorizer'], 'purchase_authorizations_user_idx');
+		$table->addIndex(['id_employee_authorizer'], 'purchase_authorizations_employee_idx');
+		$table->addIndex(['status'], 'purchase_authorizations_status_idx');
+		$table->addIndex(['level'], 'purchase_authorizations_level_idx');
 	}
 
-	private function createComprasAdjuntos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_adjuntos')) {
+	private function createPurchasesAdjuntos(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_attachments')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_adjuntos');
+		$table = $schema->createTable('purchase_attachments');
 
-		$table->addColumn('id_adjunto', 'integer', [
+		$table->addColumn('id_attachment', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('tipo', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('type', 'string', ['length' => 64, 'notnull' => true]);
 		$table->addColumn('file_id', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('nombre_archivo', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('name_file', 'string', ['length' => 255, 'notnull' => false]);
 		$table->addColumn('mime', 'string', ['length' => 190, 'notnull' => false]);
-		$table->addColumn('tamano', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('size', 'integer', ['unsigned' => true, 'notnull' => false]);
 		$table->addColumn('created_by', 'string', ['length' => 64, 'notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_adjunto']);
-		$table->addIndex(['id_solicitud'], 'comp_adj_sol_idx');
-		$table->addIndex(['tipo'], 'comp_adj_tipo_idx');
-		$table->addIndex(['file_id'], 'comp_adj_file_idx');
+		$table->setPrimaryKey(['id_attachment']);
+		$table->addIndex(['id_request'], 'purchase_attachments_request_idx');
+		$table->addIndex(['type'], 'purchase_attachments_type_idx');
+		$table->addIndex(['file_id'], 'purchase_attachments_file_idx');
 	}
 
-	private function createComprasOrdenes(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_ordenes')) {
+	private function createPurchasesOrdenes(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_orders')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_ordenes');
+		$table = $schema->createTable('purchase_orders');
 
-		$table->addColumn('id_orden', 'integer', [
+		$table->addColumn('id_order', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('folio_orden', 'string', ['length' => 64, 'notnull' => true]);
-		$table->addColumn('id_proveedor', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('monto_total', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
-		$table->addColumn('moneda', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
-		$table->addColumn('estado', 'string', ['length' => 64, 'notnull' => true, 'default' => 'generada']);
-		$table->addColumn('archivo_file_id', 'integer', ['unsigned' => true, 'notnull' => false]);
-		$table->addColumn('archivo_nombre', 'string', ['length' => 255, 'notnull' => false]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('reference_order', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('id_supplier', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('amount_total', 'decimal', ['precision' => 12, 'scale' => 2, 'notnull' => false]);
+		$table->addColumn('currency', 'string', ['length' => 3, 'notnull' => true, 'default' => 'MXN']);
+		$table->addColumn('status', 'string', ['length' => 64, 'notnull' => true, 'default' => 'generada']);
+		$table->addColumn('attached_file_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('file_name', 'string', ['length' => 255, 'notnull' => false]);
 		$table->addColumn('created_by', 'string', ['length' => 64, 'notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_orden']);
-		$table->addUniqueIndex(['folio_orden'], 'comp_ord_folio_uq');
-		$table->addIndex(['id_solicitud'], 'comp_ord_sol_idx');
-		$table->addIndex(['id_proveedor'], 'comp_ord_prov_idx');
-		$table->addIndex(['estado'], 'comp_ord_estado_idx');
-		$table->addIndex(['archivo_file_id'], 'comp_ord_file_idx');
+		$table->setPrimaryKey(['id_order']);
+		$table->addUniqueIndex(['reference_order'], 'purchase_orders_reference_uq');
+		$table->addIndex(['id_request'], 'purchase_orders_request_idx');
+		$table->addIndex(['id_supplier'], 'purchase_orders_supplier_idx');
+		$table->addIndex(['status'], 'purchase_orders_status_idx');
+		$table->addIndex(['attached_file_id'], 'purchase_orders_file_idx');
 	}
 
-	private function createComprasHistorial(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('emp_comp_historial')) {
+	private function createPurchasesHistory(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('purchase_history')) {
 			return;
 		}
 
-		$table = $schema->createTable('emp_comp_historial');
+		$table = $schema->createTable('purchase_history');
 
-		$table->addColumn('id_historial', 'integer', [
+		$table->addColumn('id_history', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_solicitud', 'integer', ['unsigned' => true, 'notnull' => true]);
-		$table->addColumn('accion', 'string', ['length' => 64, 'notnull' => true]);
-		$table->addColumn('estado_anterior', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('estado_nuevo', 'string', ['length' => 64, 'notnull' => false]);
-		$table->addColumn('comentario', 'text', ['notnull' => false]);
+		$table->addColumn('id_request', 'integer', ['unsigned' => true, 'notnull' => true]);
+		$table->addColumn('action', 'string', ['length' => 64, 'notnull' => true]);
+		$table->addColumn('status_previous', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('status_new', 'string', ['length' => 64, 'notnull' => false]);
+		$table->addColumn('comment', 'text', ['notnull' => false]);
 		$table->addColumn('metadata', 'text', ['notnull' => false]);
 		$table->addColumn('created_by', 'string', ['length' => 64, 'notnull' => false]);
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
-		$table->setPrimaryKey(['id_historial']);
-		$table->addIndex(['id_solicitud'], 'comp_hist_sol_idx');
-		$table->addIndex(['accion'], 'comp_hist_accion_idx');
-		$table->addIndex(['estado_nuevo'], 'comp_hist_estado_idx');
-		$table->addIndex(['created_at'], 'comp_hist_fecha_idx');
+		$table->setPrimaryKey(['id_history']);
+		$table->addIndex(['id_request'], 'purchase_history_request_idx');
+		$table->addIndex(['action'], 'purchase_history_action_idx');
+		$table->addIndex(['status_new'], 'purchase_history_status_idx');
+		$table->addIndex(['created_at'], 'purchase_history_date_idx');
 	}
 
-	private function insertConfig(string $nombre, ?string $data): bool {
+	private function insertConfig(string $name, ?string $data): bool {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Id_conf')
-			->from('empleados_conf')
+		$qb->select('settings_id')
+			->from('employee_settings')
 			->where($qb->expr()->eq(
-				'Nombre',
-				$qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR)
+				'name',
+				$qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)
 			))
 			->setMaxResults(1);
 
@@ -347,14 +347,14 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$qb = $this->db->getQueryBuilder();
 
 		$values = [
-			'Nombre' => $qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR),
+			'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
 		];
 
 		if ($data !== null) {
-			$values['Data'] = $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR);
+			$values['data'] = $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR);
 		}
 
-		$qb->insert('empleados_conf')
+		$qb->insert('employee_settings')
 			->values($values);
 
 		if (method_exists($qb, 'executeStatement')) {

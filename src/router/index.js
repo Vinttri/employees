@@ -2,24 +2,24 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { generateUrl } from '@nextcloud/router'
 
-import Employees from '../views/components/ListaEmpleados/Employees.vue'
-import Calendario from '../views/components/TiempoLibre/TiempoLibre.vue'
-import Equipos from '../views/components/Equipos/Equipos.vue'
-import Puestos from '../views/components/puestos/Puestos.vue'
+import Employees from '../views/components/EmployeeList/Employees.vue'
+import Calendar from '../views/components/TimeOff/TimeOff.vue'
+import Teams from '../views/components/Teams/Teams.vue'
+import Positions from '../views/components/positions/Positions.vue'
 import Areas from '../views/components/areas/Areas.vue'
-import Ahorros from '../views/components/ahorros/Solicitar.vue'
-import PanelAhorros from '../views/components/ahorros/PanelAhorros.vue'
+import SavingsRequest from '../views/components/savings/Request.vue'
+import SavingsPanel from '../views/components/savings/SavingsPanel.vue'
 import Dashboard from '../views/components/Dashboard/Dashboard.vue'
-import CompaniesGroups from '../views/components/clientes/CompaniesGroups.vue'
-import Actividades from '../views/components/clientes/Actividades.vue'
-import Costos from '../views/components/costos/Costos.vue'
+import CompaniesGroups from '../views/components/clients/CompaniesGroups.vue'
+import Activities from '../views/components/clients/Activities.vue'
+import Costs from '../views/components/costs/Costs.vue'
 import Reports from '../views/components/reports/Reports.vue'
-import Adminreports from '../views/components/reports/admin/Adminreports.vue'
-import Ejemplo from '../views/components/ejemplo/Ejemplo.vue'
+import AdminReports from '../views/components/reports/admin/AdminReports.vue'
+import Example from '../views/components/example/Example.vue'
 import QuickReport from '../views/components/reports/QuickReport.vue'
-import CumplimientoReportes from '../views/components/reports/CumplimientoReportes.vue'
-import Inventario from '../views/components/Inventario/Inventario.vue'
-import MisSolicitudesCompras from '../views/components/Compras/MisSolicitudes.vue'
+import ReportCompliance from '../views/components/reports/ReportCompliance.vue'
+import Inventory from '../views/components/Inventory/Inventory.vue'
+import MyRequestsPurchases from '../views/components/Purchases/MyRequests.vue'
 
 Vue.use(Router)
 
@@ -28,7 +28,7 @@ export default new Router({
 	linkActiveClass: 'active',
 	// if index.php is in the url AND we got this far, then it's working:
 	// let's keep using index.php in the url
-	base: generateUrl('/apps/empleados', ''),
+	base: generateUrl('/apps/employees', ''),
 	routes: [
 		{
 			path: '/',
@@ -36,14 +36,14 @@ export default new Router({
 			name: 'Home',
 		},
 		{
-			path: '/Empleados',
+			path: '/employees',
 			component: Employees,
-			name: 'Empleados',
+			name: 'Employees',
 		},
 		{
-			path: '/Puestos',
-			component: Puestos,
-			name: 'Puestos',
+			path: '/Positions',
+			component: Positions,
+			name: 'Positions',
 		},
 		{
 			path: '/Areas',
@@ -51,28 +51,28 @@ export default new Router({
 			name: 'Areas',
 		},
 		{
-			path: '/Equipos',
-			component: Equipos,
-			name: 'Equipos',
+			path: '/Teams',
+			component: Teams,
+			name: 'Teams',
 		},
 		{
-			path: '/Calendario',
-			component: Calendario,
-			name: 'Calendario',
+			path: '/calendar',
+			component: Calendar,
+			name: 'Calendar',
 		},
 		{
-			path: '/Solicitar',
-			component: Ahorros,
-			name: 'Ahorros',
+			path: '/Request',
+			component: SavingsRequest,
+			name: 'SavingsRequest',
 		},
 		{
-			path: '/PanelAhorros',
-			component: PanelAhorros,
-			name: 'PanelAhorros',
+			path: '/SavingsPanel',
+			component: SavingsPanel,
+			name: 'SavingsPanel',
 		},
 		{
 			path: '/Activities',
-			component: Actividades,
+			component: Activities,
 			name: 'Activities',
 		},
 		{
@@ -82,7 +82,7 @@ export default new Router({
 		},
 		{
 			path: '/Costs',
-			component: Costos,
+			component: Costs,
 			name: 'Costs',
 		},
 		{
@@ -91,14 +91,14 @@ export default new Router({
 			name: 'Reports',
 		},
 		{
-			path: '/Adminreports',
-			component: Adminreports,
-			name: 'Adminreports',
+			path: '/AdminReports',
+			component: AdminReports,
+			name: 'AdminReports',
 		},
 		{
-			path: '/ejemplo', // Nueva ruta
-			component: Ejemplo, // Asumiendo que el componente se llama Sidenavitaion.vue
-			name: 'ejemplo',
+			path: '/example',
+			component: Example,
+			name: 'Example',
 		},
 		{
 			path: '/quick-report',
@@ -106,34 +106,34 @@ export default new Router({
 			component: QuickReport,
 		},
 		{
-			path: '/cumplimiento-reportes',
-			name: 'cumplimiento-reportes',
-			component: CumplimientoReportes,
+			path: '/report-compliance',
+			name: 'report-compliance',
+			component: ReportCompliance,
 		},
 		{
-			path: '/Inventario',
-			component: Inventario,
-			name: 'Inventario',
+			path: '/Inventory',
+			component: Inventory,
+			name: 'Inventory',
 		},
 		{
-			path: '/Inventario/Mantenimientos',
-			name: 'Mantenimientos',
-			component: () => import('../views/components/Inventario/Mantenimientos/MantenimientosView.vue'),
+			path: '/Inventory/Maintenance',
+			name: 'Maintenance',
+			component: () => import('../views/components/Inventory/Maintenance/MaintenanceView.vue'),
 		},
 		{
-			path: '/Inventario/Mantenimientos/Grupos/:id',
-			name: 'MantenimientoGrupo',
-			component: () => import('../views/components/Inventario/Mantenimientos/MantenimientoGrupoDetail.vue'),
+			path: '/Inventory/Maintenance/Grupos/:id',
+			name: 'MaintenanceGroup',
+			component: () => import('../views/components/Inventory/Maintenance/MaintenanceGroupDetails.vue'),
 		},
 		{
-			path: '/Inventario/Mantenimientos/:id',
-			name: 'MantenimientoDetalle',
-			component: () => import('../views/components/Inventario/Mantenimientos/MantenimientoDetail.vue'),
+			path: '/Inventory/Maintenance/:id',
+			name: 'MaintenanceDetalle',
+			component: () => import('../views/components/Inventory/Maintenance/MaintenanceDetail.vue'),
 		},
 		{
-			path: '/compras',
-			name: 'compras',
-			component: MisSolicitudesCompras,
+			path: '/purchases',
+			name: 'purchases',
+			component: MyRequestsPurchases,
 		},
 	],
 })

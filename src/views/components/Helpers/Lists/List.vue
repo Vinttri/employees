@@ -1,6 +1,6 @@
 <template id="List">
 	<NcAppContent v-if="loading" name="Loading">
-		<NcEmptyContent class="empty-content" :name="t('empleados', 'Loading')">
+		<NcEmptyContent class="empty-content" :name="t('employees', 'Loading')">
 			<template #icon>
 				<NcLoadingIcon :size="20" />
 			</template>
@@ -28,7 +28,7 @@
 				<div v-else-if="custom == false && Object.keys(select).length == 0">
 					<div class="emptycontent">
 						<DatabaseSearchOutline :size="60" />
-						<h2>{{ t('empleados', 'Select something') }}</h2>
+						<h2>{{ t('employees', 'Select something') }}</h2>
 					</div>
 				</div>
 				<div v-else>
@@ -58,7 +58,7 @@
 										<template #icon>
 											<AccountEdit :size="20" />
 										</template>
-										{{ t('empleados', 'Enable editing') }}
+										{{ t('employees', 'Enable editing') }}
 									</NcActionButton>
 									<NcActionSeparator />
 									<NcActionButton
@@ -67,12 +67,12 @@
 										<template #icon>
 											<DeleteAlert :size="20" />
 										</template>
-										{{ t('empleados', 'Delete') }}
+										{{ t('employees', 'Delete') }}
 									</NcActionButton>
 									<NcDialog
 										:open.sync="showDialog"
-										:name="t('empleados', 'Confirm')"
-										:message="t('empleados', 'Do you want to delete this item?')"
+										:name="t('employees', 'Confirm')"
+										:message="t('employees', 'Do you want to delete this item?')"
 										:buttons="buttons" />
 								</NcActions>
 							</div>
@@ -165,11 +165,11 @@ export default {
 		buttons() {
 			return [
 				{
-					label: this.t('empleados', 'Cancelar'),
+					label: this.t('employees', 'Cancelar'),
 					callback: () => { this.lastResponse = 'Pressed "Cancel"' },
 				},
 				{
-					label: this.t('empleados', 'Eliminar'),
+					label: this.t('employees', 'Eliminar'),
 					type: 'primary',
 					callback: () => { this.delete() },
 				},

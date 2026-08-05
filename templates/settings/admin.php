@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use OCA\Empleados\AppInfo\Application;
+use OCA\Employees\AppInfo\Application;
 
-script(Application::APP_ID, 'empleados-settings');
+script(Application::APP_ID, 'employees-settings');
 ?>
 
 <div id="admin"></div>

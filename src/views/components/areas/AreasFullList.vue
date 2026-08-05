@@ -4,25 +4,25 @@
 			<div class="search-contacts-field">
 				<div class="container-search">
 					<div class="input-container">
-						<input v-model="query" type="text" :placeholder="t('empleados', 'Search Areas/Departament...')">
+						<input v-model="query" type="text" :placeholder="t('employees', 'Search Areas/Departament...')">
 					</div>
 					<div class="filters-container">
 						<NcButton
 							class="filter-icon-button"
 							type="tertiary"
-							:title="t('empleados', 'Filters')"
+							:title="t('employees', 'Filters')"
 							@click.stop="toggleFilters">
 							<template #icon>
 								<FilterVariant :size="20" />
 							</template>
-							{{ t('empleados') }}
+							{{ t('employees') }}
 							<span v-if="hideEmpty" class="filter-badge">1</span>
 						</NcButton>
 
 						<div v-if="showFilters" class="filter-dropdown" @click.stop>
 							<div class="filter-section">
 								<p class="filter-section-label">
-									{{ t('empleados', 'Sort') }}
+									{{ t('employees', 'Sort') }}
 								</p>
 								<select v-model="sortOrder">
 									<option value="asc">
@@ -39,7 +39,7 @@
 							<div class="filter-section">
 								<label>
 									<input v-model="hideEmpty" type="checkbox">
-									{{ t('empleados', 'Hide empty') }}
+									{{ t('employees', 'Hide empty') }}
 								</label>
 							</div>
 						</div>
@@ -50,18 +50,18 @@
 								<Cog :size="20" />
 							</template>
 
-							<NcActionButton @click="AgregarNuevo()">
+							<NcActionButton @click="AgregarNew()">
 								<template #icon>
 									<AccountMultiplePlusOutline :size="20" />
 								</template>
-								{{ t('empleados', 'Add new department') }}
+								{{ t('employees', 'Add new department') }}
 							</NcActionButton>
 
 							<NcActionButton @click="Exportar()">
 								<template #icon>
 									<DatabaseExport :size="20" />
 								</template>
-								{{ t('empleados', 'Export list') }}
+								{{ t('employees', 'Export list') }}
 							</NcActionButton>
 
 							<NcActionSeparator />
@@ -70,7 +70,7 @@
 								<template #icon>
 									<Upload :size="20" />
 								</template>
-								{{ t('empleados', 'Import data from template') }}
+								{{ t('employees', 'Import data from template') }}
 							</NcActionButton>
 						</NcActions>
 					</div>
@@ -81,7 +81,7 @@
 		<VirtualList
 			ref="scroller"
 			class="contacts-list"
-			data-key="Id_departamento"
+			data-key="id_department"
 			:data-sources="filteredList"
 			:data-component="AreasListItem"
 			:estimate-size="60"
@@ -97,25 +97,25 @@
 		<NcModal
 			v-if="modal"
 			ref="modalRef"
-			:name="t('empleados', 'Add new department')"
+			:name="t('employees', 'Add new department')"
 			@close="closeModal">
 			<div class="modal__content">
 				<div class="form-group center">
 					<NcTextField
 						required
 						:value.sync="nombre_area"
-						:label="t('empleados', 'Area / Department name')" />
+						:label="t('employees', 'Area / Department name')" />
 					<NcSelect
 						v-model="padre"
-						:input-label="t('empleados', 'Parent area / department')"
+						:input-label="t('employees', 'Parent area / department')"
 						:options="options" />
 					<br>
 					<NcButton
 						class="center"
-						:aria-label="t('empleados', 'Save changes')"
+						:aria-label="t('employees', 'Save changes')"
 						type="primary"
 						@click="crearArea()">
-						{{ t('empleados', 'Save changes') }}
+						{{ t('employees', 'Save changes') }}
 					</NcButton>
 				</div>
 			</div>
@@ -193,20 +193,20 @@ export default {
 
 	computed: {
 		filteredList() {
-			let areas = this.contacts.filter(item => this.matchSearch(item.Nombre))
+			let areas = this.contacts.filter(item => this.matchSearch(item.name))
 
 			if (this.hideEmpty) {
 				areas = areas.filter(
-					item => Number(item.cantidad_empleados) > 0,
+					item => Number(item.employee_count) > 0,
 				)
 			}
 
 			areas.sort((a, b) => {
 				if (this.sortOrder === 'asc') {
-					return a.Nombre.localeCompare(b.Nombre)
+					return a.name.localeCompare(b.name)
 				}
 
-				return b.Nombre.localeCompare(a.Nombre)
+				return b.name.localeCompare(a.name)
 			})
 
 			return areas
@@ -240,28 +240,28 @@ export default {
 		// Exponer i18n a la plantilla
 		t,
 
-		matchSearch(nombre) {
+		matchSearch(name) {
 			if (this.query.trim() !== '') {
-				return nombre.toString().toLowerCase().includes(this.query.trim().toLowerCase())
+				return name.toString().toLowerCase().includes(this.query.trim().toLowerCase())
 			}
 			return true
 		},
 
 		async getallsAreas() {
 			try {
-				await axios.get(generateUrl('/apps/empleados/GetAreasFix'))
+				await axios.get(generateUrl('/apps/employees/GetAreasFix'))
 					.then(
 						(response) => { this.options = response?.data?.ocs?.data },
 						(err) => { showError(err) },
 					)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
 			}
 		},
 
 		Exportar() {
 			this.toggle()
-			axios.get(generateUrl('/apps/empleados/ExportListAreas'), { responseType: 'blob' })
+			axios.get(generateUrl('/apps/employees/ExportListAreas'), { responseType: 'blob' })
 				.then(
 					(response) => {
 						const url = URL.createObjectURL(new Blob([response.data], {
@@ -274,7 +274,7 @@ export default {
 						link.click()
 					},
 					(err) => {
-						showError(t('empleados', 'Se ha producido un error {error}, reporte al administrador', { error: String(err) }))
+						showError(t('employees', 'Se ha producido un error {error}, reporte al administrador', { error: String(err) }))
 					},
 				)
 		},
@@ -284,23 +284,23 @@ export default {
 			const formData = new FormData()
 			formData.append('AreafileXLSX', this.$refs.file.files[0])
 			try {
-				await axios.post(generateUrl('/apps/empleados/ImportListAreas'), formData, {
+				await axios.post(generateUrl('/apps/employees/ImportListAreas'), formData, {
 					headers: { 'Content-Type': 'multipart/form-data' },
 				}).then(
 					() => {
 						this.$root.$emit('getall')
 						this.$root.$emit('reload')
 						this.$root.$emit('send-data-areas', [])
-						showSuccess(t('empleados', 'Se actualizó la base de datos exitosamente'))
+						showSuccess(t('employees', 'Se actualizó la base de datos exitosamente'))
 					},
 					(err) => { showError(err) },
 				)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
 			}
 		},
 
-		AgregarNuevo() {
+		AgregarNew() {
 			this.toggle()
 			this.modal = true
 		},
@@ -320,16 +320,16 @@ export default {
 		async crearArea() {
 			const padreValor = (this.padre && this.padre.label) ? this.padre.label : ''
 			if (this.nombre_area.trim() === '') {
-				showError(t('empleados', 'The area/department name cannot be empty.'))
+				showError(t('employees', 'The area/department name cannot be empty.'))
 				return
 			}
 			try {
-				await axios.post(generateUrl('/apps/empleados/crearArea'), {
+				await axios.post(generateUrl('/apps/employees/crearArea'), {
 					padre: padreValor,
-					nombre: this.nombre_area,
+					name: this.nombre_area,
 				}).then(
 					() => {
-						showSuccess(t('empleados', 'Área creada exitosamente'))
+						showSuccess(t('employees', 'Área creada exitosamente'))
 						this.$root.$emit('reload')
 						this.nombre_area = ''
 						this.padre = null
@@ -338,7 +338,7 @@ export default {
 					(err) => { showError(err) },
 				)
 			} catch (err) {
-				showError(t('empleados', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
 			}
 		},
 	},

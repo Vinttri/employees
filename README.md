@@ -23,7 +23,7 @@
 
 Before using this module, please visit the project wiki:
 
-[Employees Module Wiki](https://github.com/Destripador/empleados/wiki)
+[Employees Module Wiki](https://github.com/Destripador/employees/wiki)
 
 ---
 
@@ -188,12 +188,12 @@ Visit the latest release and download the `.tar.gz` file.
 
 ### 2. Extract and install
 
-Place the extracted `empleados` folder into your Nextcloud `custom_apps` directory.
+Place the extracted `employees` folder into your Nextcloud `custom_apps` directory.
 
 Example:
 
 ```bash
-/path/to/nextcloud/custom_apps/empleados
+/path/to/nextcloud/custom_apps/Employee
 ```
 
 ### 3. Enable the app
@@ -201,7 +201,7 @@ Example:
 From your Nextcloud installation, run:
 
 ```bash
-php occ app:enable empleados
+php occ app:enable Employee
 ```
 
 ### 4. Run migrations if needed
@@ -209,7 +209,7 @@ php occ app:enable empleados
 If your Nextcloud installation is in developer mode or requires manual migration execution, run the corresponding migration command:
 
 ```bash
-php occ migrations:execute empleados <version>
+php occ migrations:execute Employee <version>
 ```
 
 Replace `<version>` with the required migration version.

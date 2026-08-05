@@ -9,8 +9,8 @@ webpackConfig.entry = {
 		filename: 'main.js',
 	},
 	settings: path.join(__dirname, 'src', 'settings.js'),
-	'dashboard-reportes': path.join(__dirname, 'src', 'dashboard-reportes.js'),
-	'dashboard-soporte': path.join(__dirname, 'src', 'dashboard-soporte.js'),
+	'dashboard-reports': path.join(__dirname, 'src', 'dashboard-reports.js'),
+	'dashboard-support': path.join(__dirname, 'src', 'dashboard-support.js'),
 }
 
 webpackConfig.plugins.push(

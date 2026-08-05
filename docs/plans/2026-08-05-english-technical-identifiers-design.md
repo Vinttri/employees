@@ -2,7 +2,7 @@
 
 ## Decision
 
-Replace the empty `empleados` installation with a new Nextcloud application whose technical ID is
+Replace the empty `employees` installation with a new Nextcloud application whose technical ID is
 `employees`. The installed directory, application routes, PHP namespace, compiled asset prefixes,
 configuration scope and navigation ID all use `employees`. The localized user-facing name remains
 `Employees` in English and `Сотрудники` in Russian, selected by the current user's Nextcloud locale.
@@ -21,7 +21,7 @@ Spanish vocabulary.
 
 ## Verification
 
-A source contract rejects `empleados` as an app ID/path/namespace/asset prefix and rejects the
+A source contract rejects `employees` as an app ID/path/namespace/asset prefix and rejects the
 defined Spanish vocabulary in executable filenames, PHP declarations and physical database schema
 identifiers. PHP lint, Composer autoload validation, frontend lint/tests and a production build run
 before packaging. Deployment requires an atomic backup, Nextcloud install/upgrade success, an exact

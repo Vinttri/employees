@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,11 +16,11 @@ class Version2022Date20260715223340 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('prima_vacacional_pagos')) {
+		if ($schema->hasTable('vacation_bonus_payments')) {
 			return null;
 		}
 
-		$table = $schema->createTable('prima_vacacional_pagos');
+		$table = $schema->createTable('vacation_bonus_payments');
 
 		$table->addColumn('id', Types::INTEGER, [
 			'autoincrement' => true,
@@ -28,21 +28,21 @@ class Version2022Date20260715223340 extends SimpleMigrationStep {
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('id_empleado', Types::INTEGER, [
+		$table->addColumn('id_employee', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$table->addColumn('numero_aniversario', Types::INTEGER, [
+		$table->addColumn('number_anniversary', Types::INTEGER, [
 			'notnull' => true,
 		]);
 
-		$table->addColumn('fecha_pago', Types::STRING, [
+		$table->addColumn('date_payment', Types::STRING, [
 			'notnull' => true,
 			'length' => 10,
 		]);
 
-		$table->addColumn('dias_pagados', Types::DECIMAL, [
+		$table->addColumn('days_paid', Types::DECIMAL, [
 			'notnull' => true,
 			'precision' => 6,
 			'scale' => 2,
@@ -61,7 +61,7 @@ class Version2022Date20260715223340 extends SimpleMigrationStep {
 
 		$table->setPrimaryKey(['id']);
 
-		$table->addUniqueIndex(['id_empleado', 'numero_aniversario'], 'prima_pago_emp_aniv_uniq');
+		$table->addUniqueIndex(['id_employee', 'number_anniversary'], 'vacation_bonus_employee_anniversary_uq');
 
 		return $schema;
 	}

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Controller;
+namespace OCA\Employees\Controller;
 
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -19,13 +19,13 @@ class ApiController extends OCSController {
      *
      * @return DataResponse<Http::STATUS_OK, array{message: string}, array{}>
      *
-     * 200: Data returned
+     * 200: data returned
      */
     #[NoAdminRequired]
     #[ApiRoute(verb: 'GET', url: '/api')]
     public function index(): DataResponse {
         return new DataResponse(
-            ['message' => 'Hola mundo!']
+            ['message' => 'Hello world!']
         );
     }
 }

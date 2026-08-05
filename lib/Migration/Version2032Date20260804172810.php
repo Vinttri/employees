@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,15 +16,15 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('boarding_catalogo')) {
-			$schema->dropTable('boarding_catalogo');
+		if ($schema->hasTable('onboarding_catalog')) {
+			$schema->dropTable('onboarding_catalog');
 		}
 
-		if ($schema->hasTable('empleados_boarding')) {
-			$schema->dropTable('empleados_boarding');
+		if ($schema->hasTable('employee_onboarding')) {
+			$schema->dropTable('employee_onboarding');
 		}
 
-		$catalogoTable = $schema->createTable('boarding_catalogo');
+		$catalogoTable = $schema->createTable('onboarding_catalog');
 
 		$catalogoTable->addColumn('id_boarding', Types::INTEGER, [
 			'autoincrement' => true,
@@ -32,7 +32,7 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 			'unsigned' => true,
 		]);
 
-		$catalogoTable->addColumn('nombre', Types::STRING, [
+		$catalogoTable->addColumn('name', Types::STRING, [
 			'notnull' => true,
 			'length' => 255,
 		]);
@@ -46,15 +46,15 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 		$catalogoTable->setPrimaryKey(['id_boarding']);
 		$catalogoTable->addIndex(['on'], 'emp_board_cat_on_idx');
 
-		$pivoteTable = $schema->createTable('empleados_boarding');
+		$pivoteTable = $schema->createTable('employee_onboarding');
 
-		$pivoteTable->addColumn('id_empleado_boarding', Types::INTEGER, [
+		$pivoteTable->addColumn('id_employee_boarding', Types::INTEGER, [
 			'autoincrement' => true,
 			'notnull' => true,
 			'unsigned' => true,
 		]);
 
-		$pivoteTable->addColumn('id_empleado', Types::INTEGER, [
+		$pivoteTable->addColumn('id_employee', Types::INTEGER, [
 			'notnull' => true,
 			'unsigned' => true,
 		]);
@@ -64,7 +64,7 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 			'unsigned' => true,
 		]);
 
-		$pivoteTable->addColumn('nombre', Types::STRING, [
+		$pivoteTable->addColumn('name', Types::STRING, [
 			'notnull' => true,
 			'length' => 255,
 		]);
@@ -75,10 +75,10 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 			'default' => 0,
 		]);
 
-		$pivoteTable->setPrimaryKey(['id_empleado_boarding']);
+		$pivoteTable->setPrimaryKey(['id_employee_boarding']);
 
-		$pivoteTable->addUniqueIndex(['id_empleado', 'id_boarding'], 'emp_board_emp_item_uniq');
-		$pivoteTable->addIndex(['id_empleado'], 'emp_board_empleado_idx');
+		$pivoteTable->addUniqueIndex(['id_employee', 'id_boarding'], 'emp_board_emp_item_uniq');
+		$pivoteTable->addIndex(['id_employee'], 'employee_onboarding_employee_idx');
 		$pivoteTable->addIndex(['id_boarding'], 'emp_board_boarding_idx');
 
 		return $schema;

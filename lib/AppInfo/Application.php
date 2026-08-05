@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\AppInfo;
+namespace OCA\Employees\AppInfo;
 
-use OCA\Empleados\Command\SeedFestivosOficiales;
-use OCA\Empleados\Listener\MovimientoArchivoListener;
+use OCA\Employees\Command\SeedOfficialHolidays;
+use OCA\Employees\Listener\FileMovementListener;
 use OCP\IDBConnection;
-use OCA\Empleados\Cron\RecordatorioReportesTiempo;
-use OCA\Empleados\Cron\RecordatorioPrimaVacacional;
-use OCA\Empleados\BackgroundJob\RecalcularVacacionesJob;
-use OCA\Empleados\Service\AniversarioSyncService;
-use OCA\Empleados\Db\historialvacacionesMapper;
-use OCA\Empleados\BackgroundJob\RecalcularFestivosVariablesJob;
-use OCA\Empleados\Dashboard\ReportesWidget;
-use OCA\Empleados\Dashboard\SoporteEquipoWidget;
-use OCA\Empleados\Notification\ComprasNotifier;
-use OCA\Empleados\Notification\ReportesNotifier;
+use OCA\Employees\Cron\TimeReportsReminder;
+use OCA\Employees\Cron\VacationBonusReminder;
+use OCA\Employees\BackgroundJob\RecalculateVacationsJob;
+use OCA\Employees\Service\AnniversarySyncService;
+use OCA\Employees\Db\VacationHistoryMapper;
+use OCA\Employees\BackgroundJob\RecalculateVariableHolidaysJob;
+use OCA\Employees\Dashboard\ReportsWidget;
+use OCA\Employees\Dashboard\TeamSupportWidget;
+use OCA\Employees\Notification\PurchasesNotifier;
+use OCA\Employees\Notification\ReportsNotifier;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -29,7 +29,7 @@ use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
 
 class Application extends App implements IBootstrap {
-	public const APP_ID = 'empleados';
+	public const APP_ID = 'employees';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
@@ -42,46 +42,46 @@ class Application extends App implements IBootstrap {
 			require_once $autoloadPath;
 		}
 
-		$context->registerEventListener(NodeCreatedEvent::class, MovimientoArchivoListener::class);
-		$context->registerEventListener(NodeWrittenEvent::class, MovimientoArchivoListener::class);
-		$context->registerEventListener(NodeRenamedEvent::class, MovimientoArchivoListener::class);
-		$context->registerEventListener(NodeCopiedEvent::class, MovimientoArchivoListener::class);
-		$context->registerEventListener(NodeDeletedEvent::class, MovimientoArchivoListener::class);
+		$context->registerEventListener(NodeCreatedEvent::class, FileMovementListener::class);
+		$context->registerEventListener(NodeWrittenEvent::class, FileMovementListener::class);
+		$context->registerEventListener(NodeRenamedEvent::class, FileMovementListener::class);
+		$context->registerEventListener(NodeCopiedEvent::class, FileMovementListener::class);
+		$context->registerEventListener(NodeDeletedEvent::class, FileMovementListener::class);
 
-		$context->registerService(AniversarioSyncService::class, function($c) {
-			return new AniversarioSyncService(
-				$c->query(historialvacacionesMapper::class)
+		$context->registerService(AnniversarySyncService::class, function($c) {
+			return new AnniversarySyncService(
+				$c->query(VacationHistoryMapper::class)
 			);
 		});
 
-		$context->registerDashboardWidget(ReportesWidget::class);
-		$context->registerDashboardWidget(SoporteEquipoWidget::class);
-		$context->registerNotifierService(ReportesNotifier::class);
-		$context->registerNotifierService(ComprasNotifier::class);
-		$context->registerService(SeedFestivosOficiales::class, function($c) {
-			return new SeedFestivosOficiales(
+		$context->registerDashboardWidget(ReportsWidget::class);
+		$context->registerDashboardWidget(TeamSupportWidget::class);
+		$context->registerNotifierService(ReportsNotifier::class);
+		$context->registerNotifierService(PurchasesNotifier::class);
+		$context->registerService(SeedOfficialHolidays::class, function($c) {
+			return new SeedOfficialHolidays(
 				$c->query(IDBConnection::class),
-				$c->query(\OCA\Empleados\Db\festivosMapper::class)
+				$c->query(\OCA\Employees\Db\HolidayMapper::class)
 			);
 		});
 	}
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn(function(IJobList $jobList) {
-			if (!$jobList->has(RecordatorioReportesTiempo::class, null)) {
-				$jobList->add(RecordatorioReportesTiempo::class);
+			if (!$jobList->has(TimeReportsReminder::class, null)) {
+				$jobList->add(TimeReportsReminder::class);
 			}
 
-			if (!$jobList->has(RecalcularVacacionesJob::class, null)) {
-				$jobList->add(RecalcularVacacionesJob::class);
+			if (!$jobList->has(RecalculateVacationsJob::class, null)) {
+				$jobList->add(RecalculateVacationsJob::class);
 			}
 
-			if (!$jobList->has(RecalcularFestivosVariablesJob::class, null)) {
-				$jobList->add(RecalcularFestivosVariablesJob::class);
+			if (!$jobList->has(RecalculateVariableHolidaysJob::class, null)) {
+				$jobList->add(RecalculateVariableHolidaysJob::class);
 			}
 
-			if (!$jobList->has(RecordatorioPrimaVacacional::class, null)) {
-				$jobList->add(RecordatorioPrimaVacacional::class);
+			if (!$jobList->has(VacationBonusReminder::class, null)) {
+				$jobList->add(VacationBonusReminder::class);
 			}
 		});
 	}

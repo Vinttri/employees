@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -19,24 +19,24 @@ class Version2034Date20260804120000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
-		if (!$schema->hasTable('inv_mant_grupos') || !$schema->hasTable('inv_mantenimientos')) {
+		if (!$schema->hasTable('maintenance_groups') || !$schema->hasTable('maintenance_records')) {
 			return $schema;
 		}
 
-		$groups = $schema->getTable('inv_mant_grupos');
-		if (!$groups->hasColumn('fecha_inicio')) {
-			$groups->addColumn('fecha_inicio', 'date', ['notnull' => false]);
+		$groups = $schema->getTable('maintenance_groups');
+		if (!$groups->hasColumn('date_start')) {
+			$groups->addColumn('date_start', 'date', ['notnull' => false]);
 		}
-		if (!$groups->hasColumn('fecha_fin')) {
-			$groups->addColumn('fecha_fin', 'date', ['notnull' => false]);
+		if (!$groups->hasColumn('date_end')) {
+			$groups->addColumn('date_end', 'date', ['notnull' => false]);
 		}
-		if (!$groups->hasIndex('img_periodo_idx')) {
-			$groups->addIndex(['fecha_inicio', 'fecha_fin'], 'img_periodo_idx');
+		if (!$groups->hasIndex('maintenance_groups_period_idx')) {
+			$groups->addIndex(['date_start', 'date_end'], 'maintenance_groups_period_idx');
 		}
 
-		$maintenances = $schema->getTable('inv_mantenimientos');
-		if ($maintenances->hasColumn('fecha_programada')) {
-			$maintenances->getColumn('fecha_programada')->setNotnull(false);
+		$maintenances = $schema->getTable('maintenance_records');
+		if ($maintenances->hasColumn('date_scheduled')) {
+			$maintenances->getColumn('date_scheduled')->setNotnull(false);
 		}
 
 		return $schema;
@@ -46,11 +46,11 @@ class Version2034Date20260804120000 extends SimpleMigrationStep {
 		// Existing campaigns were single-day campaigns. If their historical date is
 		// unavailable we deliberately leave the new period nullable.
 		$qb = $this->db->getQueryBuilder();
-		$qb->update('inv_mant_grupos')
-			->set('fecha_inicio', 'fecha_programada')
-			->set('fecha_fin', 'fecha_programada')
-			->where($qb->expr()->isNull('fecha_inicio'))
-			->andWhere($qb->expr()->isNotNull('fecha_programada'))
+		$qb->update('maintenance_groups')
+			->set('date_start', 'date_scheduled')
+			->set('date_end', 'date_scheduled')
+			->where($qb->expr()->isNull('date_start'))
+			->andWhere($qb->expr()->isNotNull('date_scheduled'))
 			->executeStatement();
 	}
 }

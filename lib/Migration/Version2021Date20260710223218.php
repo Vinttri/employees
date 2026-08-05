@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -13,10 +13,10 @@ class Version2021Date20260710223218 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('historial_ausencias');
+		$table = $schema->getTable('absence_history');
 
-		if (!$table->hasColumn('a_capital_humano')) {
-			$table->addColumn('a_capital_humano', 'integer', [
+		if (!$table->hasColumn('can_access_human_resources')) {
+			$table->addColumn('can_access_human_resources', 'integer', [
 				'notnull' => true,
 				'default' => 0,
 			]);

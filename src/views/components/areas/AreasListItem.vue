@@ -1,17 +1,17 @@
 <template>
 	<div class="contacts-list__item-wrapper">
 		<ListItem
-			:key="source.Id_empleados"
+			:key="source.id_employees"
 			:compact="true"
 			class="list-item-style envelope"
-			:name="source.Nombre"
-			:counter-number="source.cantidad_empleados"
+			:name="source.name"
+			:counter-number="source.employee_count"
 			@click.prevent="showDetails(source)">
 			<template #name>
-				{{ source.Nombre }}
+				{{ source.name }}
 			</template>
-			<template v-if="source.Id_padre" #subname>
-				<small>{{ t('empleados', 'Parent area') }}: {{ source.Id_padre }}</small>
+			<template v-if="source.id_parent" #subname>
+				<small>{{ t('employees', 'Parent area') }}: {{ source.id_parent }}</small>
 			</template>
 		</ListItem>
 	</div>

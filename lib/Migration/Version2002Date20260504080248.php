@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -28,9 +28,9 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$this->createInventarioModelos($schema);
-		$this->createInventarioComputo($schema);
-		$this->createSoporteHistorial($schema);
+		$this->createInventoryModelos($schema);
+		$this->createInventoryComputo($schema);
+		$this->createSoporteHistory($schema);
 
 		return $schema;
 	}
@@ -41,41 +41,41 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 			'modulo_soporte' => 'false',
 		];
 
-		foreach ($configs as $nombre => $data) {
-			$created = $this->insertConfig($nombre, $data);
+		foreach ($configs as $name => $data) {
+			$created = $this->insertConfig($name, $data);
 
 			if ($created) {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' insertado.");
+				$output->info("Seed employee_settings.name='{$name}' insertado.");
 			} else {
-				$output->info("Seed empleados_conf.Nombre='{$nombre}' ya existía, omitido.");
+				$output->info("Seed employee_settings.name='{$name}' ya existía, omitido.");
 			}
 		}
 	}
 
-	private function createInventarioModelos(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inventario_modelos')) {
+	private function createInventoryModelos(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('inventory_models')) {
 			return;
 		}
 
-		$table = $schema->createTable('inventario_modelos');
+		$table = $schema->createTable('inventory_models');
 
-		$table->addColumn('id_modelo', 'integer', [
+		$table->addColumn('id_model', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('marca', 'string', [
+		$table->addColumn('brand', 'string', [
 			'notnull' => false,
 			'length' => 100,
 		]);
 
-		$table->addColumn('modelo', 'string', [
+		$table->addColumn('model', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
 
-		$table->addColumn('procesador', 'string', [
+		$table->addColumn('processor', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
@@ -85,12 +85,12 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 			'length' => 100,
 		]);
 
-		$table->addColumn('disco_duro', 'string', [
+		$table->addColumn('disk_drive', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
 
-		$table->addColumn('tipo', 'string', [
+		$table->addColumn('type', 'string', [
 			'notnull' => false,
 			'length' => 100,
 		]);
@@ -108,54 +108,54 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->setPrimaryKey(['id_modelo']);
-		$table->addIndex(['marca'], 'inv_modelos_marca');
-		$table->addIndex(['modelo'], 'inv_modelos_modelo');
-		$table->addIndex(['tipo'], 'inv_modelos_tipo');
+		$table->setPrimaryKey(['id_model']);
+		$table->addIndex(['brand'], 'inventory_models_brand_idx');
+		$table->addIndex(['model'], 'inventory_models_model_idx');
+		$table->addIndex(['type'], 'inventory_models_type_idx');
 	}
 
-	private function createInventarioComputo(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('inventario_computo')) {
+	private function createInventoryComputo(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('computer_inventory')) {
 			return;
 		}
 
-		$table = $schema->createTable('inventario_computo');
+		$table = $schema->createTable('computer_inventory');
 
-		$table->addColumn('id_equipo', 'integer', [
+		$table->addColumn('id_team', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('id_empleado', 'integer', [
+		$table->addColumn('id_employee', 'integer', [
 			'unsigned' => true,
 			'notnull' => false,
 		]);
 
-		$table->addColumn('id_modelo', 'integer', [
+		$table->addColumn('id_model', 'integer', [
 			'unsigned' => true,
 			'notnull' => false,
 		]);
 
-		$table->addColumn('nombre_dispositivo', 'string', [
+		$table->addColumn('device_name', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
 
-		$table->addColumn('nombre_sistema', 'string', [
+		$table->addColumn('system_name', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
 
-		$table->addColumn('numero_serie', 'string', [
+		$table->addColumn('serial_number', 'string', [
 			'notnull' => false,
 			'length' => 190,
 		]);
 
-		$table->addColumn('estado', 'string', [
+		$table->addColumn('status', 'string', [
 			'notnull' => false,
 			'length' => 80,
-			'default' => 'activo',
+			'default' => 'active',
 		]);
 
 		$table->addColumn('info', 'text', [
@@ -170,12 +170,12 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->setPrimaryKey(['id_equipo']);
+		$table->setPrimaryKey(['id_team']);
 
-		$table->addIndex(['id_empleado'], 'inv_comp_empleado');
-		$table->addIndex(['id_modelo'], 'inv_comp_modelo');
-		$table->addIndex(['numero_serie'], 'inv_comp_serie');
-		$table->addIndex(['estado'], 'inv_comp_estado');
+		$table->addIndex(['id_employee'], 'inventory_computers_employee_idx');
+		$table->addIndex(['id_model'], 'inventory_computers_model_idx');
+		$table->addIndex(['serial_number'], 'inventory_computers_serial_idx');
+		$table->addIndex(['status'], 'inventory_computers_status_idx');
 
 		/*
 		 * No agrego foreign keys todavía.
@@ -185,48 +185,48 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 		 * para evitar problemas en upgrades, instalaciones antiguas o datos heredados.
 		 *
 		 * Relaciones lógicas:
-		 * - inventario_computo.id_empleado → empleados.Id_empleados
-		 * - inventario_computo.id_modelo → inventario_modelos.id_modelo
+		 * - computer_inventory.id_employee → Employee.id_employees
+		 * - computer_inventory.id_model → inventory_models.id_model
 		 */
 	}
 
-	private function createSoporteHistorial(ISchemaWrapper $schema): void {
-		if ($schema->hasTable('soporte_historial')) {
+	private function createSoporteHistory(ISchemaWrapper $schema): void {
+		if ($schema->hasTable('support_history')) {
 			return;
 		}
 
-		$table = $schema->createTable('soporte_historial');
+		$table = $schema->createTable('support_history');
 
-		$table->addColumn('id_soporte', 'integer', [
+		$table->addColumn('id_support', 'integer', [
 			'autoincrement' => true,
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('id_equipo', 'integer', [
+		$table->addColumn('id_team', 'integer', [
 			'unsigned' => true,
 			'notnull' => true,
 		]);
 
-		$table->addColumn('accion', 'string', [
+		$table->addColumn('action', 'string', [
 			'notnull' => false,
 			'length' => 150,
 		]);
 
-		$table->addColumn('detalles', 'text', [
+		$table->addColumn('details', 'text', [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('fecha', 'datetime', [
+		$table->addColumn('date', 'datetime', [
 			'notnull' => false,
 		]);
 
-		$table->addColumn('usuario_actual', 'string', [
+		$table->addColumn('current_user', 'string', [
 			'notnull' => false,
 			'length' => 100,
 		]);
 
-		$table->addColumn('usuario_soporte', 'string', [
+		$table->addColumn('user_support', 'string', [
 			'notnull' => false,
 			'length' => 100,
 		]);
@@ -239,28 +239,28 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$table->setPrimaryKey(['id_soporte']);
+		$table->setPrimaryKey(['id_support']);
 
-		$table->addIndex(['id_equipo'], 'soporte_hist_equipo');
-		$table->addIndex(['accion'], 'soporte_hist_accion');
-		$table->addIndex(['fecha'], 'soporte_hist_fecha');
-		$table->addIndex(['usuario_actual'], 'soporte_hist_usuario');
-		$table->addIndex(['usuario_soporte'], 'soporte_hist_tecnico');
+		$table->addIndex(['id_team'], 'support_history_team_idx');
+		$table->addIndex(['action'], 'support_history_action_idx');
+		$table->addIndex(['date'], 'support_history_date_idx');
+		$table->addIndex(['current_user'], 'support_history_current_user_idx');
+		$table->addIndex(['user_support'], 'support_history_technician_idx');
 
 		/*
 		 * Relación lógica:
-		 * - soporte_historial.id_equipo → inventario_computo.id_equipo
+		 * - support_history.id_team → computer_inventory.id_team
 		 */
 	}
 
-	private function insertConfig(string $nombre, ?string $data): bool {
+	private function insertConfig(string $name, ?string $data): bool {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Id_conf')
-			->from('empleados_conf')
+		$qb->select('settings_id')
+			->from('employee_settings')
 			->where($qb->expr()->eq(
-				'Nombre',
-				$qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR)
+				'name',
+				$qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)
 			))
 			->setMaxResults(1);
 
@@ -275,11 +275,11 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 		$qb = $this->db->getQueryBuilder();
 
 		$values = [
-			'Nombre' => $qb->createNamedParameter($nombre, IQueryBuilder::PARAM_STR),
-			'Data' => $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR),
+			'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
+			'data' => $qb->createNamedParameter($data, IQueryBuilder::PARAM_STR),
 		];
 
-		$qb->insert('empleados_conf')
+		$qb->insert('employee_settings')
 			->values($values);
 
 		if (method_exists($qb, 'executeStatement')) {

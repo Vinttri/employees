@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -15,41 +15,41 @@ class Version2006Date20260511030746 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('emp_comp_solicitudes')) {
+		if (!$schema->hasTable('purchase_requests')) {
 			return null;
 		}
 
-		$table = $schema->getTable('emp_comp_solicitudes');
+		$table = $schema->getTable('purchase_requests');
 
-		if (!$table->hasColumn('firmado_file_id')) {
-			$table->addColumn('firmado_file_id', 'bigint', [
+		if (!$table->hasColumn('signed_file_id')) {
+			$table->addColumn('signed_file_id', 'bigint', [
 				'notnull' => false,
 				'unsigned' => true,
 			]);
 		}
 
-		if (!$table->hasColumn('firmado_nombre')) {
-			$table->addColumn('firmado_nombre', 'string', [
+		if (!$table->hasColumn('signed_name')) {
+			$table->addColumn('signed_name', 'string', [
 				'notnull' => false,
 				'length' => 255,
 			]);
 		}
 
-		if (!$table->hasColumn('firmado_mime')) {
-			$table->addColumn('firmado_mime', 'string', [
+		if (!$table->hasColumn('signed_mime')) {
+			$table->addColumn('signed_mime', 'string', [
 				'notnull' => false,
 				'length' => 120,
 			]);
 		}
 
-		if (!$table->hasColumn('firmado_subido_at')) {
-			$table->addColumn('firmado_subido_at', 'datetime', [
+		if (!$table->hasColumn('signed_uploaded_at')) {
+			$table->addColumn('signed_uploaded_at', 'datetime', [
 				'notnull' => false,
 			]);
 		}
 
-		if (!$table->hasColumn('firmado_subido_by')) {
-			$table->addColumn('firmado_subido_by', 'string', [
+		if (!$table->hasColumn('signed_uploaded_by')) {
+			$table->addColumn('signed_uploaded_by', 'string', [
 				'notnull' => false,
 				'length' => 64,
 			]);

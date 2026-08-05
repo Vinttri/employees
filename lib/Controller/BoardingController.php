@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\Empleados\Controller;
+namespace OCA\Employees\Controller;
 
-use OCA\Empleados\AppInfo\Application;
-use OCA\Empleados\Db\boardingMapper;
-use OCA\Empleados\Db\empleadosMapper;
-use OCA\Empleados\Db\configuracionesMapper;
+use OCA\Employees\AppInfo\Application;
+use OCA\Employees\Db\OnboardingItemMapper;
+use OCA\Employees\Db\EmployeeMapper;
+use OCA\Employees\Db\SettingsMapper;
 
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -20,15 +20,15 @@ use OCP\IGroupManager;
 
 class BoardingController extends BaseController {
 
-	protected boardingMapper $boardingMapper;
+	protected OnboardingItemMapper $OnboardingItemMapper;
 
 	public function __construct(
 		IRequest $request,
 		IUserSession $userSession,
 		IGroupManager $groupManager,
-		empleadosMapper $empleadosMapper,
-		configuracionesMapper $configuracionesMapper,
-		boardingMapper $boardingMapper
+		EmployeeMapper $EmployeeMapper,
+		SettingsMapper $SettingsMapper,
+		OnboardingItemMapper $OnboardingItemMapper
 	) {
 
 		parent::__construct(
@@ -36,11 +36,11 @@ class BoardingController extends BaseController {
 			$request,
 			$userSession,
 			$groupManager,
-			$empleadosMapper,
-			$configuracionesMapper
+			$EmployeeMapper,
+			$SettingsMapper
 		);
 
-		$this->boardingMapper = $boardingMapper;
+		$this->OnboardingItemMapper = $OnboardingItemMapper;
 	}
 
 	#[UseSession]
@@ -49,7 +49,7 @@ class BoardingController extends BaseController {
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
 		return new DataResponse(
-			$this->boardingMapper->findAll(),
+			$this->OnboardingItemMapper->findAll(),
 			Http::STATUS_OK
 		);
 	}
@@ -63,7 +63,7 @@ class BoardingController extends BaseController {
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
 		return new DataResponse(
-			$this->boardingMapper->findById($id_boarding),
+			$this->OnboardingItemMapper->findById($id_boarding),
 			Http::STATUS_OK
 		);
 	}
@@ -80,7 +80,7 @@ class BoardingController extends BaseController {
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
 		return new DataResponse(
-			$this->boardingMapper->findByOn($on),
+			$this->OnboardingItemMapper->findByOn($on),
 			Http::STATUS_OK
 		);
 	}
@@ -88,23 +88,23 @@ class BoardingController extends BaseController {
 	#[UseSession]
 	#[NoAdminRequired]
 	public function crearBoarding(
-		string $nombre,
+		string $name,
 		int $on
 	): DataResponse {
 
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
-		if ($this->boardingMapper->existeNombre($nombre, $on)) {
+		if ($this->OnboardingItemMapper->existeNombre($name, $on)) {
 			return new DataResponse(
 				[
 					'status' => 'error',
-					'message' => 'Ya existe un ítem con ese nombre para este tipo (on/off).'
+					'message' => 'Ya existe un ítem con ese name para este type (on/off).'
 				],
 				Http::STATUS_CONFLICT
 			);
 		}
 
-		$this->boardingMapper->createBoarding($nombre, $on);
+		$this->OnboardingItemMapper->createBoarding($name, $on);
 
 		return new DataResponse(
 			['status' => 'ok'],
@@ -116,13 +116,13 @@ class BoardingController extends BaseController {
 	#[NoAdminRequired]
 	public function modificarBoarding(
 		int $id_boarding,
-		string $nombre,
+		string $name,
 		int $on
 	): DataResponse {
 
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
-		$this->boardingMapper->updateBoarding($id_boarding, $nombre, $on);
+		$this->OnboardingItemMapper->updateBoarding($id_boarding, $name, $on);
 
 		return new DataResponse(
 			['status' => 'ok'],
@@ -138,7 +138,7 @@ class BoardingController extends BaseController {
 
 		$this->checkAccess(['admin', 'recursos_humanos']);
 
-		$this->boardingMapper->deleteById($id_boarding);
+		$this->OnboardingItemMapper->deleteById($id_boarding);
 
 		return new DataResponse(
 			['status' => 'ok'],

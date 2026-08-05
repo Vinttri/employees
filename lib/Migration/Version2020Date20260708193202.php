@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace OCA\Empleados\Migration;
+namespace OCA\Employees\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -12,10 +12,10 @@ class Version2020Date20260708193202 extends SimpleMigrationStep {
     public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
         /** @var ISchemaWrapper $schema */
         $schema = $schemaClosure();
-        $table = $schema->getTable('historial_vacaciones');
+        $table = $schema->getTable('vacation_history');
 
-        if (!$table->hasColumn('asignado_manualmente')) {
-            $table->addColumn('asignado_manualmente', 'smallint', [
+        if (!$table->hasColumn('manually_assigned')) {
+            $table->addColumn('manually_assigned', 'smallint', [
                 'notnull' => true,
                 'default' => 0,
             ]);

@@ -57,15 +57,15 @@ $info = (string)file_get_contents($root . '/appinfo/info.xml');
 if (!str_contains($info, '<name>Employees</name>')) {
 	$errors[] = 'info.xml app/navigation name is not Employees';
 }
-if (!str_contains($info, '<version>2.5.13</version>')) {
-	$errors[] = 'info.xml version is not 2.5.13';
+if (!str_contains($info, '<version>3.0.0</version>')) {
+	$errors[] = 'info.xml version is not 3.0.0';
 }
 
 foreach (['en', 'ru'] as $language) {
 	$runtimePath = $root . '/l10n/' . $language . '.js';
 	$runtime = is_file($runtimePath) ? (string)file_get_contents($runtimePath) : '';
 	if (!str_starts_with($runtime, 'OC.L10N.register(')
-		|| !str_contains($runtime, '"empleados"')) {
+		|| !str_contains($runtime, '"employees"')) {
 		$errors[] = "Missing Nextcloud runtime catalogue for {$language}";
 	}
 }
