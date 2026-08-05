@@ -10,14 +10,8 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-/** Aligns employee relation columns with their integer primary keys on PostgreSQL. */
-class Version2041Date20260805220000 extends SimpleMigrationStep {
-	private const RELATION_COLUMNS = [
-		'id_department',
-		'id_position',
-		'id_team',
-	];
-
+/** Keeps manager and partner relations as Nextcloud user UIDs. */
+class Version2042Date20260805230000 extends SimpleMigrationStep {
 	public function __construct(private IDBConnection $db) {
 	}
 
@@ -33,20 +27,15 @@ class Version2041Date20260805220000 extends SimpleMigrationStep {
 
 		$platform = $this->db->getDatabasePlatform();
 		$table = $platform->quoteIdentifier('*PREFIX*employees');
-		foreach (self::RELATION_COLUMNS as $columnName) {
+		foreach (['id_manager', 'id_partner'] as $columnName) {
 			$column = $platform->quoteIdentifier($columnName);
 			$this->db->executeStatement(sprintf(
-				'ALTER TABLE %s ALTER COLUMN %s DROP DEFAULT',
-				$table,
-				$column,
-			));
-			$this->db->executeStatement(sprintf(
-				"ALTER TABLE %s ALTER COLUMN %s TYPE INTEGER USING NULLIF(BTRIM(%s::text), '')::integer",
+				'ALTER TABLE %s ALTER COLUMN %s TYPE VARCHAR(64) USING %s::text',
 				$table,
 				$column,
 				$column,
 			));
-			$output->info("Aligned employees.{$columnName} with its integer relation");
+			$output->info("Restored employees.{$columnName} as a Nextcloud user UID");
 		}
 	}
 }

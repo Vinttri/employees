@@ -16,8 +16,8 @@ class Employee extends Entity {
 	protected string $contactEmail = '';
 	protected ?int $idDepartment = null;
 	protected ?int $idPosition = null;
-	protected ?int $idManager = null;
-	protected ?int $idPartner = null;
+	protected string $idManager = '';
+	protected string $idPartner = '';
 	protected string $fundCode = '';
 	protected string $savingsFund = '';
 	protected string $accountNumber = '';
@@ -48,8 +48,8 @@ class Employee extends Entity {
 		$this->addType('contactEmail', 'string');
 		$this->addType('idDepartment', 'integer');
 		$this->addType('idPosition', 'integer');
-		$this->addType('idManager', 'integer');
-		$this->addType('idPartner', 'integer');
+		$this->addType('idManager', 'string');
+		$this->addType('idPartner', 'string');
 		$this->addType('fundCode', 'string');
 		$this->addType('savingsFund', 'string');
 		$this->addType('accountNumber', 'string');
