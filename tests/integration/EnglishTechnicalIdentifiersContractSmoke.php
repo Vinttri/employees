@@ -92,6 +92,11 @@ foreach (['appinfo/routes.php', 'composer.json', 'package.json', 'webpack.js', '
 	}
 }
 
+$application = (string)file_get_contents($root . '/lib/AppInfo/Application.php');
+if (!str_contains($application, '!class_exists(\\Mpdf\\Mpdf::class)')) {
+	$failures[] = 'Composer bootstrap is not safe during side-by-side replacement';
+}
+
 foreach (['appinfo', 'lib', 'src', 'templates', 'tests'] as $sourceRoot) {
 	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $sourceRoot));
 	foreach ($iterator as $file) {

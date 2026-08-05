@@ -38,7 +38,10 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$autoloadPath = __DIR__ . '/../../vendor/autoload.php';
 
-		if (is_file($autoloadPath)) {
+		// During the one-release replacement window, the retired app can have
+		// already registered an equivalent dependency loader. Loading the same
+		// generated Composer class from a second path would be fatal.
+		if (!class_exists(\Mpdf\Mpdf::class) && is_file($autoloadPath)) {
 			require_once $autoloadPath;
 		}
 
