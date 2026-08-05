@@ -14,16 +14,16 @@ class Employee extends Entity {
 	protected string $numberEmployee = '';
 	protected string $hireDate = '';
 	protected string $contactEmail = '';
-	protected string $idDepartment = '';
-	protected string $idPosition = '';
-	protected string $idManager = '';
-	protected string $idPartner = '';
+	protected ?int $idDepartment = null;
+	protected ?int $idPosition = null;
+	protected ?int $idManager = null;
+	protected ?int $idPartner = null;
 	protected string $fundCode = '';
 	protected string $savingsFund = '';
 	protected string $accountNumber = '';
 	// Campo heredado pendiente de eliminación; no es la fuente official de asignaciones.
 	protected string $assignedTeam = '';
-	protected string $idTeam = '';
+	protected ?int $idTeam = null;
 	protected string $salary = '';
 	protected string $birthDate = '';
 	protected string $status = '';
@@ -54,7 +54,7 @@ class Employee extends Entity {
 		$this->addType('savingsFund', 'string');
 		$this->addType('accountNumber', 'string');
 		$this->addType('assignedTeam', 'string');
-		$this->addType('idTeam', 'string');
+		$this->addType('idTeam', 'integer');
 		$this->addType('salary', 'decimal');
 		$this->addType('birthDate', 'date');
 		$this->addType('status', 'string');

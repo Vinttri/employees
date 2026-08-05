@@ -101,11 +101,11 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('number_employee', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('hire_date', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('email_contact', 'string', ['notnull' => false, 'length' => 190]);
-		$table->addColumn('id_department', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('id_position', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('id_team', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('id_manager', 'string', ['notnull' => false, 'length' => 64]);
-		$table->addColumn('id_partner', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_department', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_position', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_team', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_manager', 'integer', ['unsigned' => true, 'notnull' => false]);
+		$table->addColumn('id_partner', 'integer', ['unsigned' => true, 'notnull' => false]);
 		$table->addColumn('fund_code', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('savings_fund', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('number_account', 'string', ['notnull' => false, 'length' => 64]);
