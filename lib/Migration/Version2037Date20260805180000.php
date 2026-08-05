@@ -49,9 +49,9 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 
 			$target = $this->db->getQueryBuilder();
 			$targetResult = $target->select(
-				'id_employee', 'uid_actor', 'type_event', 'file_id', 'storage_id',
-				'path_previous', 'path_actual', 'name_file', 'mime_type', 'size',
-				'is_folder', 'date_event', 'remote_addr', 'user_agent',
+				'id_employee', 'actor_uid', 'event_type', 'file_id', 'storage_id',
+				'previous_path', 'actual_path', 'file_name', 'mime_type', 'size',
+				'is_folder', 'event_date', 'remote_addr', 'user_agent',
 			)->from('employee_file_movements')->executeQuery();
 			$targetRows = $targetResult->fetchAll();
 			$targetResult->closeCursor();
@@ -72,17 +72,17 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 				$insert = $this->db->getQueryBuilder();
 				$insert->insert('employee_file_movements')->values([
 					'id_employee' => $insert->createNamedParameter($mapped['id_employee']),
-					'uid_actor' => $insert->createNamedParameter($mapped['uid_actor']),
-					'type_event' => $insert->createNamedParameter($mapped['type_event']),
+					'actor_uid' => $insert->createNamedParameter($mapped['actor_uid']),
+					'event_type' => $insert->createNamedParameter($mapped['event_type']),
 					'file_id' => $insert->createNamedParameter($mapped['file_id']),
 					'storage_id' => $insert->createNamedParameter($mapped['storage_id']),
-					'path_previous' => $insert->createNamedParameter($mapped['path_previous']),
-					'path_actual' => $insert->createNamedParameter($mapped['path_actual']),
-					'name_file' => $insert->createNamedParameter($mapped['name_file']),
+					'previous_path' => $insert->createNamedParameter($mapped['previous_path']),
+					'actual_path' => $insert->createNamedParameter($mapped['actual_path']),
+					'file_name' => $insert->createNamedParameter($mapped['file_name']),
 					'mime_type' => $insert->createNamedParameter($mapped['mime_type']),
 					'size' => $insert->createNamedParameter($mapped['size']),
 					'is_folder' => $insert->createNamedParameter((bool)$mapped['is_folder'], IQueryBuilder::PARAM_BOOL),
-					'date_event' => $insert->createNamedParameter($mapped['date_event']),
+					'event_date' => $insert->createNamedParameter($mapped['event_date']),
 					'remote_addr' => $insert->createNamedParameter($mapped['remote_addr']),
 					'user_agent' => $insert->createNamedParameter($mapped['user_agent']),
 				])->executeStatement();
@@ -100,17 +100,17 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 	private function mapLegacyRow(array $row): array {
 		return [
 			'id_employee' => $row['id_empleado'],
-			'uid_actor' => $row['uid_actor'],
-			'type_event' => $row['tipo_evento'],
+			'actor_uid' => $row['uid_actor'],
+			'event_type' => $row['tipo_evento'],
 			'file_id' => $row['file_id'],
 			'storage_id' => $row['storage_id'],
-			'path_previous' => $row['ruta_anterior'],
-			'path_actual' => $row['ruta_actual'],
-			'name_file' => $row['nombre_archivo'],
+			'previous_path' => $row['ruta_anterior'],
+			'actual_path' => $row['ruta_actual'],
+			'file_name' => $row['nombre_archivo'],
 			'mime_type' => $row['mime_type'],
 			'size' => $row['tamanio'],
 			'is_folder' => (bool)$row['es_carpeta'],
-			'date_event' => $row['fecha_evento'],
+			'event_date' => $row['fecha_evento'],
 			'remote_addr' => $row['remote_addr'],
 			'user_agent' => $row['user_agent'],
 		];
@@ -118,9 +118,9 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 
 	private function signature(array $row): string {
 		return hash('sha256', serialize([
-			$row['id_employee'], $row['uid_actor'], $row['type_event'], $row['file_id'],
-			$row['storage_id'], $row['path_previous'], $row['path_actual'], $row['name_file'],
-			$row['mime_type'], $row['size'], $row['is_folder'], $row['date_event'],
+			$row['id_employee'], $row['actor_uid'], $row['event_type'], $row['file_id'],
+			$row['storage_id'], $row['previous_path'], $row['actual_path'], $row['file_name'],
+			$row['mime_type'], $row['size'], $row['is_folder'], $row['event_date'],
 			$row['remote_addr'], $row['user_agent'],
 		]));
 	}

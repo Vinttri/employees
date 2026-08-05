@@ -18,7 +18,7 @@ class ReportsWidget implements IWidget, IIconWidget {
 	}
 
 	public function getId(): string {
-		return 'empleados_reportes';
+		return 'employees-reports';
 	}
 
 	public function getTitle(): string {

@@ -117,7 +117,7 @@ foreach (['appinfo', 'lib', 'src', 'templates', 'tests'] as $sourceRoot) {
 			continue;
 		}
 		$source = file_get_contents($file->getPathname());
-		if (preg_match('/\/apps\/(?:Employee|empleados)(?:\/|\$\{|[\'"`])|employees-soporte-equipo|OCA\\\\Empleados/', $source)) {
+		if (preg_match('/\/apps\/(?:Employee|empleados)(?:\/|\$\{|[\'"`])|employees-soporte-equipo|empleados_reportes|OCA\\\\Empleados/', $source)) {
 			$failures[] = "retired technical identity remains: {$relative}";
 		}
 	}

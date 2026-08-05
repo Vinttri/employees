@@ -57,8 +57,13 @@ $info = (string)file_get_contents($root . '/appinfo/info.xml');
 if (!str_contains($info, '<name>Employees</name>')) {
 	$errors[] = 'info.xml app/navigation name is not Employees';
 }
-if (!str_contains($info, '<version>3.0.0</version>')) {
-	$errors[] = 'info.xml version is not 3.0.0';
+if (!preg_match('/<version>([^<]+)<\/version>/', $info, $versionMatch)) {
+	$errors[] = 'info.xml version is missing';
+} else {
+	$package = json_decode((string)file_get_contents($root . '/package.json'), true, 512, JSON_THROW_ON_ERROR);
+	if (($package['version'] ?? null) !== $versionMatch[1]) {
+		$errors[] = 'info.xml and package.json versions differ';
+	}
 }
 
 foreach (['en', 'ru'] as $language) {

@@ -27,9 +27,9 @@ $installed = $db->createSchema();
 $table = $installed->getTable($prefix . 'employee_file_movements');
 
 $requiredColumns = [
-	'id', 'id_employee', 'uid_actor', 'type_event', 'file_id', 'storage_id',
-	'path_previous', 'path_actual', 'name_file', 'mime_type', 'size',
-	'is_folder', 'date_event', 'remote_addr', 'user_agent',
+	'id', 'id_employee', 'actor_uid', 'event_type', 'file_id', 'storage_id',
+	'previous_path', 'actual_path', 'file_name', 'mime_type', 'size',
+	'is_folder', 'event_date', 'remote_addr', 'user_agent',
 ];
 foreach ($requiredColumns as $column) {
 	assertFileMovement($table->hasColumn($column), 'existe columna ' . $column);

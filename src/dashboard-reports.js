@@ -6,7 +6,7 @@ const registerWidget = () => {
 		return
 	}
 
-	window.OCA.Dashboard.register('empleados_reportes', (el) => {
+	window.OCA.Dashboard.register('employees-reports', (el) => {
 		const View = Vue.extend(DashboardReportsWidget)
 		new View().$mount(el)
 	})
