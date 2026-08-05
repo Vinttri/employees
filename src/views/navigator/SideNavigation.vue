@@ -35,7 +35,7 @@
 					:name="t('employees', 'Human Resources')" />
 
 				<NcAppNavigationList :aria-labelledby="t('employees', 'Human Resources')">
-					<NcAppNavigationItem :name="t('employees', 'Employees')" :to="{ name: 'Empleados' }">
+					<NcAppNavigationItem :name="t('employees', 'Employees')" :to="{ name: 'Employees' }">
 						<template #icon>
 							<BadgeAccountAlert :size="20" />
 						</template>
@@ -127,7 +127,7 @@
 
 					<NcAppNavigationItem v-if="canSeeAdminReports"
 						:name="t('employees', 'Compliance tracking')"
-						:to="{ name: 'cumplimiento-reportes' }">
+						:to="{ name: 'report-compliance' }">
 						<template #icon>
 							<FileChartOutline :size="20" />
 						</template>
@@ -143,7 +143,7 @@
 					:name="t('employees', 'Savings')" />
 
 				<NcAppNavigationList :aria-labelledby="t('employees', 'Savings')">
-					<NcAppNavigationItem :name="t('employees', 'Request')" :to="{ name: 'Ahorros' }">
+					<NcAppNavigationItem :name="t('employees', 'Request')" :to="{ name: 'SavingsRequest' }">
 						<template #icon>
 							<FileSign :size="20" />
 						</template>
@@ -167,7 +167,7 @@
 					:name="t('employees', 'Working time')" />
 
 				<NcAppNavigationList :aria-labelledby="t('employees', 'Working time')">
-					<NcAppNavigationItem :name="t('employees', 'Calendar')" :to="{ name: 'Calendario' }">
+					<NcAppNavigationItem :name="t('employees', 'Calendar')" :to="{ name: 'Calendar' }">
 						<template #icon>
 							<CalendarBlank :size="20" />
 						</template>

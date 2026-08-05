@@ -17,7 +17,7 @@
 						<NcButton
 							v-if="isAdmin"
 							type="primary"
-							@click="go('Empleados')">
+							@click="go('Employees')">
 							<template #icon>
 								<BadgeAccountAlert :size="20" />
 							</template>
@@ -482,7 +482,7 @@ export default {
 			if (this.isAdmin) {
 				actions.push(
 					{
-						route: 'Empleados',
+						route: 'Employees',
 						title: t('employees', 'Employees'),
 						description: t('employees', 'Manage employee files'),
 						icon: BadgeAccountAlert,
@@ -519,7 +519,7 @@ export default {
 
 			if (this.absencesEnabled) {
 				actions.push({
-					route: 'Calendario',
+					route: 'Calendar',
 					title: t('employees', 'Calendar'),
 					description: t('employees', 'Vacations and absences'),
 					icon: CalendarBlank,
@@ -537,7 +537,7 @@ export default {
 
 			if (this.savingsEnabled) {
 				actions.push({
-					route: 'Ahorros',
+					route: 'SavingsRequest',
 					title: t('employees', 'Savings'),
 					description: t('employees', 'Savings requests'),
 					icon: Bank,

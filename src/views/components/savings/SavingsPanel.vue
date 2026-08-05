@@ -306,24 +306,24 @@ export default {
 		},
 
 		async gethistorial() {
-			let state
-			try {
-				state = (this.options_estado_values === t('employees', 'Pendientes')) ? '0' : '1'
-				const response = await axios.get(generateUrl('apps/employees/GetHistoryPanel/' + this.options_fechas_value + '/' + state))
-				if (response?.data?.ocs?.meta?.status !== 'ok') {
-					showError(response?.data?.ocs?.meta?.message)
-					this.loading = false
-					window.location.href = '/apps/employees/#/'
-					return
-				}
-				this.Empleados = response?.data?.ocs?.data.Empleados
-				this.loading = false
+			this.loading = true
 
-				this.historial = response?.data?.ocs?.data
-				this.loading = false
+			try {
+				const state = (this.options_estado_values === t('employees', 'Pendientes')) ? '0' : '1'
+				const response = await axios.get(generateUrl('/apps/employees/GetHistoryPanel/' + this.options_fechas_value + '/' + state))
+				const payload = response?.data?.ocs?.data ?? response?.data
+
+				if (!Array.isArray(payload)) {
+					throw new TypeError('GetHistoryPanel returned an invalid response')
+				}
+
+				this.historial = payload
 			} catch (e) {
 				console.error(e)
 				showError(t('employees', 'Could not fetch your information'))
+				this.historial = []
+			} finally {
+				this.loading = false
 			}
 		},
 
