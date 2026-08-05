@@ -365,7 +365,7 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 			'autoincrement' => true,
 			'notnull' => true,
 		]);
-		$table->addColumn('id_savings', 'string', ['notnull' => false, 'length' => 64]);
+		$table->addColumn('id_savings', 'integer', ['notnull' => false]);
 		$table->addColumn('quantity_requested', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('quantity_total', 'string', ['notnull' => false, 'length' => 64]);
 		$table->addColumn('date_request', 'string', ['notnull' => false, 'length' => 32]);
@@ -376,6 +376,13 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addIndex(['id_savings'], 'employees_hist_savings_id');
 		$table->addIndex(['status'], 'employees_savings_history_status_idx');
 		$table->addIndex(['date_request'], 'employees_savings_history_date_idx');
+		$table->addForeignKeyConstraint(
+			$schema->getTable('user_savings'),
+			['id_savings'],
+			['id_savings'],
+			['onDelete' => 'CASCADE'],
+			'employees_savings_history_savings_fk',
+		);
 	}
 
 	private function createCapitalHumano(ISchemaWrapper $schema): void {

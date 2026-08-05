@@ -867,7 +867,7 @@ final class RepairEmployeesTables implements IRepairStep {
                 $this->db->executeStatement(
 "CREATE TABLE `$phys` (
  `id_history` INT AUTO_INCREMENT NOT NULL,
- `id_savings` VARCHAR(255) NULL,
+ `id_savings` INT NULL,
  `quantity_requested` VARCHAR(255) NULL,
  `quantity_total` VARCHAR(255) NULL,
  `date_request` VARCHAR(255) NULL,
@@ -883,7 +883,7 @@ final class RepairEmployeesTables implements IRepairStep {
                 $this->db->executeStatement(
 "CREATE TABLE \"$phys\" (
  \"id_history\" SERIAL PRIMARY KEY,
- \"id_savings\" VARCHAR(255) NULL,
+ \"id_savings\" INTEGER NULL,
  \"quantity_requested\" VARCHAR(255) NULL,
  \"quantity_total\" VARCHAR(255) NULL,
  \"date_request\" VARCHAR(255) NULL,
@@ -898,7 +898,7 @@ final class RepairEmployeesTables implements IRepairStep {
                 $this->db->executeStatement(
 "CREATE TABLE \"$phys\" (
  \"id_history\" INTEGER PRIMARY KEY AUTOINCREMENT,
- \"id_savings\" TEXT NULL,
+ \"id_savings\" INTEGER NULL,
  \"quantity_requested\" TEXT NULL,
  \"quantity_total\" TEXT NULL,
  \"date_request\" TEXT NULL,

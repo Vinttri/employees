@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class SavingsHistoryMapper extends QBMapper {
@@ -17,7 +18,7 @@ class SavingsHistoryMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('id_savings', $qb->createNamedParameter($id_user)));
+			->where($qb->expr()->eq('id_savings', $qb->createNamedParameter((int)$id_user, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());
@@ -50,7 +51,7 @@ class SavingsHistoryMapper extends QBMapper {
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert($this->getTableName())
 			->values([
-				'id_savings' => $insert->createNamedParameter($id_savings),
+				'id_savings' => $insert->createNamedParameter($id_savings, IQueryBuilder::PARAM_INT),
 				'quantity_requested' => $insert->createNamedParameter($quantity_requested),
 				'quantity_total' => $insert->createNamedParameter($quantity_total),
 				'date_request' => $insert->createNamedParameter($nowTimestamp),
