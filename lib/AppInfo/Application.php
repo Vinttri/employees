@@ -17,6 +17,8 @@ use OCA\Employees\Dashboard\ReportsWidget;
 use OCA\Employees\Dashboard\TeamSupportWidget;
 use OCA\Employees\Notification\PurchasesNotifier;
 use OCA\Employees\Notification\ReportsNotifier;
+use OCA\Employees\Notification\AbsencesNotifier;
+use OCA\Employees\Calendar\EmployeeAbsenceCalendarProvider;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -61,6 +63,8 @@ class Application extends App implements IBootstrap {
 		$context->registerDashboardWidget(TeamSupportWidget::class);
 		$context->registerNotifierService(ReportsNotifier::class);
 		$context->registerNotifierService(PurchasesNotifier::class);
+		$context->registerNotifierService(AbsencesNotifier::class);
+		$context->registerCalendarProvider(EmployeeAbsenceCalendarProvider::class);
 		$context->registerService(SeedOfficialHolidays::class, function($c) {
 			return new SeedOfficialHolidays(
 				$c->query(IDBConnection::class),

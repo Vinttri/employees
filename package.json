@@ -1,6 +1,6 @@
 {
   "name": "employees",
-  "version": "3.0.16",
+  "version": "3.0.17",
   "license": "AGPL-3.0-or-later",
   "engines": {
     "node": "^20.0.0",

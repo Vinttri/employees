@@ -29,6 +29,42 @@ class DepartmentMapper extends QBMapper {
 		return $users;
 	}
 
+	public function findOrCreateByName(string $name): int {
+		$name = trim($name);
+		if ($name === '') {
+			throw new \InvalidArgumentException('Department name cannot be empty.');
+		}
+
+		$find = function () use ($name): ?int {
+			$qb = $this->db->getQueryBuilder();
+			$result = $qb->select('id_department')
+				->from($this->getTableName())
+				->where($qb->expr()->eq('name', $qb->createNamedParameter($name)))
+				->setMaxResults(1)
+				->executeQuery();
+			$id = $result->fetchOne();
+			$result->closeCursor();
+
+			return $id === false ? null : (int)$id;
+		};
+
+		$existing = $find();
+		if ($existing !== null) {
+			return $existing;
+		}
+
+		$qb = $this->db->getQueryBuilder();
+		$qb->insert($this->getTableName())->values([
+			'id_parent' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+			'name' => $qb->createNamedParameter($name),
+			'created_at' => $qb->createNamedParameter(date('Y-m-d')),
+			'updated_at' => $qb->createNamedParameter(date('Y-m-d')),
+		]);
+		$qb->executeStatement();
+
+		return $find() ?? throw new \RuntimeException("Department was not created: {$name}");
+	}
+
 	public function CheckExistAreas($id_departments): array {
 		$qb = $this->db->getQueryBuilder();
 

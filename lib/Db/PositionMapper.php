@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PositionMapper extends QBMapper {
@@ -26,6 +27,42 @@ class PositionMapper extends QBMapper {
         $result->closeCursor();
 
         return $users;
+    }
+
+    public function findOrCreateByName(string $name): int {
+        $name = trim($name);
+        if ($name === '') {
+            throw new \InvalidArgumentException('Position name cannot be empty.');
+        }
+
+        $find = function () use ($name): ?int {
+            $qb = $this->db->getQueryBuilder();
+            $result = $qb->select('id_positions')
+                ->from($this->getTableName())
+                ->where($qb->expr()->eq('name', $qb->createNamedParameter($name)))
+                ->setMaxResults(1)
+                ->executeQuery();
+            $id = $result->fetchOne();
+            $result->closeCursor();
+
+            return $id === false ? null : (int)$id;
+        };
+
+        $existing = $find();
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $qb = $this->db->getQueryBuilder();
+        $qb->insert($this->getTableName())->values([
+            'name' => $qb->createNamedParameter($name),
+            'level' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+            'created_at' => $qb->createNamedParameter(date('Y-m-d')),
+            'updated_at' => $qb->createNamedParameter(date('Y-m-d')),
+        ]);
+        $qb->executeStatement();
+
+        return $find() ?? throw new \RuntimeException("Position was not created: {$name}");
     }
 
     public function CheckExistPositions($id_departments): array {

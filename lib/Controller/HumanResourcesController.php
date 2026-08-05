@@ -89,7 +89,7 @@ class HumanResourcesController extends Controller {
 		// Actualizar los datos en la base de datos
 		$data = $this->HumanResourcesMapper->UpdateCapitalHumano($HumanResources);
 		$gestor = $this->SettingsMapper->GetGestor();
-		$folderPath = "/EMPLEADOS";
+		$folderPath = "/Employees_storage";
 
 		// Procesar usuarios insertados
 		foreach ($data['inserted'] as $userId) {

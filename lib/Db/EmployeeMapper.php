@@ -74,12 +74,66 @@ class EmployeeMapper extends QBMapper {
 		return $users;
 	}
 
+	/** @return array<string, mixed>|null */
+	public function findByUserId(string $uid): ?array {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id_user', $qb->createNamedParameter($uid)))
+			->setMaxResults(1)
+			->executeQuery();
+		$row = LegacyRowCompat::row($result->fetch());
+		$result->closeCursor();
+
+		return is_array($row) ? $row : null;
+	}
+
+	public function createBaseRecord(string $uid, ?string $contactEmail = null): int {
+		$timestamp = date('Y-m-d');
+		$qb = $this->db->getQueryBuilder();
+		$qb->insert($this->getTableName())->values([
+			'id_user' => $qb->createNamedParameter($uid),
+			'email_contact' => $qb->createNamedParameter($contactEmail),
+			'status' => $qb->createNamedParameter('1'),
+			'created_at' => $qb->createNamedParameter($timestamp),
+			'updated_at' => $qb->createNamedParameter($timestamp),
+		]);
+		$qb->executeStatement();
+
+		$record = $this->findByUserId($uid);
+		if ($record === null) {
+			throw new \RuntimeException("Employee record was not created for {$uid}.");
+		}
+
+		return (int)$record['id_employees'];
+	}
+
+	public function updateDirectoryProfile(
+		int $employeeId,
+		?string $contactEmail,
+		?int $departmentId,
+		?int $positionId,
+		?int $teamId,
+		?string $managerUid,
+	): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('email_contact', $qb->createNamedParameter($contactEmail))
+			->set('id_department', $qb->createNamedParameter($departmentId, IQueryBuilder::PARAM_INT))
+			->set('id_position', $qb->createNamedParameter($positionId, IQueryBuilder::PARAM_INT))
+			->set('id_team', $qb->createNamedParameter($teamId, IQueryBuilder::PARAM_INT))
+			->set('id_manager', $qb->createNamedParameter($managerUid))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d')))
+			->where($qb->expr()->eq('id_employees', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)));
+		$qb->executeStatement();
+	}
+
     public function GetUserLists(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.id_employees') // Solo traemos Employee sin duplicar
+		$qb->select('e.*', 'a.*', 'i.*', 'e.id_employees')
+			->selectAlias('e.id_user', 'employee_uid')
 			->from('employees', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->innerJoin('e', 'absences', 'a', $qb->expr()->eq('a.id_employee', 'e.id_employees'))
 			->innerJoin('e', 'user_savings', 'i', $qb->expr()->eq('i.id_user', 'e.id_employees'))
 			->where($qb->expr()->eq('e.status', $qb->createNamedParameter(1)));
@@ -111,10 +165,9 @@ class EmployeeMapper extends QBMapper {
 	public function GetUserListsDeactive(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
+		$qb->select('o.*')
 			->from($this->getTableName(), 'o')
-			->innerJoin('o', 'users', 'c', $qb->expr()->eq('uid', 'id_user'))
-			->where($qb->expr()->eq('status', $qb->createNamedParameter(0)));
+			->where($qb->expr()->eq('o.status', $qb->createNamedParameter(0)));
 		
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());

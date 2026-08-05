@@ -25,7 +25,7 @@ use OCP\Share\IShare;
 
 class PermissionsController extends BaseController {
 
-	private const EMPLOYEES_FOLDER = 'EMPLEADOS';
+	private const EMPLOYEES_FOLDER = 'Employees_storage';
 
 	private const EMPLOYEES_FOLDER_PERMISSIONS =
 		Constants::PERMISSION_READ
@@ -303,7 +303,7 @@ class PermissionsController extends BaseController {
 			)
 		) {
 			throw new \RuntimeException(
-				'La carpeta EMPLEADOS no existe en la cuenta del gestor.',
+				'The Employees_storage Team Folder is not available to the data manager.',
 			);
 		}
 

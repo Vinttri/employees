@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class AbsenceHistoryMapper extends QBMapper {
@@ -343,6 +344,50 @@ class AbsenceHistoryMapper extends QBMapper {
 			->andWhere($qb->expr()->neq('h.is_partner', $qb->createNamedParameter(2, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->neq('h.is_partner', $qb->createNamedParameter(3, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->neq('h.can_access_human_resources', $qb->createNamedParameter(2, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)));
+
+		$result = $qb->executeQuery();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
+		$result->closeCursor();
+
+		return $rows;
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	public function findApprovedForUser(
+		string $uid,
+		?\DateTimeInterface $rangeStart = null,
+		?\DateTimeInterface $rangeEnd = null,
+	): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select(
+			'h.absence_history_id',
+			'h.date_from',
+			'h.date_until',
+			'h.notes',
+			't.name AS type_name',
+		)
+			->from($this->getTableName(), 'h')
+			->innerJoin('h', 'absences', 'a', $qb->expr()->eq('h.absence_id', 'a.absence_id'))
+			->innerJoin('a', 'employees', 'e', $qb->expr()->eq('a.id_employee', 'e.id_employees'))
+			->innerJoin('h', 'absence_types', 't', $qb->expr()->eq('h.absence_type_id', 't.absence_type_id'))
+			->where($qb->expr()->eq('e.id_user', $qb->createNamedParameter($uid)))
+			->andWhere($qb->expr()->eq('h.is_manager', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('h.is_partner', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('h.can_access_human_resources', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->orderBy('h.date_from', 'ASC');
+
+		if ($rangeStart !== null) {
+			$qb->andWhere($qb->expr()->gte(
+				'h.date_until',
+				$qb->createNamedParameter($rangeStart->format('Y-m-d')),
+			));
+		}
+		if ($rangeEnd !== null) {
+			$qb->andWhere($qb->expr()->lte(
+				'h.date_from',
+				$qb->createNamedParameter($rangeEnd->format('Y-m-d')),
+			));
+		}
 
 		$result = $qb->executeQuery();
 		$rows = LegacyRowCompat::rows($result->fetchAll());

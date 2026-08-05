@@ -523,7 +523,7 @@ export default {
 		async initializeEmployeeFolder() {
 			const name = this.data.displayname?.trim() || this.data.uid
 			this.rootPath = this.normalizePath(
-				`${defaultRootPath}/EMPLEADOS/${this.data.uid} - ${name.toUpperCase()}`,
+				`${defaultRootPath}/Employees_storage/${this.data.uid} - ${name.toUpperCase()}`,
 			)
 			this.currentPath = this.rootPath
 			this.navigationStack = []

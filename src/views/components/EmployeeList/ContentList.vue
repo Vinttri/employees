@@ -12,6 +12,15 @@
 								<Cog :size="20" />
 							</template>
 
+							<NcActionButton @click="openEmployeeSetup">
+								<template #icon>
+									<AccountPlus :size="20" />
+								</template>
+								{{ t('employees', 'Add or import employees') }}
+							</NcActionButton>
+
+							<NcActionSeparator />
+
 							<NcActionButton @click="Exportar()">
 								<template #icon>
 									<DatabaseExport :size="20" />
@@ -68,6 +77,7 @@ import { translate as t } from '@nextcloud/l10n'
 import DatabaseExport from 'vue-material-design-icons/DatabaseExport.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
+import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 
 export default {
 	name: 'ContentList',
@@ -80,6 +90,7 @@ export default {
 		Cog,
 		Upload,
 		DatabaseExport,
+		AccountPlus,
 		NcActionSeparator,
 	},
 
@@ -115,6 +126,9 @@ export default {
 	methods: {
 		// expone t al template y métodos
 		t,
+		openEmployeeSetup() {
+			window.location.href = generateUrl('/settings/admin/employees')
+		},
 
 		matchSearch(displayname, uid) {
 			try {

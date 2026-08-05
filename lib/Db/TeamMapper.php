@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class TeamMapper extends QBMapper {
@@ -26,6 +27,36 @@ class TeamMapper extends QBMapper {
 		$result->closeCursor();
 
 		return $users;
+	}
+
+	public function findOrCreateByName(string $name): int {
+		$name = trim($name);
+		if ($name === '') {
+			throw new \InvalidArgumentException('Team name cannot be empty.');
+		}
+
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('id_team')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('name', $qb->createNamedParameter($name)))
+			->setMaxResults(1)
+			->executeQuery();
+		$id = $result->fetchOne();
+		$result->closeCursor();
+		if ($id !== false) {
+			return (int)$id;
+		}
+
+		$insert = $this->db->getQueryBuilder();
+		$insert->insert($this->getTableName())->values([
+			'team_leader_id' => $insert->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+			'name' => $insert->createNamedParameter($name),
+			'created_at' => $insert->createNamedParameter(date('Y-m-d')),
+			'updated_at' => $insert->createNamedParameter(date('Y-m-d')),
+		]);
+		$insert->executeStatement();
+
+		return $this->findOrCreateByName($name);
 	}
 
 	public function GetEquipoJefe($id): array {

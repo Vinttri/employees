@@ -196,12 +196,27 @@
 					<div class="tab-toolbar">
 						<div>
 							<h3>{{ t('employees', 'Users without employee record') }}</h3>
-							<p>{{ t('employees', 'Enable an employee record for existing Nextcloud users.') }}</p>
+							<p>{{ t('employees', 'Create employee records from existing Nextcloud users, then optionally fill organization data from Contacts.') }}</p>
 						</div>
 
 						<NcTextField class="tab-search"
 							:value.sync="pendingSearch"
 							:label="t('employees', 'Search pending users')" />
+					</div>
+
+					<NcNoteCard type="info" class="directory-help">
+						{{ t('employees', 'Creating an employee does not create a new Nextcloud account. Select an existing user below. Contacts are read only and are used only after your confirmation.') }}
+					</NcNoteCard>
+
+					<div class="directory-actions">
+						<NcButton @click="previewContactsOrganization()">
+							{{ t('employees', 'Preview Contacts organization data') }}
+						</NcButton>
+						<NcButton type="primary"
+							:disabled="selectedPendingUsers.length === 0 || loadingEmployees"
+							@click="createSelectedEmployees">
+							{{ t('employees', 'Import selected from Nextcloud') }} ({{ selectedPendingUsers.length }})
+						</NcButton>
 					</div>
 
 					<div v-if="loadingEmployees" class="loader-settings">
@@ -211,6 +226,7 @@
 						<div v-if="filteredUsuarios.length > 0" class="container list-container">
 							<table class="grid Employee-table">
 								<tr>
+									<th>{{ t('employees', 'Select') }}</th>
 									<th class="header__cell header__cell--avatar">
 										&nbsp;
 									</th>
@@ -221,6 +237,11 @@
 									<th>{{ t('employees', 'Options') }}</th>
 								</tr>
 								<tr v-for="item in filteredUsuarios" :key="item.uid" v-bind="$attrs">
+									<td>
+										<NcCheckboxRadioSwitch type="checkbox"
+											:checked="selectedPendingUsers.includes(item.uid)"
+											@update:checked="togglePendingUser(item.uid, $event)" />
+									</td>
 									<td class="row__cell row__cell--avatar">
 										<NcAvatar :user="item.uid"
 											:display-name="getUsuarioDisplayName(item)"
@@ -239,14 +260,14 @@
 										<code>{{ item.uid }}</code>
 									</td>
 									<td>
-										<NcActions>
-											<NcActionButton close-after-click @click="ActivarUser(getUsuarioIndex(item))">
-												<template #icon>
-													<Plus :size="20" />
-												</template>
-												{{ t('employees', 'Activate') }}
-											</NcActionButton>
-										</NcActions>
+										<div class="row-actions">
+											<NcButton @click="ActivarUser(getUsuarioIndex(item))">
+												{{ t('employees', 'Create employee record') }}
+											</NcButton>
+											<NcButton type="primary" @click="previewContactsOrganization(item.uid)">
+												{{ t('employees', 'Create and fill from Contacts') }}
+											</NcButton>
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -333,6 +354,52 @@
 			</div>
 		</NcModal>
 
+		<NcModal v-if="showContactsPreview"
+			size="large"
+			:name="t('employees', 'Contacts organization preview')"
+			@close="showContactsPreview = false">
+			<div class="contacts-preview-dialog">
+				<h2>{{ t('employees', 'Contacts organization preview') }}</h2>
+				<p>{{ t('employees', 'Review the values before creating or updating employee records. This operation never changes Contacts.') }}</p>
+				<div v-if="loadingContacts" class="permisos-loader">
+					<NcLoadingIcon :size="44" />
+				</div>
+				<table v-else class="grid contacts-preview-table">
+					<tr>
+						<th>{{ t('employees', 'Select') }}</th>
+						<th>{{ t('employees', 'Employee') }}</th>
+						<th>{{ t('employees', 'Department') }}</th>
+						<th>{{ t('employees', 'Position') }}</th>
+						<th>{{ t('employees', 'Team') }}</th>
+						<th>{{ t('employees', 'Manager') }}</th>
+					</tr>
+					<tr v-for="contact in contactsPreview" :key="contact.uid">
+						<td>
+							<NcCheckboxRadioSwitch type="checkbox"
+								:checked="selectedContacts.includes(contact.uid)"
+								:disabled="!contact.importable"
+								@update:checked="toggleContact(contact.uid, $event)" />
+						</td>
+						<td><strong>{{ contact.display_name }}</strong><br><code>{{ contact.uid }}</code></td>
+						<td>{{ contact.department || '—' }}</td>
+						<td>{{ contact.position || '—' }}</td>
+						<td>{{ contact.team || '—' }}</td>
+						<td>{{ contact.manager_name || '—' }}</td>
+					</tr>
+				</table>
+				<div class="permisos-actions">
+					<NcButton @click="showContactsPreview = false">
+						{{ t('employees', 'Cancel') }}
+					</NcButton>
+					<NcButton type="primary"
+						:disabled="selectedContacts.length === 0 || loadingContacts"
+						@click="importSelectedContacts">
+						{{ t('employees', 'Create and fill selected employees') }} ({{ selectedContacts.length }})
+					</NcButton>
+				</div>
+			</div>
+		</NcModal>
+
 		<!-- Dialog: deactivate -->
 		<NcDialog :open.sync="showDeactiveUserDialog"
 			:name="t('employees', 'Confirmation')"
@@ -351,7 +418,6 @@
 // Icons
 import AccountGroup from 'vue-material-design-icons/AccountGroup.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
 import AccountOff from 'vue-material-design-icons/AccountOff.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 
@@ -395,7 +461,6 @@ export default {
 		NcLoadingIcon,
 		AccountGroup,
 		Delete,
-		Plus,
 		VueTabs,
 		VTab,
 		AccountOff,
@@ -447,6 +512,11 @@ export default {
 			activeSearch: '',
 			inactiveSearch: '',
 			pendingSearch: '',
+			selectedPendingUsers: [],
+			showContactsPreview: false,
+			contactsPreview: [],
+			selectedContacts: [],
+			loadingContacts: false,
 		}
 	},
 
@@ -576,23 +646,104 @@ export default {
 		},
 
 		async ActivarUser(index) {
+			const user = this.Usuarios[index]
+			if (!user) return
+			this.selectedPendingUsers = [user.uid]
+			await this.createSelectedEmployees()
+		},
+
+		togglePendingUser(uid, checked) {
+			const selected = new Set(this.selectedPendingUsers)
+			if (checked) selected.add(uid)
+			else selected.delete(uid)
+			this.selectedPendingUsers = [...selected]
+		},
+
+		async createSelectedEmployees() {
+			if (this.selectedPendingUsers.length === 0) return
+			this.loadingEmployees = true
 			try {
-				this.loadingEmployees = true
-				await axios.post(generateUrl('/apps/employees/ActivarEmpleado'), {
-					id_user: this.Usuarios[index].uid,
-				}).then(
-					() => {
-						this.getall()
-						this.loadingEmployees = false
-					},
-					(err) => {
-						showError(err)
-						this.loadingEmployees = false
-					},
-				)
+				const response = await axios.post(generateUrl('/apps/employees/directory/users/import'), {
+					uids: this.selectedPendingUsers,
+				})
+				const payload = this.getPayload(response)
+				const result = payload.data || payload
+				if ((result.failed || 0) > 0) {
+					showError(t('employees', 'Created {created} employee records; {failed} failed.', {
+						created: result.created || 0,
+						failed: result.failed || 0,
+					}))
+				} else {
+					showSuccess(t('employees', 'Created {count} employee records from Nextcloud.', {
+						count: result.created || 0,
+					}))
+				}
+				this.selectedPendingUsers = []
+				await this.getall()
 			} catch (err) {
-				showError(t('employees', 'An exception occurred [02] [{error}]', { error: String(err) }))
+				showError(t('employees', 'Could not create employee records: {error}', { error: String(err) }))
+			} finally {
 				this.loadingEmployees = false
+			}
+		},
+
+		async previewContactsOrganization(uid = '') {
+			this.showContactsPreview = true
+			this.loadingContacts = true
+			this.selectedContacts = []
+			try {
+				const response = await axios.get(generateUrl('/apps/employees/directory/contacts/preview'))
+				const payload = this.getPayload(response)
+				this.contactsPreview = payload?.data?.contacts || payload?.contacts || []
+				if (uid) {
+					const contact = this.contactsPreview.find(item => item.uid === uid && item.importable)
+					if (contact) {
+						this.selectedContacts = [uid]
+					} else {
+						showError(t('employees', 'No importable Contacts entry matches user {uid}.', { uid }))
+					}
+				}
+			} catch (err) {
+				this.contactsPreview = []
+				showError(t('employees', 'Could not load Contacts organization data: {error}', { error: String(err) }))
+			} finally {
+				this.loadingContacts = false
+			}
+		},
+
+		toggleContact(uid, checked) {
+			const selected = new Set(this.selectedContacts)
+			if (checked) selected.add(uid)
+			else selected.delete(uid)
+			this.selectedContacts = [...selected]
+		},
+
+		async importSelectedContacts() {
+			if (this.selectedContacts.length === 0) return
+			this.loadingContacts = true
+			try {
+				const response = await axios.post(generateUrl('/apps/employees/directory/contacts/import'), {
+					uids: this.selectedContacts,
+				})
+				const payload = this.getPayload(response)
+				const result = payload.data || payload
+				if ((result.failed || 0) > 0) {
+					showError(t('employees', 'Imported {imported} Contacts entries; {failed} failed.', {
+						imported: result.imported || 0,
+						failed: result.failed || 0,
+					}))
+				} else {
+					showSuccess(t('employees', 'Imported {count} employees and organization records from Contacts.', {
+						count: result.imported || 0,
+					}))
+				}
+				this.showContactsPreview = false
+				this.selectedContacts = []
+				await this.getall()
+			} catch (err) {
+				showError(t('employees', 'Could not import Contacts organization data: {error}', { error: String(err) }))
+			} finally {
+				this.loadingContacts = false
 			}
 		},
 
@@ -1004,6 +1155,20 @@ export default {
 	padding-top: 24px;
 }
 
+.contacts-preview-table {
+	width: 100%;
+	margin-top: 16px;
+	border-collapse: collapse;
+}
+
+.contacts-preview-table th,
+.contacts-preview-table td {
+	padding: 10px;
+	border-bottom: 1px solid var(--color-border);
+	vertical-align: top;
+	text-align: left;
+}
+
 .employees-table {
 	width: 100%;
 	border-collapse: separate;
@@ -1082,6 +1247,32 @@ export default {
 	background: var(--color-background-dark);
 	font-size: 12px;
 }
+.directory-help {
+	margin: 12px 0;
+}
+
+.directory-actions,
+.row-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.directory-actions {
+	justify-content: flex-end;
+	margin: 12px 0;
+}
+
+.contacts-preview-dialog {
+	max-height: min(78vh, 820px);
+	padding: 8px 12px;
+	overflow: auto;
+}
+
+.contacts-preview-dialog h2 {
+	margin: 0 0 8px;
+}
+
 .permisos-dialog-modal {
 	--permissions-modal-width: min(980px, calc(100vw - 48px));
 }
@@ -1236,6 +1427,15 @@ export default {
 	.permisos-dialog {
 		width: calc(100vw - 40px);
 		max-height: 78vh;
+	}
+	.directory-actions,
+	.row-actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.contacts-preview-table {
+		display: block;
+		overflow-x: auto;
 	}
 }
 </style>

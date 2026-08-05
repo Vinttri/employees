@@ -38,7 +38,8 @@ use OCA\Employees\Service\AnniversarySyncService;
 
 use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
-use OCP\Activity\IManager;
+use OCP\Activity\IManager as ActivityManager;
+use OCP\Notification\IManager as NotificationManager;
 
 use OCA\Employees\Helper\MailHelper;
 
@@ -65,7 +66,8 @@ class AbsencesController extends BaseController {
 
     protected IRootFolder $rootFolder;
 
-    private IManager $activityManager;
+    private ActivityManager $activityManager;
+	private NotificationManager $notificationManager;
 	private IURLGenerator $urlGenerator;
     private MailHelper $mailHelper;
     private ActivityMapper $ActivityMapper;
@@ -86,7 +88,8 @@ class AbsencesController extends BaseController {
         EmployeeMapper $EmployeeMapper,
         IRootFolder $rootFolder,
         IUserManager $userManager,
-        IManager $activityManager,
+		ActivityManager $activityManager,
+		NotificationManager $notificationManager,
 		IURLGenerator $urlGenerator,
         MailHelper $mailHelper,
         TimeReportMapper $TimeReportMapper,
@@ -109,6 +112,7 @@ class AbsencesController extends BaseController {
         $this->rootFolder = $rootFolder;
         $this->userManager = $userManager;
         $this->activityManager = $activityManager;
+		$this->notificationManager = $notificationManager;
 		$this->urlGenerator = $urlGenerator;
         $this->mailHelper = $mailHelper;
         $this->TimeReportMapper = $TimeReportMapper; 
@@ -531,7 +535,7 @@ class AbsencesController extends BaseController {
             }
         
             $userFolder = $this->rootFolder->getUserFolder($gestor);
-            $folderPath = "EMPLEADOS/" . $user->getUID() . " - " . strtoupper($user->getDisplayName()) . "/JUSTIFICANTES";
+            $folderPath = "Employees_storage/" . $user->getUID() . " - " . strtoupper($user->getDisplayName()) . "/Supporting documents";
         
             if (!$userFolder->nodeExists($folderPath)) {
                 $userFolder->newFolder($folderPath);
@@ -817,6 +821,14 @@ class AbsencesController extends BaseController {
                 $user->getUID(),
                 $user->getDisplayName()
             );
+			$this->notifyAbsenceReviewers(
+				(int)$idHistoryAusencia,
+				$user->getUID(),
+				$user->getDisplayName(),
+				(string)($absence_types[0]['name'] ?? 'Time off'),
+				$date_from,
+				$date_until,
+			);
 
             return new DataResponse(['success' => true, 'message' => 'Ausencia registrada correctamente']);
         } catch (\Exception $e) {
@@ -1852,6 +1864,7 @@ class AbsencesController extends BaseController {
 
             $this->AbsenceHistoryMapper->RechazarTodo($id);
             $this->revertirEfectosAusencia($ausencia);
+			$this->notifyAbsenceOwner($ausencia, 'absence_rejected');
 
             return new DataResponse(['success' => true], Http::STATUS_OK);
         } catch (\Exception $e) {
@@ -1918,6 +1931,88 @@ class AbsencesController extends BaseController {
         }
     }
 
+	private function notifyAbsenceReviewers(
+		int $absenceHistoryId,
+		string $employeeUid,
+		string $employeeName,
+		string $type,
+		string $from,
+		string $until,
+	): void {
+		$employee = $this->EmployeeMapper->findByUserId($employeeUid);
+		if ($employee === null) {
+			return;
+		}
+
+		$reviewers = array_unique(array_filter([
+			(string)($employee['id_manager'] ?? ''),
+			(string)($employee['id_partner'] ?? ''),
+			(string)($this->SettingsMapper->GetGestor()[0]['data'] ?? ''),
+		]));
+		foreach ($reviewers as $reviewerUid) {
+			if ($reviewerUid === $employeeUid || $this->userManager->get($reviewerUid) === null) {
+				continue;
+			}
+			$this->sendAbsenceNotification(
+				$reviewerUid,
+				'absence_requested',
+				$absenceHistoryId,
+				[
+					'employee' => $employeeName,
+					'type' => $type,
+					'from' => $from,
+					'until' => $until,
+				],
+			);
+		}
+	}
+
+	private function notifyAbsenceOwner(array $absence, string $subject): void {
+		$record = $this->AbsenceMapper->GetAusenciasById((int)$absence['absence_id']);
+		if ($record === []) {
+			return;
+		}
+		$employee = $this->EmployeeMapper->GetMyEmployeeInfoByIdEmpleado((string)$record[0]['id_employee']);
+		$uid = (string)($employee[0]['id_user'] ?? '');
+		if ($uid === '') {
+			return;
+		}
+		$type = $this->AbsenceTypeMapper->getTipoById($absence['absence_type_id']);
+		$this->sendAbsenceNotification(
+			$uid,
+			$subject,
+			(int)($absence['absence_history_id'] ?? 0),
+			[
+				'type' => (string)($type[0]['name'] ?? 'Time off'),
+				'from' => (string)$absence['date_from'],
+				'until' => (string)$absence['date_until'],
+			],
+		);
+	}
+
+	/** @param array<string, mixed> $parameters */
+	private function sendAbsenceNotification(
+		string $uid,
+		string $subject,
+		int $absenceHistoryId,
+		array $parameters,
+	): void {
+		$old = $this->notificationManager->createNotification();
+		$old->setApp(Application::APP_ID)
+			->setUser($uid)
+			->setObject('absence', (string)$absenceHistoryId);
+		$this->notificationManager->markProcessed($old);
+
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp(Application::APP_ID)
+			->setUser($uid)
+			->setDateTime(new \DateTime())
+			->setObject('absence', (string)$absenceHistoryId)
+			->setSubject($subject, $parameters)
+			->setLink($this->urlGenerator->linkToRouteAbsolute('employees.page.index') . '#/Calendar');
+		$this->notificationManager->notify($notification);
+	}
+
     /**
      * Envía un email al empleado informando que su ausencia fue aprobada.
      */
@@ -1939,24 +2034,32 @@ class AbsencesController extends BaseController {
             return;
         }
 
-        $mail = $userEmpleado->getEMailAddress();
-        if (!$mail) {
-            return;
-        }
-
         $type = $this->AbsenceTypeMapper->getTipoById($ausencia['absence_type_id']);
         $nombreTipo = $type[0]['name'] ?? 'Ausencia';
+		$this->sendAbsenceNotification(
+			$uidEmpleado,
+			'absence_approved',
+			(int)($ausencia['absence_history_id'] ?? 0),
+			[
+				'type' => (string)$nombreTipo,
+				'from' => (string)$ausencia['date_from'],
+				'until' => (string)$ausencia['date_until'],
+			],
+		);
 
-        $this->mailHelper->enviarCorreo(
-            $mail,
-            'Solicitud aprobada',
-            [
-                'Hola ' . $userEmpleado->getDisplayName() . '',
-                'Tu solicitud de "' . $nombreTipo . '" ha sido aprobada por completo.',
-                'Fecha de inicio: ' . $ausencia['date_from'] . '  - Fecha de finalización: ' . $ausencia['date_until'] . '',
-                '',
-            ]
-        );
+		$mail = $userEmpleado->getEMailAddress();
+		if ($mail) {
+			$this->mailHelper->enviarCorreo(
+				$mail,
+				'Solicitud aprobada',
+				[
+					'Hola ' . $userEmpleado->getDisplayName() . '',
+					'Tu solicitud de "' . $nombreTipo . '" ha sido aprobada por completo.',
+					'Fecha de inicio: ' . $ausencia['date_from'] . '  - Fecha de finalización: ' . $ausencia['date_until'] . '',
+					'',
+				]
+			);
+		}
 
         $event = $this->activityManager->generateEvent();
         $event->setApp('employees');

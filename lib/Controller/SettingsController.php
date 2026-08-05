@@ -322,31 +322,23 @@ class SettingsController extends Controller {
 
     #[NoCSRFRequired]
 	#[NoAdminRequired]    
-	public function ActualizarGestor(string $id_gestor): void{
-        $gestor = $this->SettingsMapper->GetGestor();
-        $currentGestor = $gestor[0]['data'] ?? null;
+	public function ActualizarGestor(string $id_gestor): DataResponse {
+		$user = $this->userManager->get($id_gestor);
+		if ($user === null) {
+			return new DataResponse(['status' => 'error', 'message' => 'Data manager user was not found.'], Http::STATUS_BAD_REQUEST);
+		}
 
-        if ($currentGestor === null || $currentGestor === '') {
-            $this->SettingsMapper->ActualizarGestor($id_gestor);
-            $userFolder = $this->rootFolder->getUserFolder($id_gestor);
-            if (!$userFolder->nodeExists("EMPLEADOS")) {
-                $userFolder->newFolder("EMPLEADOS");
-            } 
-        } else {
-            $currentUser = $currentGestor;
-            $this->SettingsMapper->ActualizarGestor($id_gestor);
-            $userFolder = $this->rootFolder->getUserFolder($currentUser);
-            if ($userFolder->nodeExists("EMPLEADOS")) {
-                $sourceNode = $userFolder->get("EMPLEADOS");
-                if ($sourceNode->getType() === \OCP\Files\FileInfo::TYPE_FOLDER) {
-                    $targetUserObject = $this->userManager->get($id_gestor);
-                    if ($targetUserObject) {
-                        $targetUserFolder = $this->rootFolder->getUserFolder($id_gestor);
-                        $sourceNode->move($targetUserFolder->getPath() . '/' . $sourceNode->getName());
-                    } 
-                }
-            }
-        }
+		$userFolder = $this->rootFolder->getUserFolder($id_gestor);
+		if (!$userFolder->nodeExists('Employees_storage')) {
+			return new DataResponse([
+				'status' => 'error',
+				'message' => 'The selected data manager cannot access the Employees_storage Team Folder.',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->SettingsMapper->ActualizarGestor($id_gestor);
+
+		return new DataResponse(['status' => 'ok'], Http::STATUS_OK);
 	}
 
     #[AdminRequired]

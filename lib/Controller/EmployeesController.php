@@ -16,6 +16,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\DepartmentMapper;
+use OCA\Employees\Db\PositionMapper;
 use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\VacationHistoryMapper;
 use OCA\Employees\Db\AbsenceMapper;
@@ -34,6 +35,7 @@ use OCA\Employees\Db\TeamMapper;
 use OCP\IAvatarManager;
 
 use OCP\IDBConnection;
+use OCP\Contacts\IManager as ContactsManager;
 
 use OCP\Files\IRootFolder;
 
@@ -50,6 +52,10 @@ use OCA\Employees\Service\InventoryMovementService;
  * Controlador principal para la gestión de Employee en Nextcloud.
  */
 class EmployeesController extends BaseController {
+	private const STORAGE_FOLDER = 'Employees_storage';
+	private const DIRECTORY_TEAM_GROUPS = [
+		'it', 'sales', 'support', 'finance', 'hr', 'legal', 'management',
+	];
 
     protected $userSession;
     protected $userManager;
@@ -57,6 +63,7 @@ class EmployeesController extends BaseController {
     protected $EmployeeMapper;
     protected $AbsenceMapper;
     protected $DepartmentMapper;
+    protected PositionMapper $PositionMapper;
     protected $SettingsMapper;
     protected $UserSavingsMapper;
     protected $session;
@@ -68,6 +75,8 @@ class EmployeesController extends BaseController {
     protected PermissionsService $permisosService;
     private AnniversarySyncService $aniversarioSyncService;
     private InventoryMovementService $inventarioMovimientoService;
+    private IDBConnection $db;
+    private ContactsManager $contactsManager;
 
     protected IRootFolder $rootFolder;
 
@@ -79,6 +88,7 @@ class EmployeesController extends BaseController {
         EmployeeMapper $EmployeeMapper,
         AbsenceMapper $AbsenceMapper,
         DepartmentMapper $DepartmentMapper,
+        PositionMapper $PositionMapper,
         SettingsMapper $SettingsMapper,
         UserSavingsMapper $UserSavingsMapper,
         IL10N $l10n,
@@ -91,7 +101,9 @@ class EmployeesController extends BaseController {
         EmployeeOrgChartMapper $EmployeeOrgChartMapper,
         PermissionsService $permisosService,
         AnniversarySyncService $aniversarioSyncService,
-        InventoryMovementService $inventarioMovimientoService
+        InventoryMovementService $inventarioMovimientoService,
+        IDBConnection $db,
+        ContactsManager $contactsManager,
     ) {
 		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
@@ -103,6 +115,7 @@ class EmployeesController extends BaseController {
         $this->AbsenceMapper = $AbsenceMapper;
         $this->UserSavingsMapper = $UserSavingsMapper;
         $this->DepartmentMapper = $DepartmentMapper;
+        $this->PositionMapper = $PositionMapper;
         $this->SettingsMapper = $SettingsMapper;
         $this->l10n = $l10n;
         $this->avatarManager = $avatarManager;
@@ -116,6 +129,8 @@ class EmployeesController extends BaseController {
         $this->aniversarioSyncService = $aniversarioSyncService;
         $this->inventarioMovimientoService = $inventarioMovimientoService;
         $this->EmployeeOrgChartMapper = $EmployeeOrgChartMapper;
+        $this->db = $db;
+        $this->contactsManager = $contactsManager;
     }
 
     /**
@@ -151,9 +166,9 @@ class EmployeesController extends BaseController {
     public function GetUserLists(): DataResponse {
         $this->requireHumanResourcesAccess();
         return new DataResponse([
-            'Empleados' => $this->EmployeeMapper->GetUserLists(),
-            'Users' => $this->EmployeeMapper->getAllUsers(),
-            'Desactivados' => $this->EmployeeMapper->GetUserListsDeactive()
+            'Empleados' => $this->enrichEmployeeDirectoryRows($this->EmployeeMapper->GetUserLists()),
+            'Users' => $this->getNextcloudDirectoryUsers(),
+            'Desactivados' => $this->enrichEmployeeDirectoryRows($this->EmployeeMapper->GetUserListsDeactive())
         ], Http::STATUS_OK);
     }
 
@@ -247,82 +262,181 @@ class EmployeesController extends BaseController {
     public function ActivarEmpleado(string $id_user): DataResponse {
         $this->requireHumanResourcesAccess();
         try {
-            // Verificar si el grupo "employees" existe
-            $group = $this->groupManager->get("employees");
-            if (!$group) {
-                $this->groupManager->createGroup("employees");
-                $group = $this->groupManager->get("employees");
+            return new DataResponse([
+                'status' => 'ok',
+                'data' => $this->provisionEmployeeRecord($id_user),
+            ], Http::STATUS_OK);
+        } catch (\Throwable $e) {
+            return new DataResponse([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[UseSession]
+    #[NoAdminRequired]
+    public function createEmployeesFromNextcloud(array $uids = []): DataResponse {
+        $this->requireHumanResourcesAccess();
+        $uids = array_values(array_unique(array_filter(array_map(
+            static fn(mixed $uid): string => trim((string)$uid),
+            $uids,
+        ))));
+
+        if ($uids === []) {
+            return new DataResponse([
+                'status' => 'error',
+                'message' => 'Select at least one Nextcloud user.',
+            ], Http::STATUS_BAD_REQUEST);
+        }
+
+        $results = [];
+        foreach ($uids as $uid) {
+            try {
+                $results[] = $this->provisionEmployeeRecord($uid);
+            } catch (\Throwable $e) {
+                $results[] = [
+                    'uid' => $uid,
+                    'status' => 'error',
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return new DataResponse([
+            'status' => 'ok',
+            'data' => [
+                'results' => $results,
+                'created' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'created')),
+                'skipped' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'existing')),
+                'failed' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'error')),
+            ],
+        ], Http::STATUS_OK);
+    }
+
+    #[UseSession]
+    #[NoAdminRequired]
+    public function previewContactsOrganization(): DataResponse {
+        $this->requireHumanResourcesAccess();
+
+        return new DataResponse([
+            'status' => 'ok',
+            'data' => [
+                'contacts' => $this->getContactsOrganizationPreview(),
+                'source' => 'nextcloud-contacts',
+                'read_only' => true,
+            ],
+        ], Http::STATUS_OK);
+    }
+
+    #[UseSession]
+    #[NoAdminRequired]
+    public function importContactsOrganization(array $uids = []): DataResponse {
+        $this->requireHumanResourcesAccess();
+        $requested = array_fill_keys(array_map('strval', $uids), true);
+        if ($requested === []) {
+            return new DataResponse([
+                'status' => 'error',
+                'message' => 'Select at least one Contacts entry.',
+            ], Http::STATUS_BAD_REQUEST);
+        }
+
+        $contacts = $this->getContactsOrganizationPreview();
+        $contactsByUid = [];
+        $uidsByDisplayName = [];
+        foreach ($contacts as $contact) {
+            $contactsByUid[$contact['uid']] = $contact;
+            $uidsByDisplayName[mb_strtolower($contact['display_name'], 'UTF-8')] = $contact['uid'];
+        }
+
+        $results = [];
+        $departmentNames = [];
+        $positionNames = [];
+        $teamNames = [];
+        foreach (array_keys($requested) as $uid) {
+            $contact = $contactsByUid[$uid] ?? null;
+            if ($contact === null || !($contact['importable'] ?? false)) {
+                $results[] = ['uid' => $uid, 'status' => 'error', 'message' => 'Contact is not importable.'];
+                continue;
             }
 
-            // verificar que el usuario exista en nextcloud
-            $user = $this->userManager->get($id_user);
-        
-            // Verificar si el usuario ya pertenece al grupo
-            if (!$group->inGroup($user)) {
-                $group->addUser($user);
-            }
-            
-            $gestor = $this->SettingsMapper->GetGestor()[0]['data'] ?? null;
-
-            if ($gestor) {
-                $userFolder = $this->rootFolder->getUserFolder($gestor);
-                $folderPath = "EMPLEADOS/" . $id_user . " - " . mb_strtoupper($user->getDisplayName(), 'UTF-8');
-
-                if (!$userFolder->nodeExists($folderPath)) {
-                    foreach (["", "/CAPACITACIONES", "/DOCUMENTOS OFICIALES", "/DOCUMENTOS DE IDENTIFICACION", "/MEMORANDUMS", "/JUSTIFICANTES"] as $subFolder) {
-                        $userFolder->newFolder($folderPath . $subFolder);
-                    }
+            try {
+                $this->provisionEmployeeRecord($uid, $contact['email']);
+                $departmentId = $contact['department'] !== ''
+                    ? $this->DepartmentMapper->findOrCreateByName($contact['department'])
+                    : null;
+                $positionId = $contact['position'] !== ''
+                    ? $this->PositionMapper->findOrCreateByName($contact['position'])
+                    : null;
+                $teamId = $contact['team'] !== ''
+                    ? $this->TeamMapper->findOrCreateByName($contact['team'])
+                    : null;
+                $managerUid = $uidsByDisplayName[mb_strtolower($contact['manager_name'], 'UTF-8')] ?? null;
+                $employee = $this->EmployeeMapper->findByUserId($uid);
+                if ($employee === null) {
+                    throw new \RuntimeException('Employee record was not found after provisioning.');
                 }
 
-                $timestamp = date('Y-m-d');
-                $empleado = new Employee();
-                $empleado->setIdUser($id_user);
-                $empleado->setestado('1');
-                $empleado->setCreatedAt($timestamp);
-                $empleado->setUpdatedAt($timestamp);
+                $this->EmployeeMapper->updateDirectoryProfile(
+                    (int)$employee['id_employees'],
+                    $contact['email'] !== '' ? $contact['email'] : null,
+                    $departmentId,
+                    $positionId,
+                    $teamId,
+                    $managerUid,
+                );
 
-                $this->EmployeeMapper->insert($empleado);
-                                
-                // Obtén la conexión a través del contenedor de Nextcloud
-                $connection = \OC::$server->get(IDBConnection::class);
-                $idEmployee = $connection->lastInsertId('employees');
-
-                // -----------------------------------------------------------
-                // FIX duplicados: si el motor de BD (p.ej. SQLite) recicla el
-                // id_employees que se acaba de asignar (porque venía de un
-                // empleado eliminado previamente), puede quedar algún residuo
-                // huérfano en Absence o user_savings con ese mismo id.
-                // Lo limpiamos antes de insertar para garantizar que nunca
-                // quede más de una fila por id_employees. Si no hay residuos,
-                // estos DELETE simplemente no afectan ninguna fila.
-                // -----------------------------------------------------------
-                $this->AbsenceMapper->deleteByIdEmpleado((int)$idEmployee);
-                $this->UserSavingsMapper->deleteByIdEmpleado((int)$idEmployee);
-
-                // Generar un nuevo registro de Absence
-                // y asociarlo al empleado recién creado
-                $Absence = new Absence();
-                $Absence->setIdEmployee((int)$idEmployee);
-                $Absence->setTimestamp(new \DateTime());
-                $this->AbsenceMapper->insert($Absence);
-
-                // Generar un nuevo registro de savings
-                // y asociarlo al empleado recién creado
-                $UserSavings = new UserSavings();
-                $UserSavings->setIdUser($idEmployee);
-                $UserSavings->setIdPermission('0');
-                $UserSavings->setstate('0');
-                $UserSavings->setLastModified($timestamp);
-                $this->UserSavingsMapper->insert($UserSavings);
-
-                return new DataResponse(Http::STATUS_OK);
-            } else {
-                return new DataResponse("No existe usuario gestor", Http::STATUS_OK);
+                if ($contact['department'] !== '') { $departmentNames[$contact['department']] = true; }
+                if ($contact['position'] !== '') { $positionNames[$contact['position']] = true; }
+                if ($contact['team'] !== '') { $teamNames[$contact['team']] = true; }
+                $results[] = ['uid' => $uid, 'status' => 'imported'];
+            } catch (\Throwable $e) {
+                $results[] = ['uid' => $uid, 'status' => 'error', 'message' => $e->getMessage()];
             }
-            
-        } catch (\Exception $e) {
-             return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
+
+        // Resolve reporting lines only after every selected employee has been
+        // provisioned. This makes the result independent of Contacts sort order.
+        foreach ($results as $result) {
+            if (($result['status'] ?? '') !== 'imported') {
+                continue;
+            }
+
+            $uid = (string)$result['uid'];
+            $contact = $contactsByUid[$uid] ?? null;
+            if ($contact === null || $contact['manager_name'] === '') {
+                continue;
+            }
+
+            $managerUid = $uidsByDisplayName[mb_strtolower($contact['manager_name'], 'UTF-8')] ?? null;
+            $employee = $this->EmployeeMapper->findByUserId($uid);
+            $manager = $managerUid !== null ? $this->EmployeeMapper->findByUserId($managerUid) : null;
+            if ($employee === null || $manager === null) {
+                continue;
+            }
+
+            if (!$this->EmployeeOrgChartMapper->ExisteRelacion(
+                (int)$manager['id_employees'],
+                (int)$employee['id_employees'],
+            )) {
+                $this->EmployeeOrgChartMapper->CrearRelacion(
+                    (int)$manager['id_employees'],
+                    (int)$employee['id_employees'],
+                );
+            }
+        }
+
+        return new DataResponse([
+            'status' => 'ok',
+            'data' => [
+                'results' => $results,
+                'imported' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'imported')),
+                'failed' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'error')),
+                'departments' => count($departmentNames),
+                'positions' => count($positionNames),
+                'teams' => count($teamNames),
+            ],
+        ], Http::STATUS_OK);
     }
 
     /**
@@ -696,11 +810,224 @@ class EmployeesController extends BaseController {
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
+    private function getNextcloudDirectoryUsers(): array {
+        $users = [];
+        foreach ($this->userManager->search('') as $user) {
+            if (method_exists($user, 'isEnabled') && !$user->isEnabled()) {
+                continue;
+            }
+
+            $users[] = [
+                'uid' => $user->getUID(),
+                'displayname' => $user->getDisplayName(),
+                'email' => (string)($user->getEMailAddress() ?? ''),
+                'enabled' => true,
+            ];
+        }
+
+        usort($users, static fn(array $left, array $right): int => strcasecmp(
+            (string)$left['displayname'],
+            (string)$right['displayname'],
+        ));
+
+        return $users;
+    }
+
+    /** @return array<string, mixed> */
+    private function provisionEmployeeRecord(string $uid, ?string $contactEmail = null): array {
+        $uid = trim($uid);
+        if ($uid === '') {
+            throw new \InvalidArgumentException('Nextcloud user id cannot be empty.');
+        }
+
+        $existing = $this->EmployeeMapper->findByUserId($uid);
+        if ($existing !== null) {
+            return [
+                'uid' => $uid,
+                'employee_id' => (int)$existing['id_employees'],
+                'status' => 'existing',
+                'warnings' => [],
+            ];
+        }
+
+        $user = $this->userManager->get($uid);
+        if ($user === null || (method_exists($user, 'isEnabled') && !$user->isEnabled())) {
+            throw new \RuntimeException("Enabled Nextcloud user was not found: {$uid}");
+        }
+
+        $dataManagerUid = $this->SettingsMapper->GetGestor()[0]['data'] ?? null;
+        if (!is_string($dataManagerUid) || trim($dataManagerUid) === '') {
+            throw new \RuntimeException('Select the data manager in global Employees settings first.');
+        }
+
+        $dataManagerFolder = $this->rootFolder->getUserFolder($dataManagerUid);
+        if (!$dataManagerFolder->nodeExists(self::STORAGE_FOLDER)) {
+            throw new \RuntimeException('Employees_storage Team Folder is not available to the selected data manager.');
+        }
+
+        $email = trim((string)($contactEmail ?? $user->getEMailAddress() ?? ''));
+        $this->db->beginTransaction();
+        try {
+            $employeeId = $this->EmployeeMapper->createBaseRecord(
+                $uid,
+                $email !== '' ? $email : null,
+            );
+
+            $absence = new Absence();
+            $absence->setIdEmployee($employeeId);
+            $absence->setTimestamp(new \DateTime());
+            $this->AbsenceMapper->insert($absence);
+
+            $savings = new UserSavings();
+            $savings->setIdUser($employeeId);
+            $savings->setIdPermission('0');
+            $savings->setstate('0');
+            $savings->setLastModified(date('Y-m-d'));
+            $this->UserSavingsMapper->insert($savings);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        $warnings = [];
+        try {
+            $group = $this->groupManager->get('employees');
+            if ($group === null) {
+                $group = $this->groupManager->createGroup('employees');
+            }
+            if ($group !== null && !$group->inGroup($user)) {
+                $group->addUser($user);
+            }
+        } catch (\Throwable $e) {
+            $warnings[] = 'The employee group could not be updated: ' . $e->getMessage();
+        }
+
+        try {
+            $folderPath = self::STORAGE_FOLDER . '/' . $uid . ' - '
+                . mb_strtoupper($user->getDisplayName(), 'UTF-8');
+            foreach ([
+                '',
+                '/Training',
+                '/Official documents',
+                '/Identity documents',
+                '/Memorandums',
+                '/Supporting documents',
+            ] as $subFolder) {
+                $path = $folderPath . $subFolder;
+                if (!$dataManagerFolder->nodeExists($path)) {
+                    $dataManagerFolder->newFolder($path);
+                }
+            }
+        } catch (\Throwable $e) {
+            $warnings[] = 'Employee folders could not be created: ' . $e->getMessage();
+        }
+
+        return [
+            'uid' => $uid,
+            'employee_id' => $employeeId,
+            'status' => 'created',
+            'warnings' => $warnings,
+        ];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private function getContactsOrganizationPreview(): array {
+        if (!$this->contactsManager->isEnabled()) {
+            throw new \RuntimeException('Nextcloud Contacts integration is not available for this user.');
+        }
+
+        $rawContacts = $this->contactsManager->search(
+            '',
+            ['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'],
+            ['limit' => 500, 'enumeration' => true, 'fullmatch' => true],
+        );
+        $contacts = [];
+        foreach ($rawContacts as $rawContact) {
+            $uid = $this->contactScalar($rawContact['UID'] ?? '');
+            if ($uid === '') {
+                continue;
+            }
+
+            $user = $this->userManager->get($uid);
+            $enabled = $user !== null && (!method_exists($user, 'isEnabled') || $user->isEnabled());
+            $team = '';
+            if ($user !== null) {
+                $userGroups = $this->groupManager->getUserGroupIds($user);
+                foreach (self::DIRECTORY_TEAM_GROUPS as $groupId) {
+                    if (in_array($groupId, $userGroups, true)) {
+                        $team = $this->directoryTeamLabel($groupId);
+                        break;
+                    }
+                }
+            }
+
+            $contacts[] = [
+                'uid' => $uid,
+                'display_name' => $this->contactScalar($rawContact['FN'] ?? $uid),
+                'email' => $this->contactScalar($rawContact['EMAIL'] ?? ''),
+                'department' => $this->contactScalar($rawContact['ORG'] ?? ''),
+                'position' => $this->contactScalar($rawContact['TITLE'] ?? ($rawContact['ROLE'] ?? '')),
+                'team' => $team,
+                'manager_name' => $this->contactScalar($rawContact['X-MANAGERSNAME'] ?? ''),
+                'existing_employee' => $this->EmployeeMapper->findByUserId($uid) !== null,
+                'importable' => $enabled,
+                'reason' => $enabled ? '' : 'No enabled Nextcloud user matches this contact.',
+            ];
+        }
+
+        usort($contacts, static fn(array $left, array $right): int => strcasecmp(
+            (string)$left['display_name'],
+            (string)$right['display_name'],
+        ));
+
+        return $contacts;
+    }
+
+    private function contactScalar(mixed $value): string {
+        if (is_array($value)) {
+            $value = reset($value);
+            if (is_array($value)) {
+                $value = $value['value'] ?? '';
+            }
+        }
+
+        return trim(is_scalar($value) ? (string)$value : '');
+    }
+
+    private function directoryTeamLabel(string $groupId): string {
+        if ($groupId === 'it') {
+            return 'IT';
+        }
+
+        return ucwords(str_replace(['-', '_'], ' ', $groupId));
+    }
+
     private function requireHumanResourcesAccess(): void {
         $this->permisosService->requireCanSeeAny([
             'employees.hr',
             'employees.admin',
         ]);
+    }
+
+    /** @param array<int, array<string, mixed>> $rows */
+    private function enrichEmployeeDirectoryRows(array $rows): array {
+        foreach ($rows as &$row) {
+            $uid = (string)($row['employee_uid'] ?? $row['id_user'] ?? $row['uid'] ?? '');
+            if ($uid === '') {
+                continue;
+            }
+
+            $user = $this->userManager->get($uid);
+            $row['id_user'] = $uid;
+            $row['uid'] = $uid;
+            $row['displayname'] = $user?->getDisplayName() ?? $uid;
+            unset($row['employee_uid']);
+        }
+        unset($row);
+
+        return $rows;
     }
 
     /**
