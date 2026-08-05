@@ -72,6 +72,15 @@ foreach ($iterator as $file) {
 			array_push($identifiers, ...$matches[1]);
 		}
 	}
+	if (str_starts_with($relative, 'lib/Migration/')) {
+		if (preg_match_all('/(?:addIndex|addUniqueIndex)\([^;]*[\'\"]([a-z][a-z0-9_]*)[\'\"]\s*\)/s', $source, $indexMatches)) {
+			foreach ($indexMatches[1] as $indexName) {
+				if (!str_starts_with($indexName, 'employees_')) {
+					$failures[] = "unscoped DB index: {$relative}:{$indexName}";
+				}
+			}
+		}
+	}
 	foreach ($identifiers as $identifier) {
 		if ($relative === 'lib/Migration/Version2037Date20260805180000.php' && $identifier === 'empleados_mov_archivos') {
 			continue;

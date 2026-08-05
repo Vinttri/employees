@@ -25,8 +25,8 @@ assertMaintenanceService(array_reduce($tables, fn(bool $ok, string $table): bool
 $maintenanceTable = $schema->getTable($prefix . 'maintenance_records');
 $checkTable = $schema->getTable($prefix . 'maintenance_checks');
 $groupTable = $schema->getTable($prefix . 'maintenance_groups');
-assertMaintenanceService($maintenanceTable->getIndex('maintenances_group_team_uq')->isUnique(), 'la unicidad grupo-equipo está aplicada');
-assertMaintenanceService($checkTable->getIndex('maintenance_checklists_code_uq')->isUnique(), 'la unicidad mantenimiento-code está aplicada');
+assertMaintenanceService($maintenanceTable->getIndex('employees_maintenances_group_team_uq')->isUnique(), 'la unicidad grupo-equipo está aplicada');
+assertMaintenanceService($checkTable->getIndex('employees_maintenance_checklists_code_uq')->isUnique(), 'la unicidad mantenimiento-code está aplicada');
 assertMaintenanceService($groupTable->hasColumn('date_start') && $groupTable->hasColumn('date_end') && !$maintenanceTable->getColumn('date_scheduled')->getNotnull(), 'el periodo y la fecha individual nullable están aplicados');
 
 $permissionQuery = $db->getQueryBuilder();

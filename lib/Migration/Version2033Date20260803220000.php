@@ -75,11 +75,11 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 		$table->addColumn('date_creation', 'datetime', ['notnull' => true]);
 		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['date_scheduled'], 'maintenance_groups_date_idx');
-		$table->addIndex(['id_department', 'date_scheduled'], 'maintenance_groups_department_date_idx');
-		$table->addIndex(['technician_uid', 'date_scheduled'], 'maintenance_groups_technician_date_idx');
-		$table->addIndex(['type', 'date_scheduled'], 'maintenance_groups_type_date_idx');
-		$table->addIndex(['status_admin', 'date_scheduled'], 'maintenance_groups_status_date_idx');
+		$table->addIndex(['date_scheduled'], 'employees_maintenance_groups_date_idx');
+		$table->addIndex(['id_department', 'date_scheduled'], 'employees_maintenance_groups_department_date_idx');
+		$table->addIndex(['technician_uid', 'date_scheduled'], 'employees_maintenance_groups_technician_date_idx');
+		$table->addIndex(['type', 'date_scheduled'], 'employees_maintenance_groups_type_date_idx');
+		$table->addIndex(['status_admin', 'date_scheduled'], 'employees_maintenance_groups_status_date_idx');
 	}
 
 	private function createMaintenances(ISchemaWrapper $schema): void {
@@ -121,14 +121,14 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 		$table->addColumn('date_creation', 'datetime', ['notnull' => true]);
 		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_group'], 'maintenances_group_idx');
-		$table->addIndex(['id_group', 'status'], 'maintenances_group_status_idx');
-		$table->addIndex(['id_team', 'date_scheduled'], 'maintenances_team_date_idx');
-		$table->addIndex(['id_department', 'date_scheduled'], 'maintenances_department_date_idx');
-		$table->addIndex(['technician_uid', 'date_scheduled'], 'maintenances_technician_date_idx');
-		$table->addIndex(['status', 'date_scheduled'], 'maintenances_status_date_idx');
-		$table->addIndex(['type', 'date_scheduled'], 'maintenances_type_date_idx');
-		$table->addUniqueIndex(['id_group', 'id_team'], 'maintenances_group_team_uq');
+		$table->addIndex(['id_group'], 'employees_maintenances_group_idx');
+		$table->addIndex(['id_group', 'status'], 'employees_maintenances_group_status_idx');
+		$table->addIndex(['id_team', 'date_scheduled'], 'employees_maintenances_team_date_idx');
+		$table->addIndex(['id_department', 'date_scheduled'], 'employees_maintenances_department_date_idx');
+		$table->addIndex(['technician_uid', 'date_scheduled'], 'employees_maintenances_technician_date_idx');
+		$table->addIndex(['status', 'date_scheduled'], 'employees_maintenances_status_date_idx');
+		$table->addIndex(['type', 'date_scheduled'], 'employees_maintenances_type_date_idx');
+		$table->addUniqueIndex(['id_group', 'id_team'], 'employees_maintenances_group_team_uq');
 	}
 
 	private function createMaintenanceChecks(ISchemaWrapper $schema): void {
@@ -147,9 +147,9 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 		$table->addColumn('updated_by', 'string', ['length' => 255, 'notnull' => true]);
 		$table->addColumn('date_update', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_maintenance'], 'maintenance_checklists_maintenance_idx');
-		$table->addIndex(['id_maintenance', 'order'], 'maintenance_checklists_order_idx');
-		$table->addUniqueIndex(['id_maintenance', 'code'], 'maintenance_checklists_code_uq');
+		$table->addIndex(['id_maintenance'], 'employees_maintenance_checklists_maintenance_idx');
+		$table->addIndex(['id_maintenance', 'order'], 'employees_maintenance_checklists_order_idx');
+		$table->addUniqueIndex(['id_maintenance', 'code'], 'employees_maintenance_checklists_code_uq');
 	}
 
 	private function createMaintenanceChanges(ISchemaWrapper $schema): void {
@@ -169,9 +169,9 @@ class Version2033Date20260803220000 extends SimpleMigrationStep {
 		$table->addColumn('user_name', 'string', ['length' => 255, 'notnull' => true]);
 		$table->addColumn('date', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_group', 'date'], 'maintenance_changes_group_date_idx');
-		$table->addIndex(['id_maintenance', 'date'], 'maintenance_changes_maintenance_date_idx');
-		$table->addIndex(['user_uid', 'date'], 'maintenance_changes_user_date_idx');
+		$table->addIndex(['id_group', 'date'], 'employees_maintenance_changes_group_date_idx');
+		$table->addIndex(['id_maintenance', 'date'], 'employees_maintenance_changes_maintenance_date_idx');
+		$table->addIndex(['user_uid', 'date'], 'employees_maintenance_changes_user_date_idx');
 	}
 
 	private function insertPermissionIfMissing(array $permission): void {

@@ -29,7 +29,7 @@ $activityTable = $schema->getTable($prefix . 'employee_activities');
 assertSchema($supportTable->hasColumn('duration_minutes') && !$supportTable->getColumn('duration_minutes')->getNotnull(), 'duración nullable preserva soportes históricos');
 assertSchema($reportTable->hasColumn('source') && $reportTable->hasColumn('source_id'), 'reporte contiene source y source_id');
 assertSchema($activityTable->hasColumn('system_code'), 'actividad contiene code estable');
-assertSchema($reportTable->hasIndex('employee_time_reports_source_uq') && $reportTable->getIndex('employee_time_reports_source_uq')->isUnique(), 'índice único evita reportes duplicados');
+assertSchema($reportTable->hasIndex('employees_employee_time_reports_source_uq') && $reportTable->getIndex('employees_employee_time_reports_source_uq')->isUnique(), 'índice único evita reportes duplicados');
 
 $activityMapper = $server->get(ActivityMapper::class);
 $first = $activityMapper->ensureSystemActivity('soporte_ti', 'Soporte TI', 'Actividad interna');

@@ -49,7 +49,7 @@ class Version2012Date20260624184640 extends SimpleMigrationStep {
 
 		$table->addIndex(
 			['date'],
-			'holidays_date_idx'
+			'employees_holidays_date_idx'
 		);
 
 		return $schema;

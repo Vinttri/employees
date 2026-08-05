@@ -27,8 +27,8 @@ class Version2035Date20260805090000 extends SimpleMigrationStep {
 			if (!$activities->hasColumn('scope')) {
 				$activities->addColumn('scope', 'string', ['length' => 16, 'notnull' => true, 'default' => 'global']);
 			}
-			if (!$activities->hasIndex('employee_activities_type_scope_idx')) {
-				$activities->addIndex(['type_activity', 'scope'], 'employee_activities_type_scope_idx');
+			if (!$activities->hasIndex('employees_employee_activities_type_scope_idx')) {
+				$activities->addIndex(['type_activity', 'scope'], 'employees_employee_activities_type_scope_idx');
 			}
 		}
 
@@ -38,10 +38,10 @@ class Version2035Date20260805090000 extends SimpleMigrationStep {
 			$areas->addColumn('id_activity', 'integer', ['unsigned' => true, 'notnull' => true]);
 			$areas->addColumn('id_department', 'integer', ['unsigned' => true, 'notnull' => true]);
 			$areas->addColumn('created_at', 'datetime', ['notnull' => true]);
-			$areas->setPrimaryKey(['id'], 'emp_act_area_pk');
-			$areas->addIndex(['id_activity'], 'emp_act_area_act_idx');
-			$areas->addIndex(['id_department'], 'emp_act_area_dep_idx');
-			$areas->addUniqueIndex(['id_activity', 'id_department'], 'emp_act_area_unique');
+			$areas->setPrimaryKey(['id'], 'employees_emp_act_area_pk');
+			$areas->addIndex(['id_activity'], 'employees_emp_act_area_act_idx');
+			$areas->addIndex(['id_department'], 'employees_emp_act_area_dep_idx');
+			$areas->addUniqueIndex(['id_activity', 'id_department'], 'employees_emp_act_area_unique');
 		}
 
 		if ($schema->hasTable('employee_time_reports')) {
@@ -49,8 +49,8 @@ class Version2035Date20260805090000 extends SimpleMigrationStep {
 			if (!$reports->hasColumn('type_work')) {
 				$reports->addColumn('type_work', 'string', ['length' => 16, 'notnull' => false]);
 			}
-			if (!$reports->hasIndex('employee_time_reports_type_idx')) {
-				$reports->addIndex(['type_work'], 'employee_time_reports_type_idx');
+			if (!$reports->hasIndex('employees_employee_time_reports_type_idx')) {
+				$reports->addIndex(['type_work'], 'employees_employee_time_reports_type_idx');
 			}
 		}
 

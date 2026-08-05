@@ -30,9 +30,9 @@ $reports = $installed->getTable($prefix . 'employee_time_reports');
 $areas = $installed->getTable($prefix . 'employee_activity_areas');
 
 assertInternalWork($activities->hasColumn('type_activity') && $activities->hasColumn('scope'), 'Activity contiene tipo y scope');
-assertInternalWork($reports->hasColumn('type_work') && $reports->hasIndex('employee_time_reports_type_idx'), 'reportes contiene tipo de trabajo indexado');
-assertInternalWork($areas->hasIndex('emp_act_area_act_idx') && $areas->hasIndex('emp_act_area_dep_idx'), 'relación de áreas está indexada en ambos sentidos');
-assertInternalWork($areas->hasIndex('emp_act_area_unique') && $areas->getIndex('emp_act_area_unique')->isUnique(), 'relación actividad-área no admite duplicados');
+assertInternalWork($reports->hasColumn('type_work') && $reports->hasIndex('employees_employee_time_reports_type_idx'), 'reportes contiene tipo de trabajo indexado');
+assertInternalWork($areas->hasIndex('employees_emp_act_area_act_idx') && $areas->hasIndex('employees_emp_act_area_dep_idx'), 'relación de áreas está indexada en ambos sentidos');
+assertInternalWork($areas->hasIndex('employees_emp_act_area_unique') && $areas->getIndex('employees_emp_act_area_unique')->isUnique(), 'relación actividad-área no admite duplicados');
 
 $supportQb = $db->getQueryBuilder();
 $supportQb->select('type_activity', 'scope', 'billable')->from('employee_activities')

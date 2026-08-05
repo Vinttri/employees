@@ -111,16 +111,16 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('updated_by', 'string', ['length' => 64, 'notnull' => false]);
 
 		$table->setPrimaryKey(['id_request']);
-		$table->addUniqueIndex(['reference'], 'purchase_requests_reference_uq');
-		$table->addIndex(['id_user'], 'purchase_requests_user_idx');
-		$table->addIndex(['id_employee'], 'purchase_requests_employee_idx');
-		$table->addIndex(['id_department'], 'purchase_requests_department_idx');
-		$table->addIndex(['id_team'], 'purchase_requests_team_idx');
-		$table->addIndex(['id_client'], 'purchase_requests_client_idx');
-		$table->addIndex(['status'], 'purchase_requests_status_idx');
-		$table->addIndex(['priority'], 'purchase_requests_priority_idx');
-		$table->addIndex(['date_required'], 'purchase_requests_required_date_idx');
-		$table->addIndex(['selected_supplier'], 'purchase_requests_supplier_idx');
+		$table->addUniqueIndex(['reference'], 'employees_purchase_requests_reference_uq');
+		$table->addIndex(['id_user'], 'employees_purchase_requests_user_idx');
+		$table->addIndex(['id_employee'], 'employees_purchase_requests_employee_idx');
+		$table->addIndex(['id_department'], 'employees_purchase_requests_department_idx');
+		$table->addIndex(['id_team'], 'employees_purchase_requests_team_idx');
+		$table->addIndex(['id_client'], 'employees_purchase_requests_client_idx');
+		$table->addIndex(['status'], 'employees_purchase_requests_status_idx');
+		$table->addIndex(['priority'], 'employees_purchase_requests_priority_idx');
+		$table->addIndex(['date_required'], 'employees_purchase_requests_required_date_idx');
+		$table->addIndex(['selected_supplier'], 'employees_purchase_requests_supplier_idx');
 	}
 
 	private function createPurchasesDetalles(ISchemaWrapper $schema): void {
@@ -146,7 +146,7 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_detail']);
-		$table->addIndex(['id_request'], 'purchase_details_request_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_details_request_idx');
 	}
 
 	private function createPurchasesProveedores(ISchemaWrapper $schema): void {
@@ -173,9 +173,9 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_supplier']);
-		$table->addIndex(['name'], 'purchase_suppliers_name_idx');
-		$table->addIndex(['rfc'], 'purchase_suppliers_tax_id_idx');
-		$table->addIndex(['active'], 'purchase_suppliers_active_idx');
+		$table->addIndex(['name'], 'employees_purchase_suppliers_name_idx');
+		$table->addIndex(['rfc'], 'employees_purchase_suppliers_tax_id_idx');
+		$table->addIndex(['active'], 'employees_purchase_suppliers_active_idx');
 	}
 
 	private function createPurchasesCotizaciones(ISchemaWrapper $schema): void {
@@ -202,10 +202,10 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_quote']);
-		$table->addIndex(['id_request'], 'purchase_quotes_request_idx');
-		$table->addIndex(['id_supplier'], 'purchase_quotes_supplier_idx');
-		$table->addIndex(['attached_file_id'], 'purchase_quotes_file_idx');
-		$table->addIndex(['selected'], 'purchase_quotes_selected_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_quotes_request_idx');
+		$table->addIndex(['id_supplier'], 'employees_purchase_quotes_supplier_idx');
+		$table->addIndex(['attached_file_id'], 'employees_purchase_quotes_file_idx');
+		$table->addIndex(['selected'], 'employees_purchase_quotes_selected_idx');
 	}
 
 	private function createPurchasesAutorizaciones(ISchemaWrapper $schema): void {
@@ -231,11 +231,11 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_authorization']);
-		$table->addIndex(['id_request'], 'purchase_authorizations_request_idx');
-		$table->addIndex(['id_authorizer'], 'purchase_authorizations_user_idx');
-		$table->addIndex(['id_employee_authorizer'], 'purchase_authorizations_employee_idx');
-		$table->addIndex(['status'], 'purchase_authorizations_status_idx');
-		$table->addIndex(['level'], 'purchase_authorizations_level_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_authorizations_request_idx');
+		$table->addIndex(['id_authorizer'], 'employees_purchase_authorizations_user_idx');
+		$table->addIndex(['id_employee_authorizer'], 'employees_purchase_authorizations_employee_idx');
+		$table->addIndex(['status'], 'employees_purchase_authorizations_status_idx');
+		$table->addIndex(['level'], 'employees_purchase_authorizations_level_idx');
 	}
 
 	private function createPurchasesAdjuntos(ISchemaWrapper $schema): void {
@@ -260,9 +260,9 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_attachment']);
-		$table->addIndex(['id_request'], 'purchase_attachments_request_idx');
-		$table->addIndex(['type'], 'purchase_attachments_type_idx');
-		$table->addIndex(['file_id'], 'purchase_attachments_file_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_attachments_request_idx');
+		$table->addIndex(['type'], 'employees_purchase_attachments_type_idx');
+		$table->addIndex(['file_id'], 'employees_purchase_attachments_file_idx');
 	}
 
 	private function createPurchasesOrdenes(ISchemaWrapper $schema): void {
@@ -290,11 +290,11 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_order']);
-		$table->addUniqueIndex(['reference_order'], 'purchase_orders_reference_uq');
-		$table->addIndex(['id_request'], 'purchase_orders_request_idx');
-		$table->addIndex(['id_supplier'], 'purchase_orders_supplier_idx');
-		$table->addIndex(['status'], 'purchase_orders_status_idx');
-		$table->addIndex(['attached_file_id'], 'purchase_orders_file_idx');
+		$table->addUniqueIndex(['reference_order'], 'employees_purchase_orders_reference_uq');
+		$table->addIndex(['id_request'], 'employees_purchase_orders_request_idx');
+		$table->addIndex(['id_supplier'], 'employees_purchase_orders_supplier_idx');
+		$table->addIndex(['status'], 'employees_purchase_orders_status_idx');
+		$table->addIndex(['attached_file_id'], 'employees_purchase_orders_file_idx');
 	}
 
 	private function createPurchasesHistory(ISchemaWrapper $schema): void {
@@ -319,10 +319,10 @@ class Version2003Date20260507022325 extends SimpleMigrationStep {
 		$table->addColumn('created_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_history']);
-		$table->addIndex(['id_request'], 'purchase_history_request_idx');
-		$table->addIndex(['action'], 'purchase_history_action_idx');
-		$table->addIndex(['status_new'], 'purchase_history_status_idx');
-		$table->addIndex(['created_at'], 'purchase_history_date_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_history_request_idx');
+		$table->addIndex(['action'], 'employees_purchase_history_action_idx');
+		$table->addIndex(['status_new'], 'employees_purchase_history_status_idx');
+		$table->addIndex(['created_at'], 'employees_purchase_history_date_idx');
 	}
 
 	private function insertConfig(string $name, ?string $data): bool {

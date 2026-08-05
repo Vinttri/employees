@@ -36,12 +36,12 @@ class Version2036Date20260805120000 extends SimpleMigrationStep {
 		$table->addColumn('remote_addr', 'string', ['length' => 45, 'notnull' => false]);
 		$table->addColumn('user_agent', 'string', ['length' => 512, 'notnull' => false]);
 
-		$table->setPrimaryKey(['id'], 'employee_file_movements_pk');
-		$table->addIndex(['uid_actor'], 'employee_file_movements_actor_idx');
-		$table->addIndex(['id_employee'], 'employee_file_movements_employee_idx');
-		$table->addIndex(['type_event'], 'employee_file_movements_type_idx');
-		$table->addIndex(['date_event'], 'employee_file_movements_date_idx');
-		$table->addIndex(['file_id'], 'employee_file_movements_file_idx');
+		$table->setPrimaryKey(['id'], 'employees_employee_file_movements_pk');
+		$table->addIndex(['uid_actor'], 'employees_employee_file_movements_actor_idx');
+		$table->addIndex(['id_employee'], 'employees_employee_file_movements_employee_idx');
+		$table->addIndex(['type_event'], 'employees_employee_file_movements_type_idx');
+		$table->addIndex(['date_event'], 'employees_employee_file_movements_date_idx');
+		$table->addIndex(['file_id'], 'employees_employee_file_movements_file_idx');
 
 		return $schema;
 	}

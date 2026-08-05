@@ -109,9 +109,9 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id_model']);
-		$table->addIndex(['brand'], 'inventory_models_brand_idx');
-		$table->addIndex(['model'], 'inventory_models_model_idx');
-		$table->addIndex(['type'], 'inventory_models_type_idx');
+		$table->addIndex(['brand'], 'employees_inventory_models_brand_idx');
+		$table->addIndex(['model'], 'employees_inventory_models_model_idx');
+		$table->addIndex(['type'], 'employees_inventory_models_type_idx');
 	}
 
 	private function createInventoryComputo(ISchemaWrapper $schema): void {
@@ -172,10 +172,10 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 
 		$table->setPrimaryKey(['id_team']);
 
-		$table->addIndex(['id_employee'], 'inventory_computers_employee_idx');
-		$table->addIndex(['id_model'], 'inventory_computers_model_idx');
-		$table->addIndex(['serial_number'], 'inventory_computers_serial_idx');
-		$table->addIndex(['status'], 'inventory_computers_status_idx');
+		$table->addIndex(['id_employee'], 'employees_inventory_computers_employee_idx');
+		$table->addIndex(['id_model'], 'employees_inventory_computers_model_idx');
+		$table->addIndex(['serial_number'], 'employees_inventory_computers_serial_idx');
+		$table->addIndex(['status'], 'employees_inventory_computers_status_idx');
 
 		/*
 		 * No agrego foreign keys todavía.
@@ -241,11 +241,11 @@ class Version2002Date20260504080248 extends SimpleMigrationStep {
 
 		$table->setPrimaryKey(['id_support']);
 
-		$table->addIndex(['id_team'], 'support_history_team_idx');
-		$table->addIndex(['action'], 'support_history_action_idx');
-		$table->addIndex(['date'], 'support_history_date_idx');
-		$table->addIndex(['current_user'], 'support_history_current_user_idx');
-		$table->addIndex(['user_support'], 'support_history_technician_idx');
+		$table->addIndex(['id_team'], 'employees_support_history_team_idx');
+		$table->addIndex(['action'], 'employees_support_history_action_idx');
+		$table->addIndex(['date'], 'employees_support_history_date_idx');
+		$table->addIndex(['current_user'], 'employees_support_history_current_user_idx');
+		$table->addIndex(['user_support'], 'employees_support_history_technician_idx');
 
 		/*
 		 * Relación lógica:

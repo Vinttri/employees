@@ -30,8 +30,8 @@ class Version2034Date20260804120000 extends SimpleMigrationStep {
 		if (!$groups->hasColumn('date_end')) {
 			$groups->addColumn('date_end', 'date', ['notnull' => false]);
 		}
-		if (!$groups->hasIndex('maintenance_groups_period_idx')) {
-			$groups->addIndex(['date_start', 'date_end'], 'maintenance_groups_period_idx');
+		if (!$groups->hasIndex('employees_maintenance_groups_period_idx')) {
+			$groups->addIndex(['date_start', 'date_end'], 'employees_maintenance_groups_period_idx');
 		}
 
 		$maintenances = $schema->getTable('maintenance_records');

@@ -32,9 +32,9 @@ class Version2028Date20260801090000 extends SimpleMigrationStep {
 		$table->addColumn('created_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_employee'], 'emergency_contacts_employee_idx');
-		$table->addIndex(['id_employee', 'is_primary'], 'emergency_contacts_primary_idx');
-		$table->addUniqueIndex(['primary_employee'], 'emergency_contacts_primary_uq');
+		$table->addIndex(['id_employee'], 'employees_emergency_contacts_employee_idx');
+		$table->addIndex(['id_employee', 'is_primary'], 'employees_emergency_contacts_primary_idx');
+		$table->addUniqueIndex(['primary_employee'], 'employees_emergency_contacts_primary_uq');
 		return $schema;
 	}
 

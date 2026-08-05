@@ -44,7 +44,7 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 		]);
 
 		$catalogoTable->setPrimaryKey(['id_boarding']);
-		$catalogoTable->addIndex(['on'], 'emp_board_cat_on_idx');
+		$catalogoTable->addIndex(['on'], 'employees_emp_board_cat_on_idx');
 
 		$pivoteTable = $schema->createTable('employee_onboarding');
 
@@ -77,9 +77,9 @@ class Version2032Date20260804172810 extends SimpleMigrationStep {
 
 		$pivoteTable->setPrimaryKey(['id_employee_boarding']);
 
-		$pivoteTable->addUniqueIndex(['id_employee', 'id_boarding'], 'emp_board_emp_item_uniq');
-		$pivoteTable->addIndex(['id_employee'], 'employee_onboarding_employee_idx');
-		$pivoteTable->addIndex(['id_boarding'], 'emp_board_boarding_idx');
+		$pivoteTable->addUniqueIndex(['id_employee', 'id_boarding'], 'employees_emp_board_emp_item_uniq');
+		$pivoteTable->addIndex(['id_employee'], 'employees_employee_onboarding_employee_idx');
+		$pivoteTable->addIndex(['id_boarding'], 'employees_emp_board_boarding_idx');
 
 		return $schema;
 	}

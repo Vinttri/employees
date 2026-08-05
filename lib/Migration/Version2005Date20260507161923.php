@@ -179,9 +179,9 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 			'notnull' => false,
 		]);
 
-		$this->addIndex($table, ['purchase_type'], 'purchase_requests_type_idx');
-		$this->addIndex($table, ['purchase_use'], 'purchase_requests_use_idx');
-		$this->addIndex($table, ['pdf_file_id'], 'purchase_requests_pdf_idx');
+		$this->addIndex($table, ['purchase_type'], 'employees_purchase_requests_type_idx');
+		$this->addIndex($table, ['purchase_use'], 'employees_purchase_requests_use_idx');
+		$this->addIndex($table, ['pdf_file_id'], 'employees_purchase_requests_pdf_idx');
 	}
 
 	private function updateDetalles(ISchemaWrapper $schema): void {
@@ -286,10 +286,10 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id_signature']);
-		$table->addIndex(['id_request'], 'purchase_signatures_request_idx');
-		$table->addIndex(['role'], 'purchase_signatures_role_idx');
-		$table->addIndex(['uid'], 'purchase_signatures_uid_idx');
-		$table->addIndex(['status'], 'purchase_signatures_status_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_signatures_request_idx');
+		$table->addIndex(['role'], 'employees_purchase_signatures_role_idx');
+		$table->addIndex(['uid'], 'employees_purchase_signatures_uid_idx');
+		$table->addIndex(['status'], 'employees_purchase_signatures_status_idx');
 	}
 
 	private function createDocumentos(ISchemaWrapper $schema): void {
@@ -351,10 +351,10 @@ class Version2005Date20260507161923 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id_doc']);
-		$table->addIndex(['id_request'], 'purchase_documents_request_idx');
-		$table->addIndex(['type_doc'], 'purchase_documents_type_idx');
-		$table->addIndex(['file_id'], 'purchase_documents_file_idx');
-		$table->addIndex(['token'], 'purchase_documents_token_idx');
+		$table->addIndex(['id_request'], 'employees_purchase_documents_request_idx');
+		$table->addIndex(['type_doc'], 'employees_purchase_documents_type_idx');
+		$table->addIndex(['file_id'], 'employees_purchase_documents_file_idx');
+		$table->addIndex(['token'], 'employees_purchase_documents_token_idx');
 	}
 
 	private function addColumn($table, string $name, string $type, array $options): void {

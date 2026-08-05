@@ -57,8 +57,8 @@ class Version2024Date20260717192013 extends SimpleMigrationStep {
 
 		$table->setPrimaryKey(['id']);
 
-		$table->addUniqueIndex(['id_employee', 'id_dependent'], 'empl_org_pair_uniq');
-		$table->addIndex(['id_dependent'], 'empl_org_dep_idx');
+		$table->addUniqueIndex(['id_employee', 'id_dependent'], 'employees_empl_org_pair_uniq');
+		$table->addIndex(['id_dependent'], 'employees_empl_org_dep_idx');
 
 		$posTable = $schema->createTable('org_chart_positions');
 

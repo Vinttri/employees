@@ -30,7 +30,7 @@ class Version2029Date20260801130000 extends SimpleMigrationStep {
 		$table->addColumn('changes', 'text', ['notnull' => false]);
 		$table->addColumn('date', 'datetime', ['notnull' => true]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['id_team', 'date'], 'inventory_movements_team_date_idx');
+		$table->addIndex(['id_team', 'date'], 'employees_inventory_movements_team_date_idx');
 
 		return $schema;
 	}

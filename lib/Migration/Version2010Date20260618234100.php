@@ -81,7 +81,7 @@ class Version2010Date20260618234100 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id_fee']);
-		$table->addIndex(['id_client'], 'professional_fees_client_idx');
+		$table->addIndex(['id_client'], 'employees_professional_fees_client_idx');
 
 		// ── fee_payments ───────────────────────────
 		$table = $schema->createTable('fee_payments');
@@ -129,7 +129,7 @@ class Version2010Date20260618234100 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id_installment']);
-		$table->addIndex(['id_fee'], 'fee_payments_fee_idx');
+		$table->addIndex(['id_fee'], 'employees_fee_payments_fee_idx');
 
 		return $schema;
 	}

@@ -52,18 +52,18 @@ assertMaintenance(array_reduce($expectedTables, fn(bool $ok, string $table): boo
 
 $maintenances = $schema->getTable('maintenance_records');
 $checks = $schema->getTable('maintenance_checks');
-$groupEquipmentIndex = $maintenances->getIndex('maintenances_group_team_uq');
+$groupEquipmentIndex = $maintenances->getIndex('employees_maintenances_group_team_uq');
 assertMaintenance(
-	$maintenances->hasIndex('maintenances_group_team_uq')
+	$maintenances->hasIndex('employees_maintenances_group_team_uq')
 	&& $groupEquipmentIndex->isUnique()
 	&& $groupEquipmentIndex->getColumns() === ['id_group', 'id_team'],
 	'un equipo es único dentro del grupo y puede repetirse en grupos distintos',
 );
-assertMaintenance($checks->hasIndex('maintenance_checklists_code_uq') && $checks->getIndex('maintenance_checklists_code_uq')->isUnique(), 'cada code de checklist es única por mantenimiento');
+assertMaintenance($checks->hasIndex('employees_maintenance_checklists_code_uq') && $checks->getIndex('employees_maintenance_checklists_code_uq')->isUnique(), 'cada code de checklist es única por mantenimiento');
 assertMaintenance(!$maintenances->getColumn('id_employee')->getNotnull() && !$maintenances->getColumn('id_department')->getNotnull(), 'snapshots de empleado y departamento aceptan null');
 assertMaintenance(!$schema->getTable('maintenance_groups')->getColumn('id_department')->getNotnull(), 'campañas especiales aceptan departamento null');
 $groups = $schema->getTable('maintenance_groups');
-assertMaintenance($groups->hasColumn('date_start') && $groups->hasColumn('date_end') && $groups->hasIndex('maintenance_groups_period_idx'), 'la migración de periodo agrega fechas e índice de cruce de forma idempotente');
+assertMaintenance($groups->hasColumn('date_start') && $groups->hasColumn('date_end') && $groups->hasIndex('employees_maintenance_groups_period_idx'), 'la migración de periodo agrega fechas e índice de cruce de forma idempotente');
 assertMaintenance(!$maintenances->getColumn('date_scheduled')->getNotnull(), 'la fecha programada individual acepta null');
 assertMaintenance(MaintenanceAsset::ESTADOS_VALIDOS === ['pending', 'scheduled', 'in_progress', 'completed', 'rescheduled', 'cancelled', 'not_applicable'], 'estados operativos válidos definidos');
 assertMaintenance(!in_array('overdue', MaintenanceAsset::ESTADOS_VALIDOS, true) && $maintenances->hasColumn('status') && !$maintenances->hasColumn('overdue'), 'overdue se calcula y no se persiste');

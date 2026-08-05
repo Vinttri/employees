@@ -31,11 +31,11 @@ class Version2031Date20260802090000 extends SimpleMigrationStep {
 			if (!$reportes->hasColumn('source_id')) {
 				$reportes->addColumn('source_id', 'integer', ['unsigned' => true, 'notnull' => false]);
 			}
-			if (!$reportes->hasIndex('employee_time_reports_source_idx')) {
-				$reportes->addIndex(['source', 'source_id'], 'employee_time_reports_source_idx');
+			if (!$reportes->hasIndex('employees_employee_time_reports_source_idx')) {
+				$reportes->addIndex(['source', 'source_id'], 'employees_employee_time_reports_source_idx');
 			}
-			if (!$reportes->hasIndex('employee_time_reports_source_uq')) {
-				$reportes->addUniqueIndex(['source', 'source_id'], 'employee_time_reports_source_uq');
+			if (!$reportes->hasIndex('employees_employee_time_reports_source_uq')) {
+				$reportes->addUniqueIndex(['source', 'source_id'], 'employees_employee_time_reports_source_uq');
 			}
 		}
 
@@ -44,8 +44,8 @@ class Version2031Date20260802090000 extends SimpleMigrationStep {
 			if (!$Activity->hasColumn('system_code')) {
 				$Activity->addColumn('system_code', 'string', ['length' => 64, 'notnull' => false]);
 			}
-			if (!$Activity->hasIndex('employee_activities_code_unique')) {
-				$Activity->addUniqueIndex(['system_code'], 'employee_activities_code_unique');
+			if (!$Activity->hasIndex('employees_employee_activities_code_unique')) {
+				$Activity->addUniqueIndex(['system_code'], 'employees_employee_activities_code_unique');
 			}
 		}
 

@@ -127,15 +127,15 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['id_employees']);
-		$table->addIndex(['id_employees'], 'id_employees');
-		$table->addIndex(['id_user'], 'idx_id_user');
-		$table->addIndex(['number_employee'], 'idx_employee_number');
-		$table->addIndex(['email_contact'], 'idx_contact_email');
-		$table->addIndex(['id_department'], 'idx_department_id');
-		$table->addIndex(['id_position'], 'idx_position_id');
-		$table->addIndex(['id_team'], 'idx_team_id');
-		$table->addIndex(['id_manager'], 'idx_manager_id');
-		$table->addIndex(['id_partner'], 'idx_partner_id');
+		$table->addIndex(['id_employees'], 'employees_id_employees');
+		$table->addIndex(['id_user'], 'employees_idx_id_user');
+		$table->addIndex(['number_employee'], 'employees_idx_employee_number');
+		$table->addIndex(['email_contact'], 'employees_idx_contact_email');
+		$table->addIndex(['id_department'], 'employees_idx_department_id');
+		$table->addIndex(['id_position'], 'employees_idx_position_id');
+		$table->addIndex(['id_team'], 'employees_idx_team_id');
+		$table->addIndex(['id_manager'], 'employees_idx_manager_id');
+		$table->addIndex(['id_partner'], 'employees_idx_partner_id');
 	}
 
 	private function createPositions(ISchemaWrapper $schema): void {
@@ -155,8 +155,8 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['id_positions']);
-		$table->addIndex(['id_positions'], 'id_positions');
-		$table->addIndex(['name'], 'idx_positions_name');
+		$table->addIndex(['id_positions'], 'employees_id_positions');
+		$table->addIndex(['name'], 'employees_idx_positions_name');
 	}
 
 	private function createDepartamentos(ISchemaWrapper $schema): void {
@@ -177,9 +177,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['id_department']);
-		$table->addIndex(['id_department'], 'id_department');
-		$table->addIndex(['name'], 'idx_departments_name');
-		$table->addIndex(['id_parent'], 'idx_departments_parent');
+		$table->addIndex(['id_department'], 'employees_id_department');
+		$table->addIndex(['name'], 'employees_idx_departments_name');
+		$table->addIndex(['id_parent'], 'employees_idx_departments_parent');
 	}
 
 	private function createEmpleadosConf(ISchemaWrapper $schema): void {
@@ -198,7 +198,7 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('data', 'string', ['length' => 255, 'notnull' => false]);
 
 		$table->setPrimaryKey(['settings_id']);
-		$table->addUniqueIndex(['name'], 'uq_employee_settings_name');
+		$table->addUniqueIndex(['name'], 'employees_uq_employee_settings_name');
 	}
 
 	private function createAniversarios(ISchemaWrapper $schema): void {
@@ -219,7 +219,7 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('days', 'decimal', ['precision' => 5, 'scale' => 2, 'notnull' => true]);
 
 		$table->setPrimaryKey(['id_anniversary']);
-		$table->addIndex(['number_anniversary'], 'anniversary_number_idx');
+		$table->addIndex(['number_anniversary'], 'employees_anniversary_number_idx');
 	}
 
 	private function createTipoAusencia(ISchemaWrapper $schema): void {
@@ -240,7 +240,7 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('request_bonus_vacation', 'integer', ['notnull' => true, 'default' => 0]);
 
 		$table->setPrimaryKey(['absence_type_id']);
-		$table->addIndex(['name'], 'absence_type_name_idx');
+		$table->addIndex(['name'], 'employees_absence_type_name_idx');
 	}
 
 	private function createAusencias(ISchemaWrapper $schema): void {
@@ -271,8 +271,8 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['absence_id']);
-		$table->addUniqueIndex(['id_employee'], 'uniq_absence_employee');
-		$table->addIndex(['id_anniversary'], 'absences_anniversary_idx');
+		$table->addUniqueIndex(['id_employee'], 'employees_uniq_absence_employee');
+		$table->addIndex(['id_anniversary'], 'employees_absences_anniversary_idx');
 	}
 
 	private function createHistoryAusencias(ISchemaWrapper $schema): void {
@@ -304,9 +304,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('notes', 'string', ['notnull' => false, 'length' => 255]);
 
 		$table->setPrimaryKey(['absence_history_id']);
-		$table->addIndex(['absence_id'], 'absence_history_absence_idx');
-		$table->addIndex(['absence_type_id'], 'absence_history_type_idx');
-		$table->addIndex(['id_anniversary'], 'absence_history_anniversary_idx');
+		$table->addIndex(['absence_id'], 'employees_absence_history_absence_idx');
+		$table->addIndex(['absence_type_id'], 'employees_absence_history_type_idx');
+		$table->addIndex(['id_anniversary'], 'employees_absence_history_anniversary_idx');
 	}
 
 	private function createTeams(ISchemaWrapper $schema): void {
@@ -327,9 +327,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['id_team']);
-		$table->addIndex(['id_team'], 'id_team');
-		$table->addIndex(['team_leader_id'], 'idx_team_leader_id');
-		$table->addIndex(['name'], 'idx_team_name');
+		$table->addIndex(['id_team'], 'employees_id_team');
+		$table->addIndex(['team_leader_id'], 'employees_idx_team_leader_id');
+		$table->addIndex(['name'], 'employees_idx_team_name');
 	}
 
 	private function createUserAhorro(ISchemaWrapper $schema): void {
@@ -349,9 +349,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('last_modified', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['id_savings']);
-		$table->addIndex(['id_user'], 'user_savings_uid');
-		$table->addIndex(['id_permission'], 'user_savings_perm');
-		$table->addIndex(['state'], 'user_savings_state');
+		$table->addIndex(['id_user'], 'employees_user_savings_uid');
+		$table->addIndex(['id_permission'], 'employees_user_savings_perm');
+		$table->addIndex(['state'], 'employees_user_savings_state');
 	}
 
 	private function createHistoryAhorro(ISchemaWrapper $schema): void {
@@ -373,9 +373,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('note', 'string', ['notnull' => false, 'length' => 255]);
 
 		$table->setPrimaryKey(['id_history']);
-		$table->addIndex(['id_savings'], 'hist_savings_id');
-		$table->addIndex(['status'], 'savings_history_status_idx');
-		$table->addIndex(['date_request'], 'savings_history_date_idx');
+		$table->addIndex(['id_savings'], 'employees_hist_savings_id');
+		$table->addIndex(['status'], 'employees_savings_history_status_idx');
+		$table->addIndex(['date_request'], 'employees_savings_history_date_idx');
 	}
 
 	private function createCapitalHumano(ISchemaWrapper $schema): void {
@@ -394,8 +394,8 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'string', ['notnull' => true, 'length' => 32]);
 
 		$table->setPrimaryKey(['human_resources_id']);
-		$table->addIndex(['human_resources_id'], 'human_resources_id');
-		$table->addIndex(['id_employee'], 'human_resources_employee_id_idx');
+		$table->addIndex(['human_resources_id'], 'employees_human_resources_id');
+		$table->addIndex(['id_employee'], 'employees_human_resources_employee_id_idx');
 	}
 
 	private function createEmpleadosClientes(ISchemaWrapper $schema): void {
@@ -415,8 +415,8 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('timestamp', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_client']);
-		$table->addIndex(['name'], 'employee_clients_name_idx');
-		$table->addIndex(['client_parent'], 'employee_clients_parent_idx');
+		$table->addIndex(['name'], 'employees_employee_clients_name_idx');
+		$table->addIndex(['client_parent'], 'employees_employee_clients_parent_idx');
 	}
 
 	private function createEmpleadosActivities(ISchemaWrapper $schema): void {
@@ -436,7 +436,7 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('time_actual', 'decimal', ['precision' => 8, 'scale' => 2, 'notnull' => false]);
 
 		$table->setPrimaryKey(['id_activity']);
-		$table->addIndex(['name'], 'employee_activities_name_idx');
+		$table->addIndex(['name'], 'employees_employee_activities_name_idx');
 	}
 
 	private function createEmpleadosRepTiempos(ISchemaWrapper $schema): void {
@@ -460,10 +460,10 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 		$table->addColumn('updated_at', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
 		$table->setPrimaryKey(['id_report']);
-		$table->addIndex(['id_employee'], 'employee_time_reports_employee_idx');
-		$table->addIndex(['id_client'], 'employee_time_reports_client_idx');
-		$table->addIndex(['id_activity'], 'employee_time_reports_activity_idx');
-		$table->addIndex(['date_recorded'], 'employee_time_reports_date_idx');
+		$table->addIndex(['id_employee'], 'employees_employee_time_reports_employee_idx');
+		$table->addIndex(['id_client'], 'employees_employee_time_reports_client_idx');
+		$table->addIndex(['id_activity'], 'employees_employee_time_reports_activity_idx');
+		$table->addIndex(['date_recorded'], 'employees_employee_time_reports_date_idx');
 	}
 
 	private function insertConfig(string $name, ?string $data): bool {

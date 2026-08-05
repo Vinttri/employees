@@ -82,14 +82,14 @@ class Version2013Date20260701010000 extends SimpleMigrationStep {
 
 			$table->addUniqueIndex(
 				['module', 'permission', 'group_id'],
-				'emp_perm_group_uq'
+				'employees_emp_perm_group_uq'
 			);
 
-			$table->addIndex(['module'], 'emp_perm_module_idx');
-			$table->addIndex(['group_id'], 'emp_perm_group_idx');
-			$table->addIndex(['enabled'], 'emp_perm_enabled_idx');
-			$table->addIndex(['restricted'], 'emp_perm_restricted_idx');
-			$table->addIndex(['sort_order'], 'emp_perm_sort_idx');
+			$table->addIndex(['module'], 'employees_emp_perm_module_idx');
+			$table->addIndex(['group_id'], 'employees_emp_perm_group_idx');
+			$table->addIndex(['enabled'], 'employees_emp_perm_enabled_idx');
+			$table->addIndex(['restricted'], 'employees_emp_perm_restricted_idx');
+			$table->addIndex(['sort_order'], 'employees_emp_perm_sort_idx');
 		}
 
 		return $schema;

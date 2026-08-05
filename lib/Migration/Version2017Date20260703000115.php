@@ -78,7 +78,7 @@ class Version2017Date20260703000115 extends SimpleMigrationStep {
 
 		$table->addUniqueIndex(
 			['id_employee', 'number_anniversary'],
-			'vacation_history_employee_anniversary_uq'
+			'employees_vacation_history_employee_anniversary_uq'
 		);
 
 		return $schema;
