@@ -51,6 +51,18 @@ use OCP\Files\IAppData;
  */
 class SettingsController extends Controller {
 
+	private const BOOLEAN_SETTINGS = [
+		'automatic_save_note',
+		'acumular_vacaciones',
+		'modulo_savings',
+		'modulo_ausencias',
+		'ausencias_readonly',
+		'modulo_clients',
+		'modulo_reporte_tiempos',
+		'modulo_inventario',
+		'modulo_soporte',
+		'modulo_purchases',
+	];
 	private $userSession;
 	private $SettingsMapper;
 
@@ -337,17 +349,48 @@ class SettingsController extends Controller {
         }
 	}
 
-    #[NoCSRFRequired]
     #[AdminRequired]
     public function ActualizarConfiguracion($id_configuracion, $data): DataResponse {
-        $this->SettingsMapper->ActualizarConfiguracion($id_configuracion, $data);
+		$id = trim((string)$id_configuracion);
+		if (!in_array($id, self::BOOLEAN_SETTINGS, true)) {
+			return new DataResponse([
+				'status' => 'error',
+				'message' => 'Unknown boolean setting.',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$normalized = $this->normalizeBooleanSetting($data);
+		if ($normalized === null) {
+			return new DataResponse([
+				'status' => 'error',
+				'message' => 'Boolean setting value must be true or false.',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$persisted = $this->SettingsMapper->ActualizarConfiguracion($id, $normalized);
 
         return new DataResponse([
             'status' => 'ok',
-            'id_configuracion' => $id_configuracion,
-            'data' => $data,
+			'id_configuracion' => $id,
+			'data' => $persisted,
         ]);
     }
+
+	private function normalizeBooleanSetting(mixed $value): ?string {
+		if (is_bool($value)) {
+			return $value ? 'true' : 'false';
+		}
+
+		if (!is_scalar($value)) {
+			return null;
+		}
+
+		return match (strtolower(trim((string)$value))) {
+			'true', '1' => 'true',
+			'false', '0' => 'false',
+			default => null,
+		};
+	}
 
     #[NoCSRFRequired]
     #[AdminRequired]

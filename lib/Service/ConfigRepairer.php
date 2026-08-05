@@ -17,6 +17,11 @@ class ConfigRepairer {
             'modulo_savings',
             'modulo_ausencias',
             'ausencias_readonly',
+            'modulo_clients',
+            'modulo_reporte_tiempos',
+            'modulo_inventario',
+            'modulo_soporte',
+            'modulo_purchases',
         ];
 
         $table = 'employee_settings';

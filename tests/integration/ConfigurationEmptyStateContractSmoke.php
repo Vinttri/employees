@@ -19,6 +19,9 @@ foreach ([
 	'ausencias_readonly',
 	'modulo_clients',
 	'modulo_reporte_tiempos',
+	'modulo_inventario',
+	'modulo_soporte',
+	'modulo_purchases',
 ] as $key) {
 	if (!str_contains($controller, "\$configMap['{$key}'] ??")) {
 		$errors[] = "Missing safe named default for {$key}";
@@ -30,4 +33,4 @@ if ($errors !== []) {
 	exit(1);
 }
 
-echo 'CONFIGURATION_EMPTY_STATE_CONTRACT_OK keys=8' . PHP_EOL;
+echo 'CONFIGURATION_EMPTY_STATE_CONTRACT_OK keys=11' . PHP_EOL;

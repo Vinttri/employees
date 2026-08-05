@@ -43,6 +43,11 @@ class AdminSettings implements ISettings {
             'modulo_savings',
             'modulo_ausencias',
             'ausencias_readonly',
+            'modulo_clients',
+            'modulo_reporte_tiempos',
+            'modulo_inventario',
+            'modulo_soporte',
+            'modulo_purchases',
         ];
         $missing = array_diff($requiredKeys, array_keys($params));
 

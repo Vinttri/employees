@@ -503,168 +503,83 @@ export default {
 		},
 
 		/**
-		 * Toggle: Automatic note saving
+		 * Persist the value emitted by NcCheckboxRadioSwitch.
+		 * The previous value is restored when the server rejects the update.
+		 * @param {string} propertyName Component state property to update.
+		 * @param {string} settingName Persisted employee setting name.
+		 * @param {boolean} checked Value emitted by the switch.
+		 * @param {boolean} refreshNavigation Whether to show the navigation refresh hint.
 		 */
-		async onChangeGuardadoNotas() {
-			this.guardado_notes = !this.guardado_notes
+		async updateBooleanSetting(propertyName, settingName, checked, refreshNavigation = false) {
+			const previousValue = this[propertyName]
+			const nextValue = checked === true
+			this[propertyName] = nextValue
+
 			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'automatic_save_note',
-					data: this.guardado_notes.toString(),
+				const response = await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
+					id_configuracion: settingName,
+					data: nextValue ? 'true' : 'false',
 				})
-				showSuccess(t('employees', 'Configuration updated'))
-				this.$bus?.emit('GetDataManager') // Notify other components
+				const persistedValue = String(response.data?.data) === 'true'
+
+				if (persistedValue !== nextValue) {
+					throw new Error('The persisted setting does not match the requested value.')
+				}
+
+				this[propertyName] = persistedValue
+				showSuccess(refreshNavigation
+					? t('employees', 'Configuration updated. Refresh the page to update the navigation menu.')
+					: t('employees', 'Configuration updated'))
+				if (settingName === 'automatic_save_note') {
+					this.$bus?.emit('GetDataManager')
+				}
 			} catch (err) {
+				this[propertyName] = previousValue
 				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
 				console.error(err)
 			}
 		},
 
-		/**
-		 * Toggle: Customers module
-		 */
-		async onChangemodulo_clients() {
-			this.modulo_clients = !this.modulo_clients
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_clients',
-					data: this.modulo_clients.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangeGuardadoNotas(checked) {
+			return this.updateBooleanSetting('guardado_notes', 'automatic_save_note', checked)
 		},
 
-		/**
-		 * Toggle: Report times module
-		 */
-		async onChangemodulo_reporte_tiempos() {
-			this.modulo_reporte_tiempos = !this.modulo_reporte_tiempos
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_reporte_tiempos',
-					data: this.modulo_reporte_tiempos.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_clients(checked) {
+			return this.updateBooleanSetting('modulo_clients', 'modulo_clients', checked, true)
 		},
 
-		/**
-		 * Toggle: IT inventory module
-		 */
-		async onChangemodulo_inventario() {
-			this.modulo_inventario = !this.modulo_inventario
-
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_inventario',
-					data: this.modulo_inventario.toString(),
-				})
-
-				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_reporte_tiempos(checked) {
+			return this.updateBooleanSetting('modulo_reporte_tiempos', 'modulo_reporte_tiempos', checked, true)
 		},
 
-		/**
-		 * Toggle: IT support module
-		 */
-		async onChangemodulo_soporte() {
-			this.modulo_soporte = !this.modulo_soporte
-
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_soporte',
-					data: this.modulo_soporte.toString(),
-				})
-
-				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_inventario(checked) {
+			return this.updateBooleanSetting('modulo_inventario', 'modulo_inventario', checked, true)
 		},
 
-		/**
-		 * Toggle: Accrue vacation
-		 */
-		async onChangeacumular_vacaciones() {
-			this.acumular_vacaciones = !this.acumular_vacaciones
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'acumular_vacaciones',
-					data: this.acumular_vacaciones.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_soporte(checked) {
+			return this.updateBooleanSetting('modulo_soporte', 'modulo_soporte', checked, true)
 		},
 
-		/**
-		 * Toggle: Savings module
-		 */
-		async onChangemodulo_savings() {
-			this.modulo_savings = !this.modulo_savings
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_savings',
-					data: this.modulo_savings.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangeacumular_vacaciones(checked) {
+			return this.updateBooleanSetting('acumular_vacaciones', 'acumular_vacaciones', checked)
 		},
 
-		/**
-		 * Toggle: Absences module
-		 */
-		async onChangemodulo_ausencias() {
-			this.modulo_ausencias = !this.modulo_ausencias
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_ausencias',
-					data: this.modulo_ausencias.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_savings(checked) {
+			return this.updateBooleanSetting('modulo_savings', 'modulo_savings', checked, true)
 		},
 
-		/**
-		 * Toggle: Absences module read-only
-		 */
-		async onChangemodulo_ausencias_readonly() {
-			this.modulo_ausencias_readonly = !this.modulo_ausencias_readonly
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'ausencias_readonly',
-					data: this.modulo_ausencias_readonly.toString(),
-				})
-				showSuccess(t('employees', 'Configuration updated'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_ausencias(checked) {
+			return this.updateBooleanSetting('modulo_ausencias', 'modulo_ausencias', checked, true)
+		},
+
+		onChangemodulo_ausencias_readonly(checked) {
+			return this.updateBooleanSetting('modulo_ausencias_readonly', 'ausencias_readonly', checked)
 		},
 
 		/**
 		 * Save secret token for admin moves
 		 */
 		async saveSecretToken() {
-			this.modulo_ausencias = !this.modulo_ausencias
 			try {
 				await axios.post(generateUrl('/apps/employees/provisioning'), {
 					secret: this.secrettoken,
@@ -693,23 +608,8 @@ export default {
 				console.error(err)
 			}
 		},
-		/**
-		 * Toggle: Purchases module
-		 */
-		async onChangemodulo_purchases() {
-			this.modulo_purchases = !this.modulo_purchases
-
-			try {
-				await axios.post(generateUrl('/apps/employees/ActualizarConfiguracion'), {
-					id_configuracion: 'modulo_purchases',
-					data: this.modulo_purchases.toString(),
-				})
-
-				showSuccess(t('employees', 'Configuration updated. Refresh the page to update the navigation menu.'))
-			} catch (err) {
-				showError(t('employees', 'Exception [UpdateConfiguration]: {error}', { error: String(err) }))
-				console.error(err)
-			}
+		onChangemodulo_purchases(checked) {
+			return this.updateBooleanSetting('modulo_purchases', 'modulo_purchases', checked, true)
 		},
 
 		revokeLogoDocumentoUrl() {
