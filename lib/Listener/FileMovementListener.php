@@ -17,7 +17,7 @@ use Throwable;
 
 class FileMovementListener implements IEventListener {
 	public function __construct(
-		private FileMovementService $movimientoArchivoService,
+		private FileMovementService $fileMovementService,
 		private LoggerInterface $logger,
 	) {
 	}
@@ -25,18 +25,18 @@ class FileMovementListener implements IEventListener {
 	public function handle(Event $event): void {
 		try {
 			if ($event instanceof NodeCreatedEvent) {
-				$this->movimientoArchivoService->registrarMovimiento(FileMovementService::EVENTO_CREADO, $event->getNode());
+				$this->fileMovementService->recordMovement(FileMovementService::EVENT_CREATED, $event->getNode());
 			} elseif ($event instanceof NodeWrittenEvent) {
-				$this->movimientoArchivoService->registrarMovimiento(FileMovementService::EVENTO_MODIFICADO, $event->getNode());
+				$this->fileMovementService->recordMovement(FileMovementService::EVENT_MODIFIED, $event->getNode());
 			} elseif ($event instanceof NodeRenamedEvent) {
-				$this->movimientoArchivoService->registrarMovimiento(FileMovementService::EVENTO_MOVIDO, $event->getTarget(), $event->getSource());
+				$this->fileMovementService->recordMovement(FileMovementService::EVENT_MOVED, $event->getTarget(), $event->getSource());
 			} elseif ($event instanceof NodeCopiedEvent) {
-				$this->movimientoArchivoService->registrarMovimiento(FileMovementService::EVENTO_COPIADO, $event->getTarget(), $event->getSource());
+				$this->fileMovementService->recordMovement(FileMovementService::EVENT_COPIED, $event->getTarget(), $event->getSource());
 			} elseif ($event instanceof NodeDeletedEvent) {
-				$this->movimientoArchivoService->registrarMovimiento(FileMovementService::EVENTO_ELIMINADO, null, $event->getNode());
+				$this->fileMovementService->recordMovement(FileMovementService::EVENT_DELETED, null, $event->getNode());
 			}
 		} catch (Throwable $e) {
-			$this->logger->error('No fue posible registrar un movimiento de file', [
+			$this->logger->error('Could not record a file movement', [
 				'app' => 'employees',
 				'event' => get_class($event),
 				'exception' => $e,

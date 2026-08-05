@@ -15,113 +15,113 @@ use OCP\IUserSession;
 use Throwable;
 
 class FileMovementService {
-	public const EVENTO_CREADO = 'creado';
-	public const EVENTO_MODIFICADO = 'modificado';
-	public const EVENTO_MOVIDO = 'movido';
-	public const EVENTO_COPIADO = 'copiado';
-	public const EVENTO_ELIMINADO = 'eliminado';
+	public const EVENT_CREATED = 'creado';
+	public const EVENT_MODIFIED = 'modificado';
+	public const EVENT_MOVED = 'movido';
+	public const EVENT_COPIED = 'copiado';
+	public const EVENT_DELETED = 'eliminado';
 
-	private const EVENTOS_VALIDOS = [
-		self::EVENTO_CREADO,
-		self::EVENTO_MODIFICADO,
-		self::EVENTO_MOVIDO,
-		self::EVENTO_COPIADO,
-		self::EVENTO_ELIMINADO,
+	private const VALID_EVENTS = [
+		self::EVENT_CREATED,
+		self::EVENT_MODIFIED,
+		self::EVENT_MOVED,
+		self::EVENT_COPIED,
+		self::EVENT_DELETED,
 	];
 
 	public function __construct(
-		private FileMovementMapper $movimientoArchivoMapper,
-		private EmployeeMapper $EmployeeMapper,
+		private FileMovementMapper $fileMovementMapper,
+		private EmployeeMapper $employeeMapper,
 		private IUserSession $userSession,
 		private IRequest $request,
 	) {
 	}
 
-	public function registrarMovimiento(string $eventType, ?Node $nodoActual, ?Node $nodoAnterior = null): void {
-		if (!in_array($eventType, self::EVENTOS_VALIDOS, true)) {
-			throw new InvalidArgumentException('Tipo de movimiento de file no soportado');
+	public function recordMovement(string $eventType, ?Node $currentNode, ?Node $previousNode = null): void {
+		if (!in_array($eventType, self::VALID_EVENTS, true)) {
+			throw new InvalidArgumentException('Unsupported file movement type');
 		}
 
-		$usuario = $this->userSession->getUser();
-		if ($usuario === null) {
+		$user = $this->userSession->getUser();
+		if ($user === null) {
 			return;
 		}
 
-		$actorUid = $usuario->getUID();
-		$actual = $this->leerNodo($nodoActual);
-		$anterior = $this->leerNodo($nodoAnterior);
-		if ($this->esOperacionTecnica($actual) || $this->esOperacionTecnica($anterior)) {
+		$actorUid = $user->getUID();
+		$current = $this->readNode($currentNode);
+		$previous = $this->readNode($previousNode);
+		if ($this->isTechnicalOperation($current) || $this->isTechnicalOperation($previous)) {
 			return;
 		}
 
-		$referencia = $actual ?? $anterior;
-		if ($referencia === null) {
+		$reference = $current ?? $previous;
+		if ($reference === null) {
 			return;
 		}
 
-		$movimiento = new FileMovement();
-		$movimiento->setIdEmployee($this->resolverIdEmpleado($actorUid));
-		$movimiento->setActorUid($actorUid);
-		$movimiento->setEventType($eventType);
-		$movimiento->setFileId($referencia['file_id']);
-		$movimiento->setStorageId($referencia['storage_id']);
-		$movimiento->setPreviousPath($anterior['ruta'] ?? null);
-		$movimiento->setActualPath($actual['ruta'] ?? null);
-		$movimiento->setFileName($referencia['name']);
-		$movimiento->setMimeType($referencia['mime_type']);
-		$movimiento->setTamanio($referencia['size']);
-		$movimiento->setIsFolder($referencia['is_folder']);
-		$movimiento->setEventDate(date('Y-m-d H:i:s'));
-		[$remoteAddr, $userAgent] = $this->obtenerContextoHttp();
-		$movimiento->setRemoteAddr($remoteAddr);
-		$movimiento->setUserAgent($userAgent);
+		$movement = new FileMovement();
+		$movement->setIdEmployee($this->resolveEmployeeId($actorUid));
+		$movement->setActorUid($actorUid);
+		$movement->setEventType($eventType);
+		$movement->setFileId($reference['file_id']);
+		$movement->setStorageId($reference['storage_id']);
+		$movement->setPreviousPath($previous['path'] ?? null);
+		$movement->setActualPath($current['path'] ?? null);
+		$movement->setFileName($reference['name']);
+		$movement->setMimeType($reference['mime_type']);
+		$movement->setSize($reference['size']);
+		$movement->setIsFolder($reference['is_folder']);
+		$movement->setEventDate(date('Y-m-d H:i:s'));
+		[$remoteAddr, $userAgent] = $this->getHttpContext();
+		$movement->setRemoteAddr($remoteAddr);
+		$movement->setUserAgent($userAgent);
 
-		$this->movimientoArchivoMapper->insert($movimiento);
+		$this->fileMovementMapper->insert($movement);
 	}
 
 	/**
-	 * @return array{file_id: ?int, storage_id: ?string, ruta: ?string, name: ?string, mime_type: ?string, size: ?int, is_folder: bool}|null
+	 * @return array{file_id: ?int, storage_id: ?string, path: ?string, name: ?string, mime_type: ?string, size: ?int, is_folder: bool}|null
 	 */
-	private function leerNodo(?Node $nodo): ?array {
-		if ($nodo === null) {
+	private function readNode(?Node $node): ?array {
+		if ($node === null) {
 			return null;
 		}
 
-		$type = $this->intentar(static fn() => $nodo->getType());
+		$type = $this->attempt(static fn() => $node->getType());
 		$isFolder = $type === FileInfo::TYPE_FOLDER;
-		$size = $isFolder ? null : $this->intentar(static fn() => (int)$nodo->getSize(false));
-		$storageId = $this->intentar(static fn() => $nodo->getStorage()->getId());
+		$size = $isFolder ? null : $this->attempt(static fn() => (int)$node->getSize(false));
+		$storageId = $this->attempt(static fn() => $node->getStorage()->getId());
 
 		return [
-			'file_id' => $this->intentar(static fn() => $nodo->getId()),
-			'storage_id' => is_string($storageId) ? $this->limitar($storageId, 255) : null,
-			'ruta' => $this->normalizarTexto($this->intentar(static fn() => $nodo->getPath())),
-			'name' => $this->limitar($this->normalizarTexto($this->intentar(static fn() => $nodo->getName())), 255),
-			'mime_type' => $this->limitar($this->normalizarTexto($this->intentar(static fn() => $nodo->getMimetype())), 255),
+			'file_id' => $this->attempt(static fn() => $node->getId()),
+			'storage_id' => is_string($storageId) ? $this->limit($storageId, 255) : null,
+			'path' => $this->normalizeText($this->attempt(static fn() => $node->getPath())),
+			'name' => $this->limit($this->normalizeText($this->attempt(static fn() => $node->getName())), 255),
+			'mime_type' => $this->limit($this->normalizeText($this->attempt(static fn() => $node->getMimetype())), 255),
 			'size' => is_int($size) && $size >= 0 ? $size : null,
 			'is_folder' => $isFolder,
 		];
 	}
 
-	/** @param array{storage_id: ?string, ruta: ?string, name: ?string}|null $nodo */
-	private function esOperacionTecnica(?array $nodo): bool {
-		if ($nodo === null) {
+	/** @param array{storage_id: ?string, path: ?string, name: ?string}|null $node */
+	private function isTechnicalOperation(?array $node): bool {
+		if ($node === null) {
 			return false;
 		}
 
-		$ruta = ltrim(strtolower(str_replace('\\', '/', (string)$nodo['ruta'])), '/');
-		if (preg_match('~^(?:appdata_[^/]+|[^/]+/(?:files_versions|files_trashbin|files_encryption))(?:/|$)~', $ruta) === 1) {
+		$path = ltrim(strtolower(str_replace('\\', '/', (string)$node['path'])), '/');
+		if (preg_match('~^(?:appdata_[^/]+|[^/]+/(?:files_versions|files_trashbin|files_encryption))(?:/|$)~', $path) === 1) {
 			return true;
 		}
 
-		$storageId = strtolower((string)$nodo['storage_id']);
-		foreach (['appdata_', 'files_versions', 'files_trashbin', 'files_encryption'] as $namespaceTecnico) {
-			if (str_contains($storageId, $namespaceTecnico)) {
+		$storageId = strtolower((string)$node['storage_id']);
+		foreach (['appdata_', 'files_versions', 'files_trashbin', 'files_encryption'] as $technicalNamespace) {
+			if (str_contains($storageId, $technicalNamespace)) {
 				return true;
 			}
 		}
 
-		$name = strtolower((string)$nodo['name']);
+		$name = strtolower((string)$node['name']);
 		return $name !== '' && (
 			preg_match('/\.(?:part|filepart)$/i', $name) === 1
 			|| str_starts_with($name, '.octransferid')
@@ -130,9 +130,9 @@ class FileMovementService {
 		);
 	}
 
-	private function resolverIdEmpleado(string $uid): ?int {
-		$Employee = $this->EmployeeMapper->GetMyEmployeeInfo($uid);
-		$idEmployee = $Employee[0]['id_employees'] ?? $Employee[0]['id_employees'] ?? null;
+	private function resolveEmployeeId(string $uid): ?int {
+		$employee = $this->employeeMapper->GetMyEmployeeInfo($uid);
+		$idEmployee = $employee[0]['id_employees'] ?? null;
 		if (!is_numeric($idEmployee) || (int)$idEmployee <= 0) {
 			return null;
 		}
@@ -141,39 +141,39 @@ class FileMovementService {
 	}
 
 	/** @return array{?string, ?string} */
-	private function obtenerContextoHttp(): array {
+	private function getHttpContext(): array {
 		if (PHP_SAPI === 'cli') {
 			return [null, null];
 		}
 
-		$remoteAddr = $this->normalizarTexto($this->intentar(fn() => $this->request->getRemoteAddress()));
-		$userAgent = $this->normalizarTexto($this->intentar(fn() => $this->request->getHeader('User-Agent')));
+		$remoteAddr = $this->normalizeText($this->attempt(fn() => $this->request->getRemoteAddress()));
+		$userAgent = $this->normalizeText($this->attempt(fn() => $this->request->getHeader('User-Agent')));
 
-		return [$this->limitar($remoteAddr, 45), $this->limitar($userAgent, 512)];
+		return [$this->limit($remoteAddr, 45), $this->limit($userAgent, 512)];
 	}
 
-	private function intentar(callable $operacion): mixed {
+	private function attempt(callable $operation): mixed {
 		try {
-			return $operacion();
+			return $operation();
 		} catch (Throwable) {
 			return null;
 		}
 	}
 
-	private function normalizarTexto(mixed $valor): ?string {
-		if (!is_string($valor)) {
+	private function normalizeText(mixed $value): ?string {
+		if (!is_string($value)) {
 			return null;
 		}
 
-		$valor = trim($valor);
-		return $valor === '' ? null : $valor;
+		$value = trim($value);
+		return $value === '' ? null : $value;
 	}
 
-	private function limitar(?string $valor, int $longitud): ?string {
-		if ($valor === null) {
+	private function limit(?string $value, int $length): ?string {
+		if ($value === null) {
 			return null;
 		}
 
-		return function_exists('mb_substr') ? mb_substr($valor, 0, $longitud) : substr($valor, 0, $longitud);
+		return function_exists('mb_substr') ? mb_substr($value, 0, $length) : substr($value, 0, $length);
 	}
 }
