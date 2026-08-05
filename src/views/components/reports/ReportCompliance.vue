@@ -6,12 +6,6 @@
 					<h2>{{ t('employees', 'Reports compliance') }}</h2>
 					<p>{{ t('employees', 'Daily time-report status by employee.') }}</p>
 				</div>
-
-				<NcDateTimePicker
-					v-model="date"
-					type="date"
-					class="date-picker"
-					@input="loadCumplimiento" />
 			</div>
 
 			<div class="header-actions">
@@ -96,18 +90,18 @@
 
 						<tbody>
 							<tr
-								v-for="empleado in Employee"
-								:key="empleado.id_employee">
-								<td>{{ empleado.displayname }}</td>
-								<td>{{ empleado.id_user }}</td>
+								v-for="employee in employees"
+								:key="employee.id_employee">
+								<td>{{ employee.displayname }}</td>
+								<td>{{ employee.id_user }}</td>
 								<td>
-									<span class="badge" :class="empleado.status">
-										{{ empleado.status === 'reportado' ? t('employees', 'Reported') : t('employees', 'Pending') }}
+									<span class="badge" :class="employee.status">
+										{{ employee.status === 'reportado' ? t('employees', 'Reported') : t('employees', 'Pending') }}
 									</span>
 								</td>
-								<td>{{ empleado.registros }}</td>
-								<td>{{ empleado.minutos_reportados }}</td>
-								<td>{{ empleado.horas_reportadas }}</td>
+								<td>{{ employee.registros }}</td>
+								<td>{{ employee.minutos_reportados }}</td>
+								<td>{{ employee.horas_reportadas }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -157,7 +151,7 @@ export default {
 				total_horas: 0,
 				porcentaje_cumplimiento: 0,
 			},
-			Employee: [],
+			employees: [],
 			sendingReminder: false,
 		}
 	},
@@ -168,21 +162,23 @@ export default {
 
 	methods: {
 		t,
-		formatFecha(date) {
-			const normalizedDate = date instanceof Date ? date : new Date(date)
+		formatDate(value) {
+			const normalizedDate = value instanceof Date ? value : new Date(value)
+			const date = Number.isNaN(normalizedDate.getTime())
+				? new Date()
+				: normalizedDate
+			const year = date.getFullYear()
+			const month = String(date.getMonth() + 1).padStart(2, '0')
+			const day = String(date.getDate()).padStart(2, '0')
 
-			if (isNaN(normalizedDate.getTime())) {
-				return new Date().toISOString().slice(0, 10)
-			}
-
-			return normalizedDate.toISOString().slice(0, 10)
+			return `${year}-${month}-${day}`
 		},
 
 		async loadCumplimiento() {
 			this.loading = true
 
 			try {
-				const date = this.formatFecha(this.date)
+				const date = this.formatDate(this.date)
 
 				const response = await axios.get(
 					generateUrl('/apps/employees/GetReportComplianceHoy'),
@@ -204,8 +200,8 @@ export default {
 					...(data.kpis || {}),
 				}
 
-				this.Employee = Array.isArray(data.Employee)
-					? data.Employee
+				this.employees = Array.isArray(data.employees)
+					? data.employees
 					: []
 			} catch (err) {
 				showError(t('employees', 'Could not load compliance data: {error}', { error: String(err) }))
@@ -217,7 +213,7 @@ export default {
 			this.sendingReminder = true
 
 			try {
-				const date = this.formatFecha(this.date)
+				const date = this.formatDate(this.date)
 
 				const response = await axios.post(
 					generateUrl('/apps/employees/EnviarRecordatoriosPendientesHoy'),
