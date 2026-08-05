@@ -149,8 +149,14 @@ class ConfiguracionesController extends Controller {
 
         $configMap = array_column($configuraciones, 'Data', 'Nombre');
 
-        if($configuraciones[0]['Data']) {
-            $gestor_datos = $this->userManager->get($configuraciones[0]['Data']);
+        $gestor = null;
+        $gestorUid = $configMap['usuario_almacenamiento'] ?? null;
+
+        if (is_string($gestorUid) && $gestorUid !== '') {
+            $gestor_datos = $this->userManager->get($gestorUid);
+        }
+
+        if ($gestor_datos ?? null) {
             $gestor[] = [
                 'id' => $gestor_datos->getUID(),
                 'displayName' => $gestor_datos->getDisplayName(),
@@ -159,21 +165,18 @@ class ConfiguracionesController extends Controller {
                 'showUserStatus' => false,
             ];
         }
-        else{
-            $gestor = null;
-        }
 
         
 		$data = array(
             'Gestor_actual' => $gestor,
             'Users' => $userList,
-            'Guardado_notas' => $configuraciones[1]['Data'],
-            'Acumular_vacaciones' => $configuraciones[2]['Data'],
-            'modulo_ahorro' => $configuraciones[3]['Data'],
-            'modulo_ausencias' => $configuraciones[4]['Data'],
-            'modulo_ausencias_readonly' => $configuraciones[5]['Data'],
-            'modulo_clientes' => $configuraciones[6]['Data'],
-            'modulo_reporte_tiempos' => $configuraciones[7]['Data'],
+            'Guardado_notas' => $configMap['automatic_save_note'] ?? null,
+            'Acumular_vacaciones' => $configMap['acumular_vacaciones'] ?? null,
+            'modulo_ahorro' => $configMap['modulo_ahorro'] ?? null,
+            'modulo_ausencias' => $configMap['modulo_ausencias'] ?? null,
+            'modulo_ausencias_readonly' => $configMap['ausencias_readonly'] ?? null,
+            'modulo_clientes' => $configMap['modulo_clientes'] ?? 'false',
+            'modulo_reporte_tiempos' => $configMap['modulo_reporte_tiempos'] ?? 'false',
             'Groups' => $groupList,
             'CanAdminReports' => $this->canAccessAdminReports(),
 
@@ -284,18 +287,22 @@ class ConfiguracionesController extends Controller {
 	#[NoAdminRequired]    
 	public function GetDataManager(): array {
         $configuraciones = $this->configuracionesMapper->GetConfig();
-        if($configuraciones[0]['Data']) {
-            $gestor_datos = $this->userManager->get($configuraciones[0]['Data']);
-            $gestor[] = [
+        $configMap = array_column($configuraciones, 'Data', 'Nombre');
+        $gestor = [null];
+        $gestorUid = $configMap['usuario_almacenamiento'] ?? null;
+
+        if (is_string($gestorUid) && $gestorUid !== '') {
+            $gestor_datos = $this->userManager->get($gestorUid);
+        }
+
+        if ($gestor_datos ?? null) {
+            $gestor = [[
                 'id' => $gestor_datos->getUID(),
                 'displayName' => $gestor_datos->getDisplayName(),
                 'icon' => $gestor_datos->getUID(),
                 'user' => $gestor_datos->getUID(),
                 'showUserStatus' => false,
-            ];
-        }
-        else{
-            $gestor = [null];
+            ]];
         }
 
         return $gestor;
@@ -305,15 +312,16 @@ class ConfiguracionesController extends Controller {
 	#[NoAdminRequired]    
 	public function ActualizarGestor(string $id_gestor): void{
         $gestor = $this->configuracionesMapper->GetGestor();
+        $currentGestor = $gestor[0]['Data'] ?? null;
 
-        if ($gestor[0]['Data'] == null || $gestor[0]['Data'] == null) {
+        if ($currentGestor === null || $currentGestor === '') {
             $this->configuracionesMapper->ActualizarGestor($id_gestor);
             $userFolder = $this->rootFolder->getUserFolder($id_gestor);
             if (!$userFolder->nodeExists("EMPLEADOS")) {
                 $userFolder->newFolder("EMPLEADOS");
             } 
         } else {
-            $currentUser = $gestor[0]['Data'];
+            $currentUser = $currentGestor;
             $this->configuracionesMapper->ActualizarGestor($id_gestor);
             $userFolder = $this->rootFolder->getUserFolder($currentUser);
             if ($userFolder->nodeExists("EMPLEADOS")) {

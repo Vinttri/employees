@@ -4,6 +4,8 @@
 
 ### Fixed
 - Use PostgreSQL-safe lowercase physical identifiers in database mappers while preserving legacy response keys.
+- Handle a fresh, empty configuration table without positional-row warnings.
+- Load generated EN/RU runtime catalogues through Nextcloud instead of direct JSON requests.
 
 ### Changed
 - Rename the user-facing application title to Employees.
