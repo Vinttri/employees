@@ -61,6 +61,20 @@ if (!str_contains($info, '<version>2.5.13</version>')) {
 	$errors[] = 'info.xml version is not 2.5.13';
 }
 
+foreach (['en', 'ru'] as $language) {
+	$runtimePath = $root . '/l10n/' . $language . '.js';
+	$runtime = is_file($runtimePath) ? (string)file_get_contents($runtimePath) : '';
+	if (!str_starts_with($runtime, 'OC.L10N.register(')
+		|| !str_contains($runtime, '"empleados"')) {
+		$errors[] = "Missing Nextcloud runtime catalogue for {$language}";
+	}
+}
+
+$main = (string)file_get_contents($root . '/src/main.js');
+if (str_contains($main, 'loadTranslations(')) {
+	$errors[] = 'Frontend still depends on direct JSON catalogue loading';
+}
+
 if ($errors !== []) {
 	fwrite(STDERR, implode("\n", array_slice($errors, 0, 40)) . "\n");
 	exit(1);
