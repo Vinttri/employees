@@ -29,7 +29,7 @@ class ComprasNotifier implements INotifier {
 	}
 
 	public function getName(): string {
-		return 'Empleados';
+		return $this->l10nFactory->get('empleados')->t('Employees');
 	}
 
 	public function prepare(INotification $notification, string $languageCode): INotification {

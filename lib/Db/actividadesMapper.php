@@ -25,7 +25,7 @@ class actividadesMapper extends QBMapper {
             );
 
         $result = $qb->executeQuery();
-        $data = $result->fetchAll();
+        $data = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
 	        return $this->attachAreas($data);
@@ -40,7 +40,7 @@ class actividadesMapper extends QBMapper {
             ->setFirstResult($offset);
 
         $result = $qb->executeQuery();
-        $data = $result->fetchAll();
+        $data = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
 	        return $this->attachAreas($data);
@@ -206,7 +206,7 @@ class actividadesMapper extends QBMapper {
             );
 
         $result = $qb->executeQuery();
-        $existe = $result->fetch();
+        $existe = LegacyRowCompat::row($result->fetch());
         $result->closeCursor();
 
         if ($existe) {
@@ -233,9 +233,9 @@ class actividadesMapper extends QBMapper {
 		$ids = array_values(array_unique(array_map('intval', array_column($activities, 'id_actividad'))));
 		$qb = $this->db->getQueryBuilder();
 		$result = $qb->select('aa.id_actividad', 'aa.id_departamento')
-			->selectAlias('d.Nombre', 'departamento_nombre')
+			->selectAlias('d.nombre', 'departamento_nombre')
 			->from('empleados_actividad_areas', 'aa')
-			->leftJoin('aa', 'departamentos', 'd', 'd.Id_departamento = aa.id_departamento')
+			->leftJoin('aa', 'departamentos', 'd', 'd.id_departamento = aa.id_departamento')
 			->where($qb->expr()->in('aa.id_actividad', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
 			->orderBy('aa.id_departamento', 'ASC')
 			->executeQuery();
@@ -289,8 +289,8 @@ class actividadesMapper extends QBMapper {
 	private function assertAreasExist(array $areaIds): void {
 		if ($areaIds === []) return;
 		$qb = $this->db->getQueryBuilder();
-		$result = $qb->select($qb->createFunction('COUNT(DISTINCT Id_departamento)'))->from('departamentos')
-			->where($qb->expr()->in('Id_departamento', $qb->createNamedParameter($areaIds, IQueryBuilder::PARAM_INT_ARRAY)))
+		$result = $qb->select($qb->createFunction('COUNT(DISTINCT id_departamento)'))->from('departamentos')
+			->where($qb->expr()->in('id_departamento', $qb->createNamedParameter($areaIds, IQueryBuilder::PARAM_INT_ARRAY)))
 			->executeQuery();
 		$count = (int)$result->fetchOne();
 		$result->closeCursor();

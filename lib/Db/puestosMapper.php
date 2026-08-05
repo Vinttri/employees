@@ -15,14 +15,14 @@ class puestosMapper extends QBMapper {
     public function GetPuestosList(): array {
         $qb = $this->db->getQueryBuilder();
 
-        $qb->select('d.Id_puestos', 'd.Nombre', 'd.Nivel', 'd.created_at', 'd.updated_at')
-            ->selectAlias($qb->createFunction('COUNT(e.Id_empleados)'), 'cantidad_empleados')
+        $qb->select('d.id_puestos', 'd.nombre', 'd.nivel', 'd.created_at', 'd.updated_at')
+            ->selectAlias($qb->createFunction('COUNT(e.id_empleados)'), 'cantidad_empleados')
             ->from($this->getTableName(), 'd')
-            ->leftJoin('d', 'empleados', 'e', 'd.Id_puestos = e.Id_puesto')
-            ->groupBy('d.Id_puestos');
+            ->leftJoin('d', 'empleados', 'e', 'd.id_puestos = e.id_puesto')
+            ->groupBy('d.id_puestos');
 
         $result = $qb->executeQuery();
-        $users = $result->fetchAll();
+        $users = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
         return $users;
@@ -33,10 +33,10 @@ class puestosMapper extends QBMapper {
 
         $qb->select('*')
             ->from($this->getTableName())
-            ->where($qb->expr()->eq('Id_puestos', $qb->createNamedParameter($id_departamentos)));
+            ->where($qb->expr()->eq('id_puestos', $qb->createNamedParameter($id_departamentos)));
 
         $result = $qb->executeQuery();
-        $users = $result->fetchAll();
+        $users = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
         return $users;
@@ -46,7 +46,7 @@ class puestosMapper extends QBMapper {
         $qb = $this->db->getQueryBuilder();
 
         $qb->delete($this->getTableName())
-            ->where($qb->expr()->eq('Id_puestos', $qb->createNamedParameter($id_departamentos)));
+            ->where($qb->expr()->eq('id_puestos', $qb->createNamedParameter($id_departamentos)));
 
         $qb->executeStatement();
     }
@@ -64,10 +64,10 @@ class puestosMapper extends QBMapper {
 
         $query = $this->db->getQueryBuilder();
         $query->update($this->getTableName())
-            ->set('Nombre', $query->createNamedParameter($Nombre))
-            ->set('Nivel', $query->createNamedParameter($Nivel))
+            ->set('nombre', $query->createNamedParameter($Nombre))
+            ->set('nivel', $query->createNamedParameter($Nivel))
             ->set('updated_at', $query->createNamedParameter($timestamp))
-            ->where($query->expr()->eq('Id_puestos', $query->createNamedParameter($Id_puestos)));
+            ->where($query->expr()->eq('id_puestos', $query->createNamedParameter($Id_puestos)));
 
         $query->executeStatement();
     }
@@ -76,7 +76,7 @@ class puestosMapper extends QBMapper {
         $qb = $this->db->getQueryBuilder();
 
         $qb->delete($this->getTableName())
-            ->where($qb->expr()->eq('Id_puestos', $qb->createNamedParameter($Id_puestos)));
+            ->where($qb->expr()->eq('id_puestos', $qb->createNamedParameter($Id_puestos)));
 
         $qb->executeStatement();
     }

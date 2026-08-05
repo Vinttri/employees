@@ -375,7 +375,7 @@ class reportetiempoMapper extends QBMapper {
 			->andWhere($qb->expr()->lte('r.fecha_registro', $qb->createNamedParameter($fin)))
 			->groupBy('r.id_empleado');
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $rows;
 	}
@@ -393,14 +393,14 @@ class reportetiempoMapper extends QBMapper {
 		}
 
 		$qb = $this->db->getQueryBuilder();
-		$qb->selectAlias('e.Id_empleados', 'id_empleado')
-			->selectAlias('e.Id_user', 'uid')
+		$qb->selectAlias('e.id_empleados', 'id_empleado')
+			->selectAlias('e.id_user', 'uid')
 			->selectAlias('u.displayname', 'displayname')
-			->selectAlias('e.Sueldo', 'costo_hora')
+			->selectAlias('e.sueldo', 'costo_hora')
 			->from('empleados', 'e')
-			->leftJoin('e', 'users', 'u', 'u.uid = e.Id_user')
+			->leftJoin('e', 'users', 'u', 'u.uid = e.id_user')
 			->where($qb->expr()->in(
-				'e.Id_empleados',
+				'e.id_empleados',
 				$qb->createNamedParameter(
 					$idEmpleadosVisibles,
 					IQueryBuilder::PARAM_INT_ARRAY
@@ -408,7 +408,7 @@ class reportetiempoMapper extends QBMapper {
 			));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		$directorio = [];
 
@@ -488,7 +488,7 @@ class reportetiempoMapper extends QBMapper {
 			->groupBy('r.id_cliente', 'r.id_empleado');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -513,7 +513,7 @@ class reportetiempoMapper extends QBMapper {
 			));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -602,7 +602,7 @@ class reportetiempoMapper extends QBMapper {
 			));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		$metricas = [];
 		$cobradoAcumulado = [];
@@ -867,7 +867,7 @@ class reportetiempoMapper extends QBMapper {
 			->selectAlias('p.id', 'cliente_padre')
 			->selectAlias('p.nombre', 'nombre_grupo_padre')
 			->from('empleados_clientes', 'c')
-			->innerJoin('c', 'empleados', 'e', 'e.Id_empleados = c.lider_proyecto')
+			->innerJoin('c', 'empleados', 'e', 'e.id_empleados = c.lider_proyecto')
 			->leftJoin('c', 'empleados_clientes', 'p', $parentJoin)
 			->where($qb->expr()->eq(
 				'c.id',
@@ -878,7 +878,7 @@ class reportetiempoMapper extends QBMapper {
 				$qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)
 			))
 			->andWhere($qb->expr()->eq(
-				'e.Estado',
+				'e.estado',
 				$qb->createNamedParameter('1', IQueryBuilder::PARAM_STR)
 			))
 			->andWhere($qb->expr()->in(
@@ -888,7 +888,7 @@ class reportetiempoMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		if (!$row) {
@@ -928,7 +928,7 @@ class reportetiempoMapper extends QBMapper {
 			->orderBy('nombre', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function (array $row): array {
@@ -954,7 +954,7 @@ class reportetiempoMapper extends QBMapper {
 			->orderBy('nombre', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function (array $row): array {
@@ -977,29 +977,29 @@ class reportetiempoMapper extends QBMapper {
 		}
 
 		$qb = $this->db->getQueryBuilder();
-		$qb->selectAlias('e.Id_empleados', 'id_empleado')
-			->selectAlias('e.Id_user', 'uid')
+		$qb->selectAlias('e.id_empleados', 'id_empleado')
+			->selectAlias('e.id_user', 'uid')
 			->selectAlias('u.displayname', 'displayname')
-			->selectAlias('e.Sueldo', 'costo_hora')
-			->selectAlias('d.Nombre', 'area')
-			->selectAlias('p.Nombre', 'puesto')
+			->selectAlias('e.sueldo', 'costo_hora')
+			->selectAlias('d.nombre', 'area')
+			->selectAlias('p.nombre', 'puesto')
 			->selectAlias('p.nivel', 'nivel_puesto')
 			->from('empleados', 'e')
-			->innerJoin('e', 'users', 'u', 'u.uid = e.Id_user')
-			->leftJoin('e', 'departamentos', 'd', 'd.Id_departamento = e.Id_departamento')
-			->leftJoin('e', 'puestos', 'p', 'p.Id_puestos = e.Id_puesto')
+			->innerJoin('e', 'users', 'u', 'u.uid = e.id_user')
+			->leftJoin('e', 'departamentos', 'd', 'd.id_departamento = e.id_departamento')
+			->leftJoin('e', 'puestos', 'p', 'p.id_puestos = e.id_puesto')
 			->where($qb->expr()->in(
-				'e.Id_empleados',
+				'e.id_empleados',
 				$qb->createNamedParameter($idEmpleadosVisibles, IQueryBuilder::PARAM_INT_ARRAY)
 			))
 			->andWhere($qb->expr()->eq(
-				'e.Estado',
+				'e.estado',
 				$qb->createNamedParameter('1', IQueryBuilder::PARAM_STR)
 			))
 			->orderBy('u.displayname', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function (array $row): array {
@@ -1065,7 +1065,7 @@ class reportetiempoMapper extends QBMapper {
 			->groupBy('r.id_empleado');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -1199,7 +1199,7 @@ class reportetiempoMapper extends QBMapper {
 			->groupBy('r.id_empleado');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -1264,7 +1264,7 @@ class reportetiempoMapper extends QBMapper {
 			->addGroupBy('r.id_actividad');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -1317,7 +1317,7 @@ class reportetiempoMapper extends QBMapper {
 			));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -1445,7 +1445,7 @@ class reportetiempoMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $this->normalizeWorkTypes($rows);
@@ -1554,7 +1554,7 @@ class reportetiempoMapper extends QBMapper {
 		$this->aplicarFiltroEmpleados($qb, $idEmpleados);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		$totalMinutos = (float)($row['total_minutos'] ?? 0);
@@ -1611,7 +1611,7 @@ class reportetiempoMapper extends QBMapper {
 		$this->aplicarFiltroEmpleados($qb, $idEmpleados);
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1647,16 +1647,16 @@ class reportetiempoMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('r.id_empleado', 'r.id_actividad', 'r.fecha_registro', 'r.origen', 'r.tiempo_registrado')
 			->selectAlias('a.nombre', 'actividad_nombre')
-			->selectAlias('e.Id_user', 'uid')
-			->selectAlias('e.Id_departamento', 'id_departamento')
-			->selectAlias('e.Sueldo', 'costo_hora')
+			->selectAlias('e.id_user', 'uid')
+			->selectAlias('e.id_departamento', 'id_departamento')
+			->selectAlias('e.sueldo', 'costo_hora')
 			->selectAlias('u.displayname', 'empleado_nombre')
-			->selectAlias('d.Nombre', 'area_nombre')
+			->selectAlias('d.nombre', 'area_nombre')
 			->from($this->getTableName(), 'r')
 			->leftJoin('r', 'empleados_actividades', 'a', 'a.id_actividad = r.id_actividad')
-			->leftJoin('r', 'empleados', 'e', 'e.Id_empleados = r.id_empleado')
-			->leftJoin('e', 'users', 'u', 'u.uid = e.Id_user')
-			->leftJoin('e', 'departamentos', 'd', 'd.Id_departamento = e.Id_departamento')
+			->leftJoin('r', 'empleados', 'e', 'e.id_empleados = r.id_empleado')
+			->leftJoin('e', 'users', 'u', 'u.uid = e.id_user')
+			->leftJoin('e', 'departamentos', 'd', 'd.id_departamento = e.id_departamento')
 			->where($this->internalWorkExpression($qb, 'r'))
 			->andWhere($qb->expr()->in('r.id_empleado', $qb->createNamedParameter($idEmpleados, IQueryBuilder::PARAM_INT_ARRAY)));
 
@@ -1672,7 +1672,7 @@ class reportetiempoMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		$groups = $empty;
 		$append = static function (array &$target, string $key, array $identity, float $minutes, float $cost): void {
@@ -1721,7 +1721,7 @@ class reportetiempoMapper extends QBMapper {
 		$qb->andWhere($this->clientWorkExpression($qb));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1753,7 +1753,7 @@ class reportetiempoMapper extends QBMapper {
 		$this->aplicarFiltroEmpleados($qb, $idEmpleados);
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1785,7 +1785,7 @@ class reportetiempoMapper extends QBMapper {
 		$this->aplicarFiltroEmpleados($qb, $idEmpleados);
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1816,7 +1816,7 @@ class reportetiempoMapper extends QBMapper {
 		$this->aplicarFiltroEmpleados($qb, $idEmpleados);
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1847,7 +1847,7 @@ class reportetiempoMapper extends QBMapper {
 		$qb->andWhere($this->clientWorkExpression($qb));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function ($row) {
@@ -1883,7 +1883,7 @@ class reportetiempoMapper extends QBMapper {
 			->where($qb->expr()->eq('id_reporte', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 		return $row ?: null;
 	}
@@ -1895,7 +1895,7 @@ class reportetiempoMapper extends QBMapper {
 			->andWhere($qb->expr()->eq('origen_id', $qb->createNamedParameter($originId, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 		return $row ?: null;
 	}
@@ -2010,7 +2010,7 @@ class reportetiempoMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return [

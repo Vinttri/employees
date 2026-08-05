@@ -204,7 +204,7 @@ class MantenimientoGrupoMapper extends QBMapper {
 
 	private function assertValidAdminStatus(string $status): void {
 		if (!in_array($status, MantenimientoGrupo::ESTADOS_VALIDOS, true)) {
-			throw new \InvalidArgumentException('Estado administrativo de mantenimiento inválido.');
+			throw new \InvalidArgumentException('estado administrativo de mantenimiento inválido.');
 		}
 	}
 

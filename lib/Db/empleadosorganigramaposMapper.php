@@ -19,7 +19,7 @@ class empleadosorganigramaposMapper extends QBMapper {
             ->from($this->getTableName());
 
         $result = $qb->executeQuery();
-        $rows = $result->fetchAll();
+        $rows = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
         return $rows;

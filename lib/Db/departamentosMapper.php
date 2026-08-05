@@ -16,14 +16,14 @@ class departamentosMapper extends QBMapper {
 	public function GetAreasList(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('d.Id_departamento', 'd.Id_padre', 'd.Nombre', 'd.created_at', 'd.updated_at')
-			->selectAlias($qb->createFunction('COUNT(e.Id_empleados)'), 'cantidad_empleados')
+		$qb->select('d.id_departamento', 'd.id_padre', 'd.nombre', 'd.created_at', 'd.updated_at')
+			->selectAlias($qb->createFunction('COUNT(e.id_empleados)'), 'cantidad_empleados')
 			->from($this->getTableName(), 'd')
-			->leftJoin('d', 'empleados', 'e', 'd.Id_departamento = e.Id_departamento')
-			->groupBy('d.Id_departamento');
+			->leftJoin('d', 'empleados', 'e', 'd.id_departamento = e.id_departamento')
+			->groupBy('d.id_departamento');
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -34,10 +34,10 @@ class departamentosMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_departamentos)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_departamentos)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -47,7 +47,7 @@ class departamentosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_departamentos)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_departamentos)));
 
 		$qb->executeStatement();
 	}
@@ -61,10 +61,10 @@ class departamentosMapper extends QBMapper {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
-			->set('Id_padre', $query->createNamedParameter($Id_padre))
-			->set('Nombre', $query->createNamedParameter($Nombre))
+			->set('id_padre', $query->createNamedParameter($Id_padre))
+			->set('nombre', $query->createNamedParameter($Nombre))
 			->set('updated_at', $query->createNamedParameter($timestamp))
-			->where($query->expr()->eq('Id_departamento', $query->createNamedParameter($Id_departamento)));
+			->where($query->expr()->eq('id_departamento', $query->createNamedParameter($Id_departamento)));
 
 		$query->executeStatement();
 	}
@@ -73,7 +73,7 @@ class departamentosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_departamento)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_departamento)));
 
 		$qb->executeStatement();
 	}
@@ -87,15 +87,15 @@ class departamentosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select(
-			'd.Id_departamento',
-			'd.Id_padre',
-			'd.Nombre'
+			'd.id_departamento',
+			'd.id_padre',
+			'd.nombre'
 		)
 			->from($this->getTableName(), 'd')
-			->orderBy('d.Id_departamento', 'ASC');
+			->orderBy('d.id_departamento', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -108,12 +108,12 @@ class departamentosMapper extends QBMapper {
 	 */
 	public function findDepartmentRow(int $id): ?array {
 		$qb = $this->db->getQueryBuilder();
-		$result = $qb->select('d.Id_departamento', 'd.Id_padre', 'd.Nombre')
+		$result = $qb->select('d.id_departamento', 'd.id_padre', 'd.nombre')
 			->from($this->getTableName(), 'd')
-			->where($qb->expr()->eq('d.Id_departamento', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('d.id_departamento', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1)
 			->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row === false ? null : $row;

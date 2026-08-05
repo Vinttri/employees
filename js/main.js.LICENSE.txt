@@ -1,0 +1,173 @@
+/*!
+ * @kurkle/color v0.3.4
+ * https://github.com/kurkle/color#readme
+ * (c) 2024 Jukka Kurkela
+ * Released under the MIT License
+ */
+
+/*!
+ * Chart.js v4.5.1
+ * https://www.chartjs.org
+ * (c) 2025 Chart.js Contributors
+ * Released under the MIT License
+ */
+
+/*!
+ * Cropper.js v1.5.13
+ * https://fengyuanchen.github.io/cropperjs
+ *
+ * Copyright 2015-present Chen Fengyuan
+ * Released under the MIT license
+ *
+ * Date: 2022-11-20T05:30:46.114Z
+ */
+
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/*!
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*!
+ * Sizzle CSS Selector Engine v2.3.3
+ * https://sizzlejs.com/
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license
+ * http://jquery.org/license
+ *
+ * Date: 2016-08-08
+ */
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+/*!
+ * Toastify js 1.12.0
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+
+/*!
+ * Vue.js v2.7.16
+ * (c) 2014-2023 Evan You
+ * Released under the MIT License.
+ */
+
+/*!
+ * escape-html
+ * Copyright(c) 2012-2013 TJ Holowaychuk
+ * Copyright(c) 2015 Andreas Lubbe
+ * Copyright(c) 2015 Tiancheng "Timothy" Gu
+ * MIT Licensed
+ */
+
+/*!
+ * jQuery JavaScript Library v3.3.1
+ * https://jquery.com/
+ *
+ * Includes Sizzle.js
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://jquery.org/license
+ *
+ * Date: 2018-01-20T17:24Z
+ */
+
+/*!
+ * vue-nav-tabs v0.5.7
+ * (c) 2018-present cristij <joracristi@gmail.com>
+ * Released under the MIT License.
+ */
+
+/*!
+ * vue-virtual-scroll-list v2.3.4
+ * open source under the MIT license
+ * https://github.com/tangbc/vue-virtual-scroll-list#readme
+ */
+
+/*!
+* focus-trap 7.5.4
+* @license MIT, https://github.com/focus-trap/focus-trap/blob/master/LICENSE
+*/
+
+/*!
+* tabbable 6.2.0
+* @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
+*/
+
+/*! @license DOMPurify 3.2.7 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.7/LICENSE */
+
+/*! Hammer.JS - v2.0.17-rc - 2019-12-16
+ * http://naver.github.io/egjs
+ *
+ * Forked By Naver egjs
+ * Copyright (c) hammerjs
+ * Licensed under the MIT license */
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
+/**
+ * vis-network
+ * https://visjs.github.io/vis-network/
+ *
+ * A dynamic, browser-based visualization library.
+ *
+ * @version 10.1.0
+ * @date    2026-05-15T16:46:11.466Z
+ *
+ * @copyright (c) 2011-2017 Almende B.V, http://almende.com
+ * @copyright (c) 2017-2019 visjs contributors, https://github.com/visjs
+ *
+ * @license
+ * vis.js is dual licensed under both
+ *
+ *   1. The Apache 2.0 License
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   and
+ *
+ *   2. The MIT License
+ *      http://opensource.org/licenses/MIT
+ *
+ * vis.js may be distributed under either license.
+ */

@@ -28,8 +28,8 @@ class InventarioComputoMapper extends QBMapper {
 		$this->selectEquipoDetalle($qb)
 			->from($this->getTableName(), 'c')
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'))
-			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->orderBy('c.id_equipo', 'DESC')
 			->setFirstResult($offset);
 		if ($limit !== null) {
@@ -39,7 +39,7 @@ class InventarioComputoMapper extends QBMapper {
 		$this->applyEquipoFilters($qb, $search, $estado, $idEmpleado, $asignacion, $idModelo);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -50,8 +50,8 @@ class InventarioComputoMapper extends QBMapper {
 		$qb->select($qb->createFunction('COUNT(DISTINCT c.id_equipo)'))
 			->from($this->getTableName(), 'c')
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'))
-			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'));
+			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'));
 
 		$this->applyEquipoFilters($qb, $search, $estado, $idEmpleado, $asignacion, $idModelo);
 		$result = $qb->executeQuery();
@@ -63,16 +63,16 @@ class InventarioComputoMapper extends QBMapper {
 
 	public function findAssignedEmployees(): array {
 		$qb = $this->db->getQueryBuilder();
-		$qb->selectDistinct('e.Id_empleados AS id_empleado')
-			->addSelect('e.Id_user AS uid', 'u.displayname AS displayname')
+		$qb->selectDistinct('e.id_empleados AS id_empleado')
+			->addSelect('e.id_user AS uid', 'u.displayname AS displayname')
 			->from('empleados', 'e')
-			->innerJoin('e', $this->getTableName(), 'c', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->innerJoin('e', $this->getTableName(), 'c', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->orderBy('u.displayname', 'ASC')
-			->addOrderBy('e.Id_user', 'ASC');
+			->addOrderBy('e.id_user', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static fn(array $row): array => [
@@ -99,9 +99,9 @@ class InventarioComputoMapper extends QBMapper {
 			->selectAlias('m.ram', 'ram')
 			->selectAlias('m.disco_duro', 'disco_duro')
 			->selectAlias('m.tipo', 'tipo')
-			->selectAlias('e.Id_empleados', 'empleado_id')
-			->selectAlias('e.Id_user', 'empleado_uid')
-			->selectAlias('e.Numero_empleado', 'numero_empleado')
+			->selectAlias('e.id_empleados', 'empleado_id')
+			->selectAlias('e.id_user', 'empleado_uid')
+			->selectAlias('e.numero_empleado', 'numero_empleado')
 			->selectAlias('u.displayname', 'empleado_displayname');
 	}
 
@@ -116,9 +116,9 @@ class InventarioComputoMapper extends QBMapper {
 					$qb->expr()->iLike('c.numero_serie', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
 					$qb->expr()->iLike('m.marca', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
 					$qb->expr()->iLike('m.modelo', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->iLike('e.Id_user', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
+					$qb->expr()->iLike('e.id_user', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
 					$qb->expr()->iLike('u.displayname', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->iLike('e.Numero_empleado', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR))
+					$qb->expr()->iLike('e.numero_empleado', $qb->createNamedParameter($like, IQueryBuilder::PARAM_STR))
 				)
 			);
 		}
@@ -152,15 +152,15 @@ class InventarioComputoMapper extends QBMapper {
 		$this->selectEquipoDetalle($qb)
 			->from($this->getTableName(), 'c')
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'))
-			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->where(
 				$qb->expr()->eq('c.id_equipo', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			)
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row ?: null;
@@ -249,9 +249,9 @@ class InventarioComputoMapper extends QBMapper {
 			->selectAlias('m.marca', 'marca')
 			->selectAlias('m.modelo', 'modelo')
 			->selectAlias('c.id_empleado', 'id_empleado')
-			->selectAlias('e.Id_empleados', 'empleado_id')
-			->selectAlias('e.Id_user', 'empleado_uid')
-			->selectAlias('e.Numero_empleado', 'numero_empleado')
+			->selectAlias('e.id_empleados', 'empleado_id')
+			->selectAlias('e.id_user', 'empleado_uid')
+			->selectAlias('e.numero_empleado', 'numero_empleado')
 			->selectAlias('u.displayname', 'empleado_displayname')
 			->from($this->getTableName(), 'c')
 			->leftJoin(
@@ -264,9 +264,9 @@ class InventarioComputoMapper extends QBMapper {
 				'c',
 				'empleados',
 				'e',
-				$qb->expr()->eq('c.id_empleado', 'e.Id_empleados')
+				$qb->expr()->eq('c.id_empleado', 'e.id_empleados')
 			)
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->orderBy('c.nombre_dispositivo', 'ASC');
 
 		$qb->andWhere(
@@ -301,7 +301,7 @@ class InventarioComputoMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(function (array $row): array {
@@ -368,15 +368,15 @@ class InventarioComputoMapper extends QBMapper {
 				'proximo_mantenimiento_activo',
 			)
 			->from($this->getTableName(), 'c')
-			->innerJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->innerJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.Id_departamento', 'e.Id_departamento'))
+			->innerJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->innerJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.id_departamento', 'e.id_departamento'))
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'))
 			->leftJoin('c', 'inv_mantenimientos', 'im', $qb->expr()->eq('im.id_equipo', 'c.id_equipo'))
 			->groupBy(
 				'c.id_equipo', 'c.nombre_dispositivo', 'c.nombre_sistema', 'c.id_modelo',
 				'm.modelo', 'm.marca', 'c.numero_serie', 'c.estado', 'c.id_empleado',
-				'e.Id_user', 'u.displayname', 'e.Id_departamento', 'd.Nombre',
+				'e.id_user', 'u.displayname', 'e.id_departamento', 'd.nombre',
 			)
 			->orderBy('c.nombre_dispositivo', 'ASC')->addOrderBy('c.id_equipo', 'ASC')
 			->setMaxResults(max(1, min(500, $limit)))->setFirstResult(max(0, $offset));
@@ -391,7 +391,7 @@ class InventarioComputoMapper extends QBMapper {
 		);
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $rows;
 	}
@@ -406,9 +406,9 @@ class InventarioComputoMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select($qb->createFunction('COUNT(DISTINCT c.id_equipo)'))
 			->from($this->getTableName(), 'c')
-			->innerJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->innerJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.Id_departamento', 'e.Id_departamento'))
+			->innerJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->innerJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.id_departamento', 'e.id_departamento'))
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'));
 
 		$this->applyDepartamentoCampaignFilters(
@@ -446,15 +446,15 @@ class InventarioComputoMapper extends QBMapper {
 			->selectAlias('c.numero_serie', 'numero_serie')
 			->selectAlias('c.estado', 'estado')
 			->selectAlias('c.id_empleado', 'id_empleado')
-			->selectAlias('e.Id_user', 'empleado_uid')
+			->selectAlias('e.id_user', 'empleado_uid')
 			->selectAlias('u.displayname', 'empleado_nombre')
-			->selectAlias('e.Id_departamento', 'id_departamento')
-			->selectAlias('d.Nombre', 'departamento_nombre')
+			->selectAlias('e.id_departamento', 'id_departamento')
+			->selectAlias('d.nombre', 'departamento_nombre')
 			->from($this->getTableName(), 'c')
 			->leftJoin('c', 'inventario_modelos', 'm', $qb->expr()->eq('m.id_modelo', 'c.id_modelo'))
-			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.Id_empleados'))
-			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->leftJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.Id_departamento', 'e.Id_departamento'))
+			->leftJoin('c', 'empleados', 'e', $qb->expr()->eq('c.id_empleado', 'e.id_empleados'))
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->leftJoin('e', 'departamentos', 'd', $qb->expr()->eq('d.id_departamento', 'e.id_departamento'))
 			->where($qb->expr()->in('c.id_equipo', array_map(
 				fn(int $id) => $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT),
 				$ids,
@@ -462,7 +462,7 @@ class InventarioComputoMapper extends QBMapper {
 			->orderBy('c.id_equipo', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $rows;
 	}
@@ -477,10 +477,10 @@ class InventarioComputoMapper extends QBMapper {
 			->selectAlias('c.numero_serie', 'numero_serie')
 			->selectAlias('c.estado', 'estado')
 			->selectAlias('c.id_empleado', 'id_empleado')
-			->selectAlias('e.Id_user', 'empleado_uid')
+			->selectAlias('e.id_user', 'empleado_uid')
 			->selectAlias('u.displayname', 'empleado_nombre')
-			->selectAlias('e.Id_departamento', 'id_departamento')
-			->selectAlias('d.Nombre', 'departamento_nombre');
+			->selectAlias('e.id_departamento', 'id_departamento')
+			->selectAlias('d.nombre', 'departamento_nombre');
 	}
 
 	private function applyDepartamentoCampaignFilters(
@@ -499,7 +499,7 @@ class InventarioComputoMapper extends QBMapper {
 			)));
 		}
 		$qb->andWhere($qb->expr()->in(
-			'e.Id_departamento',
+			'e.id_departamento',
 			array_map(fn(int $id) => $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT), $departmentIds),
 		));
 
@@ -522,9 +522,9 @@ class InventarioComputoMapper extends QBMapper {
 				$qb->expr()->iLike('c.numero_serie', $qb->createNamedParameter($like)),
 				$qb->expr()->iLike('m.modelo', $qb->createNamedParameter($like)),
 				$qb->expr()->iLike('m.marca', $qb->createNamedParameter($like)),
-				$qb->expr()->iLike('e.Id_user', $qb->createNamedParameter($like)),
+				$qb->expr()->iLike('e.id_user', $qb->createNamedParameter($like)),
 				$qb->expr()->iLike('u.displayname', $qb->createNamedParameter($like)),
-				$qb->expr()->iLike('d.Nombre', $qb->createNamedParameter($like)),
+				$qb->expr()->iLike('d.nombre', $qb->createNamedParameter($like)),
 			));
 		}
 	}

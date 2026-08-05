@@ -15,14 +15,14 @@ class equiposMapper extends QBMapper {
 	public function GetEquiposList(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('d.Id_equipo', 'd.Id_jefe_equipo', 'd.Nombre', 'd.created_at', 'd.updated_at')
-			->selectAlias($qb->createFunction('COUNT(e.Id_empleados)'), 'cantidad_empleados')
+		$qb->select('d.id_equipo', 'd.id_jefe_equipo', 'd.nombre', 'd.created_at', 'd.updated_at')
+			->selectAlias($qb->createFunction('COUNT(e.id_empleados)'), 'cantidad_empleados')
 			->from($this->getTableName(), 'd')
-			->leftJoin('d', 'empleados', 'e', 'd.Id_equipo = e.Id_equipo')
-			->groupBy('d.Id_equipo');
+			->leftJoin('d', 'empleados', 'e', 'd.id_equipo = e.id_equipo')
+			->groupBy('d.id_equipo');
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -31,15 +31,15 @@ class equiposMapper extends QBMapper {
 	public function GetEquipoJefe($id): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('d.Id_equipo', 'd.Id_jefe_equipo', 'd.Nombre')
-			->selectAlias($qb->createFunction('COUNT(e.Id_empleados)'), 'cantidad_empleados')
+		$qb->select('d.id_equipo', 'd.id_jefe_equipo', 'd.nombre')
+			->selectAlias($qb->createFunction('COUNT(e.id_empleados)'), 'cantidad_empleados')
 			->from($this->getTableName(), 'd')
-			->leftJoin('d', 'empleados', 'e', 'd.Id_equipo = e.Id_equipo')
-			->where($qb->expr()->eq('d.Id_equipo', $qb->createNamedParameter($id)))
-			->groupBy('d.Id_equipo');
+			->leftJoin('d', 'empleados', 'e', 'd.id_equipo = e.id_equipo')
+			->where($qb->expr()->eq('d.id_equipo', $qb->createNamedParameter($id)))
+			->groupBy('d.id_equipo');
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -50,10 +50,10 @@ class equiposMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($id_departamentos)));
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($id_departamentos)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -63,7 +63,7 @@ class equiposMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($id_departamentos)));
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($id_departamentos)));
 
 		$qb->executeStatement();
 	}
@@ -76,9 +76,9 @@ class equiposMapper extends QBMapper {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
-			->set('Id_jefe_equipo', $query->createNamedParameter($Id_jefe_equipo))
+			->set('id_jefe_equipo', $query->createNamedParameter($Id_jefe_equipo))
 			->set('updated_at', $query->createNamedParameter($timestamp))
-			->where($query->expr()->eq('Id_equipo', $query->createNamedParameter($Id_equipo)));
+			->where($query->expr()->eq('id_equipo', $query->createNamedParameter($Id_equipo)));
 
 		$query->executeStatement();
 	}
@@ -88,13 +88,13 @@ class equiposMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($id)))
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($id)))
 			->setMaxResults(1);
 
 		$res = $qb->executeQuery();
 
 		try {
-			$row = $res->fetch();
+			$row = LegacyRowCompat::row($res->fetch());
 		} finally {
 			$res->closeCursor();
 		}
@@ -106,7 +106,7 @@ class equiposMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($Id_equipo)));
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($Id_equipo)));
 
 		$result = $qb->executeQuery();
 		$row = $result->fetchAssociative();
@@ -118,7 +118,7 @@ class equiposMapper extends QBMapper {
 
 		$qb2 = $this->db->getQueryBuilder();
 		$qb2->delete($this->getTableName())
-			->where($qb2->expr()->eq('Id_equipo', $qb2->createNamedParameter($Id_equipo)));
+			->where($qb2->expr()->eq('id_equipo', $qb2->createNamedParameter($Id_equipo)));
 		$qb2->executeStatement();
 
 		return $row;
@@ -129,14 +129,14 @@ class equiposMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($idEquipo)))
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($idEquipo)))
 			->setMaxResults(1);
 
 		$result = method_exists($qb, 'executeQuery')
 			? $qb->executeQuery()
 			: $qb->execute();
 
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		if (!$row) {
@@ -146,7 +146,7 @@ class equiposMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($idEquipo)));
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($idEquipo)));
 
 		if (method_exists($qb, 'executeStatement')) {
 			$qb->executeStatement();

@@ -23,15 +23,15 @@ class empleadosorganigramaMapper extends QBMapper {
             'o.id',
             'o.id_empleado',
             'o.id_dependiente',
-            'jefe.Id_user AS jefe_user',
-            'dep.Id_user AS dependiente_user'
+            'jefe.id_user AS jefe_user',
+            'dep.id_user AS dependiente_user'
         )
             ->from($this->getTableName(), 'o')
-            ->innerJoin('o', 'empleados', 'jefe', 'o.id_empleado = jefe.Id_empleados')
-            ->innerJoin('o', 'empleados', 'dep', 'o.id_dependiente = dep.Id_empleados');
+            ->innerJoin('o', 'empleados', 'jefe', 'o.id_empleado = jefe.id_empleados')
+            ->innerJoin('o', 'empleados', 'dep', 'o.id_dependiente = dep.id_empleados');
 
         $result = $qb->executeQuery();
-        $rows = $result->fetchAll();
+        $rows = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
         return $rows;
@@ -46,7 +46,7 @@ class empleadosorganigramaMapper extends QBMapper {
             ->andWhere($qb->expr()->eq('id_dependiente', $qb->createNamedParameter($idDependiente, \PDO::PARAM_INT)));
 
         $result = $qb->executeQuery();
-        $row = $result->fetch();
+        $row = LegacyRowCompat::row($result->fetch());
         $result->closeCursor();
 
         return $row !== false;

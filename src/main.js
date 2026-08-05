@@ -5,7 +5,7 @@ import router from './router/index.js'
 import Router from 'vue-router'
 import mitt from 'mitt'
 
-import { loadTranslations, translate as t, translatePlural as n } from '@nextcloud/l10n'
+import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import axios from '@nextcloud/axios'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
@@ -129,7 +129,7 @@ const loadPermissionsContext = async () => {
 	}
 }
 
-loadTranslations('empleados').then(async () => {
+const mountApplication = async () => {
 	await loadRuntimeConfigurations()
 	await loadPermissionsContext()
 
@@ -145,4 +145,6 @@ loadTranslations('empleados').then(async () => {
 			permissionsContext,
 		},
 	}).$mount('#content')
-})
+}
+
+mountApplication()

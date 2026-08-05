@@ -3,14 +3,14 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 
     <id>empleados</id>
-    <name>Empleados</name>
+    <name>Employees</name>
 
     <summary>Employee ERP for HR, documents, vacations, savings and time reports.</summary>
 
     <description><![CDATA[
-# Empleados — ERP and Human Resources Module for Nextcloud
+# Employees — ERP and Human Resources Module for Nextcloud
 
-Empleados is an ERP-style Human Resources module built for Nextcloud. It allows organizations to manage employee information, departments, positions, teams, documents, vacations, absences, savings and time reports directly inside their private Nextcloud environment.
+Employees is an ERP-style Human Resources module built for Nextcloud. It allows organizations to manage employee information, departments, positions, teams, documents, vacations, absences, savings and time reports directly inside their private Nextcloud environment.
 
 The module is designed for companies that want more control over their internal processes, better data ownership and a customizable alternative to external HR SaaS platforms.
 
@@ -77,7 +77,7 @@ https://youtu.be/WrfVQT97Mqk
 This project is currently in beta and under active development. It is already functional in internal environments, but some workflows, documentation and administrative tools may continue to change as the module evolves.
     ]]></description>
 
-    <version>2.5.11.3</version>
+    <version>2.5.13</version>
     <licence>AGPL-3.0-or-later</licence>
 
     <author mail="luis.alvarado@crowe.mx" homepage="https://gossler-torreon.com">Luis Angel Alvarado Hernandez</author>
@@ -85,15 +85,15 @@ This project is currently in beta and under active development. It is already fu
     <namespace>Empleados</namespace>
     <category>organization</category>
 
-    <website>https://github.com/Destripador/empleados</website>
-    <repository type="git">https://github.com/Destripador/empleados</repository>
-    <bugs>https://github.com/Destripador/empleados/issues</bugs>
-    <discussion>https://github.com/Destripador/empleados/issues</discussion>
+    <website>https://github.com/Vinttri/empleados</website>
+    <repository type="git">https://github.com/Vinttri/empleados</repository>
+    <bugs>https://github.com/Vinttri/empleados/issues</bugs>
+    <discussion>https://github.com/Vinttri/empleados/issues</discussion>
 
     <documentation>
         <user>https://github.com/Destripador/empleados/wiki</user>
         <admin>https://github.com/Destripador/empleados/blob/main/README.md</admin>
-        <developer>https://github.com/Destripador/empleados</developer>
+        <developer>https://github.com/Vinttri/empleados</developer>
     </documentation>
 
     <screenshot small-thumbnail="https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/empleado_general.png">https://raw.githubusercontent.com/Destripador/employees/refs/heads/main/docs/screenshots/empleado_general.png</screenshot>
@@ -115,7 +115,7 @@ This project is currently in beta and under active development. It is already fu
     <navigations>
         <navigation>
             <id>empleados</id>
-            <name>Empleados</name>
+            <name>Employees</name>
             <route>empleados.page.index</route>
             <icon>app.svg</icon>
             <type>link</type>

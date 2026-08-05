@@ -23,7 +23,7 @@ class settingsAdmin implements IIconSection {
     }
 
     public function getName(): string {
-        return $this->l->t('Empleados');
+        return $this->l->t('Employees');
     }
 
     public function getPriority(): int {

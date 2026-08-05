@@ -39,7 +39,7 @@ class empleadosBoardingMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $data ?: [];
@@ -76,7 +76,7 @@ class empleadosBoardingMapper extends QBMapper {
             ->orderBy('eb.nombre', 'ASC');
 
         $result = $qb->executeQuery();
-        $data = $result->fetchAll();
+        $data = LegacyRowCompat::rows($result->fetchAll());
         $result->closeCursor();
 
         return $data;
@@ -116,7 +116,7 @@ class empleadosBoardingMapper extends QBMapper {
 			->orderBy('b.nombre', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;

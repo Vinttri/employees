@@ -15,24 +15,24 @@ use OCP\AppFramework\Db\DoesNotExistException;
 
 class capitalhumanoMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'CapitalHumano', capitalhumano::class);
+		parent::__construct($db, 'capitalhumano', capitalhumano::class);
 	}
 
 	public function GetCapitalHumano(): array {
 		$qb = $this->db->getQueryBuilder();
 
 		/*
-		$qb->select('Id_user')
+		$qb->select('id_user')
 			->from($this->getTableName(), 'o')
-			->innerJoin('o', 'empleados', 'e', $qb->expr()->eq('Id_empleados', 'Id_empleado'))
-			->where($qb->expr()->eq('Estado', $qb->createNamedParameter(1)));
+			->innerJoin('o', 'empleados', 'e', $qb->expr()->eq('id_empleados', 'id_empleado'))
+			->where($qb->expr()->eq('estado', $qb->createNamedParameter(1)));
 		*/
 
-		$qb->select('Id_empleado')
+		$qb->select('id_empleado')
 			->from($this->getTableName());
 
 		$result = $qb->execute();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -44,16 +44,16 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
     $existingUsers = [];
 
     // Obtener todos los IDs de empleados existentes en la base de datos
-    $qb->select('Id_empleado')
+    $qb->select('id_empleado')
         ->from($this->getTableName());
     $result = $qb->execute();
-    $existingUsersRaw = $result->fetchAll();
+    $existingUsersRaw = LegacyRowCompat::rows($result->fetchAll());
     $result->closeCursor();
 
     // Convertimos los resultados en un array simple de IDs
     foreach ($existingUsersRaw as $row) {
-        if (isset($row['Id_empleado'])) {
-            $existingUsers[] = $row['Id_empleado'];
+        if (isset($row['id_empleado'])) {
+            $existingUsers[] = $row['id_empleado'];
         }
     }
 
@@ -75,7 +75,7 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
     if (!empty($usersToDelete)) {
         $qb = $this->db->getQueryBuilder();
         $qb->delete($this->getTableName())
-            ->where($qb->expr()->in('Id_empleado', array_map([$qb, 'createNamedParameter'], $usersToDelete)));
+            ->where($qb->expr()->in('id_empleado', array_map([$qb, 'createNamedParameter'], $usersToDelete)));
         $qb->execute();
     }
 
@@ -85,7 +85,7 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
             $qb = $this->db->getQueryBuilder();
             $qb->insert($this->getTableName())
                 ->values([
-                    'Id_empleado' => $qb->createNamedParameter($userId),
+                    'id_empleado' => $qb->createNamedParameter($userId),
                     'created_at' => $qb->createNamedParameter($timestamp),
                     'updated_at' => $qb->createNamedParameter($timestamp)
                 ]);
@@ -109,7 +109,7 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
 			->from($this->getTableName());
 			
 		$result = $qb->execute();
-		$config = $result->fetchAll();
+		$config = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $config;
@@ -118,8 +118,8 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
 	public function ActualizarGestor($id_gestor): void {
 		$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Data', $query->createNamedParameter($id_gestor))
-				->where($query->expr()->eq('Id_conf', $query->createNamedParameter("1")));
+				->set('data', $query->createNamedParameter($id_gestor))
+				->where($query->expr()->eq('id_conf', $query->createNamedParameter("1")));
 	
 			$query->execute();
 	}
@@ -127,8 +127,8 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
 	public function ActualizarConfiguracion($id_configuracion, $data): void {
 		$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Data', $query->createNamedParameter($data))
-				->where($query->expr()->eq('Nombre', $query->createNamedParameter($id_configuracion)));
+				->set('data', $query->createNamedParameter($data))
+				->where($query->expr()->eq('nombre', $query->createNamedParameter($id_configuracion)));
 	
 			$query->execute();
 	}
@@ -136,12 +136,12 @@ public function UpdateCapitalHumano(array $capitalhumano): array {
 	public function GetNotasGuardado(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Data')
+		$qb->select('data')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Nombre', $qb->createNamedParameter("automatic_save_note")));
+			->where($qb->expr()->eq('nombre', $qb->createNamedParameter("automatic_save_note")));
 			
 		$result = $qb->execute();
-		$config = $result->fetchAll();
+		$config = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $config;

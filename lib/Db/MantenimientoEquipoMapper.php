@@ -360,7 +360,7 @@ class MantenimientoEquipoMapper extends QBMapper {
 
 	private function assertValidStatus(string $status): void {
 		if (!in_array($status, MantenimientoEquipo::ESTADOS_VALIDOS, true)) {
-			throw new \InvalidArgumentException('Estado de mantenimiento inválido.');
+			throw new \InvalidArgumentException('estado de mantenimiento inválido.');
 		}
 	}
 }

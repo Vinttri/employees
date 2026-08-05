@@ -34,7 +34,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $data ?: [];
@@ -60,7 +60,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			->orderBy('numero_parcialidad', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;

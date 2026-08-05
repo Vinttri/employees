@@ -57,7 +57,7 @@ class historialausenciasMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -73,7 +73,7 @@ class historialausenciasMapper extends QBMapper {
 			->andWhere($qb->expr()->lte('h.a_gerente', $qb->createNamedParameter(0)));
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -89,7 +89,7 @@ class historialausenciasMapper extends QBMapper {
 			->andWhere($qb->expr()->lte('h.a_socio', $qb->createNamedParameter(0)));
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -108,7 +108,7 @@ class historialausenciasMapper extends QBMapper {
 			->where($qb->expr()->eq('h.id_historial_ausencias', $qb->createNamedParameter($id)));
 
 		$result = $qb->executeQuery();
-		$rows   = $result->fetchAll();
+		$rows   = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -134,7 +134,7 @@ class historialausenciasMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($qb->expr()->eq('id_historial_ausencias', $qb->createNamedParameter($id)));
 		$result = $qb->executeQuery();
-		$row = $result->fetchAll();
+		$row = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $row;
 	}
@@ -210,7 +210,7 @@ class historialausenciasMapper extends QBMapper {
 			->orderBy('h.timestamp', 'DESC');
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -227,19 +227,19 @@ class historialausenciasMapper extends QBMapper {
 				'h.*',
 				't.nombre AS tipo_ausencia',
 				't.solicitar_prima_vacacional',
-				'e.Id_user AS nombre_empleado',
-				'e.Id_empleados AS id_empleado'
+				'e.id_user AS nombre_empleado',
+				'e.id_empleados AS id_empleado'
 			)
 			->from($this->getTableName(), 'h')
 			->innerJoin('h', 'tipo_ausencia', 't', $qb->expr()->eq('h.id_tipo_ausencia', 't.id_tipo_ausencia'))
 			->innerJoin('h', 'ausencias', 'a', $qb->expr()->eq('h.id_ausencias', 'a.id_ausencias'))
-			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.Id_empleados'))
+			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.id_empleados'))
 			->where($qb->expr()->eq('h.id_ausencias', $qb->createNamedParameter($id_ausencias, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('h.id_aniversario', $qb->createNamedParameter($numero_aniversario, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
 			->orderBy('h.timestamp', 'DESC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -252,14 +252,14 @@ class historialausenciasMapper extends QBMapper {
 				'h.*',
 				't.nombre AS tipo_ausencia',
 				't.solicitar_prima_vacacional',
-				'e.Id_user AS nombre_empleado',
-				'e.Id_empleados AS id_empleado',
-				'e.Ingreso AS ingreso_empleado'
+				'e.id_user AS nombre_empleado',
+				'e.id_empleados AS id_empleado',
+				'e.ingreso AS ingreso_empleado'
 			)
 			->from($this->getTableName(), 'h')
 			->innerJoin('h', 'tipo_ausencia', 't', $qb->expr()->eq('h.id_tipo_ausencia', 't.id_tipo_ausencia'))
 			->innerJoin('h', 'ausencias', 'a', $qb->expr()->eq('h.id_ausencias', 'a.id_ausencias'))
-			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.Id_empleados'))
+			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.id_empleados'))
 			->where(
 				$qb->expr()->andX(
 					$qb->expr()->lte('h.fecha_de', $qb->createNamedParameter($hasta)),
@@ -269,7 +269,7 @@ class historialausenciasMapper extends QBMapper {
 			->orderBy('h.timestamp', 'DESC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -322,13 +322,13 @@ class historialausenciasMapper extends QBMapper {
 				'h.*',
 				't.nombre AS tipo_nombre',
 				't.solicitar_prima_vacacional',
-				'e.Id_user AS nombre_empleado',
-				'e.Id_empleados AS id_empleado'
+				'e.id_user AS nombre_empleado',
+				'e.id_empleados AS id_empleado'
 			)
 			->from($this->getTableName(), 'h')
 			->innerJoin('h', 'tipo_ausencia', 't', $qb->expr()->eq('h.id_tipo_ausencia', 't.id_tipo_ausencia'))
 			->innerJoin('h', 'ausencias', 'a', $qb->expr()->eq('h.id_ausencias', 'a.id_ausencias'))
-			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.Id_empleados'))
+			->innerJoin('a', 'empleados', 'e', $qb->expr()->eq('a.id_empleado', 'e.id_empleados'))
 			->where(
 				// no está 100% aprobada todavía
 				$qb->expr()->orX(
@@ -345,7 +345,7 @@ class historialausenciasMapper extends QBMapper {
 			->andWhere($qb->expr()->neq('h.a_capital_humano', $qb->createNamedParameter(2, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;

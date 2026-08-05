@@ -22,21 +22,21 @@ class empleadosMapper extends QBMapper {
 	public function GetSubordinates($id): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('e.Id_empleados', 'e.Id_user', 'u.displayname', 'e.Sueldo')
+		$qb->select('e.id_empleados', 'e.id_user', 'u.displayname', 'e.sueldo')
 			->from('empleados', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->where(
 				$qb->expr()->orX(
-					$qb->expr()->eq('e.Id_gerente', $qb->createNamedParameter($id)),
-					$qb->expr()->eq('e.Id_socio', $qb->createNamedParameter($id))
+					$qb->expr()->eq('e.id_gerente', $qb->createNamedParameter($id)),
+					$qb->expr()->eq('e.id_socio', $qb->createNamedParameter($id))
 				)
 			)
 			->andWhere(
-				$qb->expr()->neq('e.Id_user', $qb->createNamedParameter($id))
+				$qb->expr()->neq('e.id_user', $qb->createNamedParameter($id))
 			);
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -47,13 +47,13 @@ class empleadosMapper extends QBMapper {
 
 		$qb->select('*')
 			->from('empleados', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->where($qb->expr()->eq('e.Id_user', $qb->createNamedParameter($id)))
-			->orderBy('e.Id_empleados', 'DESC')
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('e.id_user', $qb->createNamedParameter($id)))
+			->orderBy('e.id_empleados', 'DESC')
 			->setMaxResults(1);
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -64,11 +64,11 @@ class empleadosMapper extends QBMapper {
 
 		$qb->select('*') // Solo traemos empleados sin duplicar
 			->from('empleados', 'e')
-			->where($qb->expr()->eq('e.Id_empleados', $qb->createNamedParameter($id)))
+			->where($qb->expr()->eq('e.id_empleados', $qb->createNamedParameter($id)))
 			->setMaxResults(1);
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -77,17 +77,17 @@ class empleadosMapper extends QBMapper {
     public function GetUserLists(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.Id_empleados') // Solo traemos empleados sin duplicar
+		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.id_empleados') // Solo traemos empleados sin duplicar
 			->from('empleados', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->innerJoin('e', 'ausencias', 'a', $qb->expr()->eq('a.id_empleado', 'e.Id_empleados'))
-			->innerJoin('e', 'user_ahorro', 'i', $qb->expr()->eq('i.id_user', 'e.Id_empleados'))
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->innerJoin('e', 'ausencias', 'a', $qb->expr()->eq('a.id_empleado', 'e.id_empleados'))
+			->innerJoin('e', 'user_ahorro', 'i', $qb->expr()->eq('i.id_user', 'e.id_empleados'))
 			->where($qb->expr()->eq('e.estado', $qb->createNamedParameter(1)));
 
 
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -102,7 +102,7 @@ class empleadosMapper extends QBMapper {
 			
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -114,10 +114,10 @@ class empleadosMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName(), 'o')
 			->innerJoin('o', 'users', 'c', $qb->expr()->eq('uid', 'id_user'))
-			->where($qb->expr()->eq('Estado', $qb->createNamedParameter(0)));
+			->where($qb->expr()->eq('estado', $qb->createNamedParameter(0)));
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -127,7 +127,7 @@ class empleadosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_empleados', $qb->createNamedParameter($id_empleados)));
+			->where($qb->expr()->eq('id_empleados', $qb->createNamedParameter($id_empleados)));
 			
 
 		$result = $qb->executeStatement();
@@ -138,9 +138,9 @@ class empleadosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
-		->set('Estado', $qb->createNamedParameter(0))
+		->set('estado', $qb->createNamedParameter(0))
 		->set('updated_at', $qb->createNamedParameter($timestamp))
-		->where($qb->expr()->eq('Id_empleados', $qb->createNamedParameter($id_empleados)));
+		->where($qb->expr()->eq('id_empleados', $qb->createNamedParameter($id_empleados)));
 			
 		$result = $qb->executeStatement();
 	}
@@ -150,9 +150,9 @@ class empleadosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
-		->set('Estado', $qb->createNamedParameter(1))
+		->set('estado', $qb->createNamedParameter(1))
 		->set('updated_at', $qb->createNamedParameter($timestamp))
-		->where($qb->expr()->eq('Id_empleados', $qb->createNamedParameter($id_empleados)));
+		->where($qb->expr()->eq('id_empleados', $qb->createNamedParameter($id_empleados)));
 			
 		$result = $qb->executeStatement();
 	}
@@ -211,31 +211,31 @@ class empleadosMapper extends QBMapper {
 	
 			$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Numero_empleado', $query->createNamedParameter($Numero_empleado))
-				->set('Ingreso', $query->createNamedParameter($Ingreso))
-				->set('Correo_contacto', $query->createNamedParameter($Correo_contacto))
-				->set('Id_departamento', $query->createNamedParameter($Id_departamento))
-				->set('Id_puesto', $query->createNamedParameter($Id_puesto))
-				->set('Id_gerente', $query->createNamedParameter($Id_gerente))
-				->set('Id_socio', $query->createNamedParameter($Id_socio))
-				->set('Fondo_clave', $query->createNamedParameter($Fondo_clave))
-				->set('Fondo_ahorro', $query->createNamedParameter($Fondo_ahorro))
-				->set('Numero_cuenta', $query->createNamedParameter($Numero_cuenta))
+				->set('numero_empleado', $query->createNamedParameter($Numero_empleado))
+				->set('ingreso', $query->createNamedParameter($Ingreso))
+				->set('correo_contacto', $query->createNamedParameter($Correo_contacto))
+				->set('id_departamento', $query->createNamedParameter($Id_departamento))
+				->set('id_puesto', $query->createNamedParameter($Id_puesto))
+				->set('id_gerente', $query->createNamedParameter($Id_gerente))
+				->set('id_socio', $query->createNamedParameter($Id_socio))
+				->set('fondo_clave', $query->createNamedParameter($Fondo_clave))
+				->set('fondo_ahorro', $query->createNamedParameter($Fondo_ahorro))
+				->set('numero_cuenta', $query->createNamedParameter($Numero_cuenta))
 				// Equipo_asignado es heredado; inventario_computo.id_empleado es la relación oficial.
-				->set('Sueldo', $query->createNamedParameter($Sueldo))
-				->set('Fecha_nacimiento', $query->createNamedParameter($Fecha_nacimiento))
-				->set('Estado', $query->createNamedParameter($Estado))
-				->set('Direccion', $query->createNamedParameter($Direccion))
-				->set('Estado_civil', $query->createNamedParameter($Estado_civil))
-				->set('Telefono_contacto', $query->createNamedParameter($Telefono_contacto))
-				->set('Curp', $query->createNamedParameter($Curp))
-				->set('Rfc', $query->createNamedParameter($Rfc))
-				->set('Imss', $query->createNamedParameter($Imss))
-				->set('Genero', $query->createNamedParameter($Genero))
-				->set('Contacto_emergencia', $query->createNamedParameter($Contacto_emergencia))
-				->set('Numero_emergencia', $query->createNamedParameter($Numero_emergencia))
+				->set('sueldo', $query->createNamedParameter($Sueldo))
+				->set('fecha_nacimiento', $query->createNamedParameter($Fecha_nacimiento))
+				->set('estado', $query->createNamedParameter($Estado))
+				->set('direccion', $query->createNamedParameter($Direccion))
+				->set('estado_civil', $query->createNamedParameter($Estado_civil))
+				->set('telefono_contacto', $query->createNamedParameter($Telefono_contacto))
+				->set('curp', $query->createNamedParameter($Curp))
+				->set('rfc', $query->createNamedParameter($Rfc))
+				->set('imss', $query->createNamedParameter($Imss))
+				->set('genero', $query->createNamedParameter($Genero))
+				->set('contacto_emergencia', $query->createNamedParameter($Contacto_emergencia))
+				->set('numero_emergencia', $query->createNamedParameter($Numero_emergencia))
 				->set('updated_at', $query->createNamedParameter($timestamp))
-				->where($query->expr()->eq('Id_empleados', $query->createNamedParameter($Id_empleados)));
+				->where($query->expr()->eq('id_empleados', $query->createNamedParameter($Id_empleados)));
 	
 			$query->executeStatement();
 		}
@@ -253,9 +253,9 @@ class empleadosMapper extends QBMapper {
 			
 			$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Notas', $query->createNamedParameter($Nota))
+				->set('notas', $query->createNamedParameter($Nota))
 				->set('updated_at', $query->createNamedParameter($timestamp))
-				->where($query->expr()->eq('Id_empleados', $query->createNamedParameter($Id_empleados)));
+				->where($query->expr()->eq('id_empleados', $query->createNamedParameter($Id_empleados)));
 	
 			$query->executeStatement();
 		}
@@ -269,11 +269,11 @@ class empleadosMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_area)));
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_area)));
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -284,11 +284,11 @@ class empleadosMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->where($qb->expr()->eq('Id_puesto', $qb->createNamedParameter($id_puesto)));
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('id_puesto', $qb->createNamedParameter($id_puesto)));
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -297,15 +297,15 @@ class empleadosMapper extends QBMapper {
 	public function GetEmpleadosEquipo(string $id_equipo): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.Id_empleados') // Solo traemos empleados sin duplicar
+		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.id_empleados') // Solo traemos empleados sin duplicar
 			->from('empleados', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->innerJoin('e', 'ausencias', 'a', $qb->expr()->eq('a.id_empleado', 'e.Id_empleados'))
-			->innerJoin('e', 'user_ahorro', 'i', $qb->expr()->eq('i.id_user', 'e.Id_empleados'))
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($id_equipo)));
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->innerJoin('e', 'ausencias', 'a', $qb->expr()->eq('a.id_empleado', 'e.id_empleados'))
+			->innerJoin('e', 'user_ahorro', 'i', $qb->expr()->eq('i.id_user', 'e.id_empleados'))
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($id_equipo)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -314,13 +314,13 @@ class empleadosMapper extends QBMapper {
 	public function GetMyEquipo(string $id_equipo): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Id_empleados', 'Id_user')
+		$qb->select('id_empleados', 'id_user')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
-			->where($qb->expr()->eq('Id_equipo', $qb->createNamedParameter($id_equipo)));
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('id_equipo', $qb->createNamedParameter($id_equipo)));
 		
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 	
 		return $users;
@@ -358,20 +358,20 @@ class empleadosMapper extends QBMapper {
 	
 			$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Numero_empleado', $query->createNamedParameter($Numero_empleado))
-				->set('Ingreso', $query->createNamedParameter($Ingreso))
-				->set('Id_departamento', $query->createNamedParameter($Id_departamento))
-				->set('Id_puesto', $query->createNamedParameter($Id_puesto))
-				->set('Id_gerente', $query->createNamedParameter($Id_gerente))
-				->set('Id_socio', $query->createNamedParameter($Id_socio))
-				->set('Fondo_clave', $query->createNamedParameter($Fondo_clave))
-				->set('Fondo_ahorro', $query->createNamedParameter($Fondo_ahorro))
-				->set('Numero_cuenta', $query->createNamedParameter($Numero_cuenta))
+				->set('numero_empleado', $query->createNamedParameter($Numero_empleado))
+				->set('ingreso', $query->createNamedParameter($Ingreso))
+				->set('id_departamento', $query->createNamedParameter($Id_departamento))
+				->set('id_puesto', $query->createNamedParameter($Id_puesto))
+				->set('id_gerente', $query->createNamedParameter($Id_gerente))
+				->set('id_socio', $query->createNamedParameter($Id_socio))
+				->set('fondo_clave', $query->createNamedParameter($Fondo_clave))
+				->set('fondo_ahorro', $query->createNamedParameter($Fondo_ahorro))
+				->set('numero_cuenta', $query->createNamedParameter($Numero_cuenta))
 				// Equipo_asignado es heredado; inventario_computo.id_empleado se actualiza mediante los endpoints de inventario.
-				->set('Id_equipo', $query->createNamedParameter($Id_equipo))
-				->set('Sueldo', $query->createNamedParameter($Sueldo))
+				->set('id_equipo', $query->createNamedParameter($Id_equipo))
+				->set('sueldo', $query->createNamedParameter($Sueldo))
 				->set('updated_at', $query->createNamedParameter($timestamp))
-				->where($query->expr()->eq('Id_empleados', $query->createNamedParameter($Id_empleados)));
+				->where($query->expr()->eq('id_empleados', $query->createNamedParameter($Id_empleados)));
 	
 			$query->executeStatement();
 			
@@ -400,19 +400,19 @@ class empleadosMapper extends QBMapper {
 	
 			$query = $this->db->getQueryBuilder();
 			$query->update($this->getTableName())
-				->set('Direccion', $query->createNamedParameter($Direccion))
-				->set('Estado_civil', $query->createNamedParameter($Estado_civil))
-				->set('Telefono_contacto', $query->createNamedParameter($Telefono_contacto))
-				->set('Curp', $query->createNamedParameter($Curp))
-				->set('Rfc', $query->createNamedParameter($Rfc))
-				->set('Imss', $query->createNamedParameter($Imss))
-				->set('Genero', $query->createNamedParameter($Genero))			
-				->set('Correo_contacto', $query->createNamedParameter($Correo_contacto))
-				->set('Contacto_emergencia', $query->createNamedParameter($Contacto_emergencia))
-				->set('Numero_emergencia', $query->createNamedParameter($Numero_emergencia))
-				->set('Fecha_nacimiento', $query->createNamedParameter($Fecha_nacimiento))
+				->set('direccion', $query->createNamedParameter($Direccion))
+				->set('estado_civil', $query->createNamedParameter($Estado_civil))
+				->set('telefono_contacto', $query->createNamedParameter($Telefono_contacto))
+				->set('curp', $query->createNamedParameter($Curp))
+				->set('rfc', $query->createNamedParameter($Rfc))
+				->set('imss', $query->createNamedParameter($Imss))
+				->set('genero', $query->createNamedParameter($Genero))
+				->set('correo_contacto', $query->createNamedParameter($Correo_contacto))
+				->set('contacto_emergencia', $query->createNamedParameter($Contacto_emergencia))
+				->set('numero_emergencia', $query->createNamedParameter($Numero_emergencia))
+				->set('fecha_nacimiento', $query->createNamedParameter($Fecha_nacimiento))
 				->set('updated_at', $query->createNamedParameter($timestamp))
-				->where($query->expr()->eq('Id_empleados', $query->createNamedParameter($Id_empleados)));
+				->where($query->expr()->eq('id_empleados', $query->createNamedParameter($Id_empleados)));
 	
 			$query->executeStatement();
 			
@@ -426,7 +426,7 @@ class empleadosMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select(
-				'e.Id_empleados',
+				'e.id_empleados',
 				'u.displayname'
 			)
 			->from('empleados', 'e')
@@ -434,7 +434,7 @@ class empleadosMapper extends QBMapper {
 				'e',
 				'users',
 				'u',
-				$qb->expr()->eq('u.uid', 'e.Id_user')
+				$qb->expr()->eq('u.uid', 'e.id_user')
 			)
 			->where(
 				$qb->expr()->eq(
@@ -445,7 +445,7 @@ class empleadosMapper extends QBMapper {
 			->orderBy('u.displayname', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -454,12 +454,12 @@ class empleadosMapper extends QBMapper {
 	public function getClientesEmployeeLookup(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->selectAlias('e.Id_empleados', 'id_empleado')
-			->selectAlias('e.Id_user', 'id_user')
+		$qb->selectAlias('e.id_empleados', 'id_empleado')
+			->selectAlias('e.id_user', 'id_user')
 			->selectAlias('u.uid', 'uid')
 			->selectAlias('u.displayname', 'displayname')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->where(
 				$qb->expr()->eq(
 					'e.estado',
@@ -469,7 +469,7 @@ class empleadosMapper extends QBMapper {
 			->orderBy('u.displayname', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_map(static function (array $row): array {
@@ -486,10 +486,10 @@ class empleadosMapper extends QBMapper {
 
 		$qb->select('u.displayname')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.Id_user'))
+			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
 			->where(
 				$qb->expr()->eq(
-					'e.Id_empleados',
+					'e.id_empleados',
 					$qb->createNamedParameter($idEmpleado, IQueryBuilder::PARAM_INT)
 				)
 			)

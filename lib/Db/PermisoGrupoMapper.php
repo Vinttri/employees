@@ -23,7 +23,7 @@ class PermisoGrupoMapper extends QBMapper {
 			->addOrderBy('label', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -46,7 +46,7 @@ class PermisoGrupoMapper extends QBMapper {
 			->andWhere($qb->expr()->eq('restricted', $qb->createNamedParameter(1)));
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return array_values(array_unique(array_map(static function (array $row): string {
@@ -65,7 +65,7 @@ class PermisoGrupoMapper extends QBMapper {
 			->addOrderBy('label', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -97,7 +97,7 @@ class PermisoGrupoMapper extends QBMapper {
 			->addOrderBy('label', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;
@@ -112,7 +112,7 @@ class PermisoGrupoMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row ?: null;
