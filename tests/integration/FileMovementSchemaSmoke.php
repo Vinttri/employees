@@ -35,7 +35,7 @@ foreach ($requiredColumns as $column) {
 	assertFileMovement($table->hasColumn($column), 'existe columna ' . $column);
 }
 
-foreach (['employee_file_movements_actor_idx', 'employee_file_movements_employee_idx', 'employee_file_movements_type_idx', 'employee_file_movements_date_idx', 'employee_file_movements_file_idx'] as $index) {
+foreach (['employees_employee_file_movements_actor_idx', 'employees_employee_file_movements_employee_idx', 'employees_employee_file_movements_type_idx', 'employees_employee_file_movements_date_idx', 'employees_employee_file_movements_file_idx'] as $index) {
 	assertFileMovement($table->hasIndex($index), 'existe índice ' . $index);
 }
 
