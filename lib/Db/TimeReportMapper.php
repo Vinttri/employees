@@ -1654,7 +1654,11 @@ class TimeReportMapper extends QBMapper {
 			->selectAlias('d.name', 'area_name')
 			->from($this->getTableName(), 'r')
 			->leftJoin('r', 'employee_activities', 'a', 'a.id_activity = r.id_activity')
-			->leftJoin('r', 'employees', 'e', 'e.id_employees = r.id_employee')
+			// Legacy installations store time-report employee IDs as VARCHAR while
+			// the employee directory uses INTEGER. Cast the numeric directory key
+			// to text so the join works consistently on PostgreSQL, MariaDB and
+			// SQLite without rejecting non-numeric legacy report values.
+			->leftJoin('r', 'employees', 'e', 'CAST(e.id_employees AS VARCHAR) = r.id_employee')
 			->leftJoin('e', 'users', 'u', 'u.uid = e.id_user')
 			->leftJoin('e', 'departments', 'd', 'd.id_department = e.id_department')
 			->where($this->internalWorkExpression($qb, 'r'))

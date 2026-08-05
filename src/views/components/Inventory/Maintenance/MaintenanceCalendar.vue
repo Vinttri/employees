@@ -8,13 +8,16 @@ import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth'
-import { translate as t } from '@nextcloud/l10n'
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import ruLocale from '@fullcalendar/core/locales/ru'
+import { getLanguage, translate as t } from '@nextcloud/l10n'
 import { addOneCalendarDay, maintenanceTypeLabel, toApiDate } from '../../../../utils/maintenanceFormatters.js'
+const fullCalendarLocale = String(getLanguage() || 'en').toLowerCase().startsWith('ru') ? ruLocale : enGbLocale
 export default {
 	name: 'MaintenanceCalendar',
 	components: { FullCalendar },
 	props: { loadEvents: { type: Function, required: true }, refreshKey: { type: Number, default: 0 } },
-	computed: { options() { return { plugins: [dayGridPlugin, interactionPlugin, multiMonthPlugin], initialView: 'dayGridMonth', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,multiMonthYear' }, buttonText: { today: t('employees', 'Today'), month: t('employees', 'Month'), year: t('employees', 'Year') }, events: this.fetchEvents, eventClick: info => this.$emit('open-group', Number(info.event.extendedProps.groupId)), fixedWeekCount: false, dayMaxEvents: true, height: 'auto' } } },
+	computed: { options() { return { plugins: [dayGridPlugin, interactionPlugin, multiMonthPlugin], locale: fullCalendarLocale, initialView: 'dayGridMonth', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,multiMonthYear' }, buttonText: { today: t('employees', 'Today'), month: t('employees', 'Month'), year: t('employees', 'Year') }, events: this.fetchEvents, eventClick: info => this.$emit('open-group', Number(info.event.extendedProps.groupId)), fixedWeekCount: false, dayMaxEvents: true, height: 'auto' } } },
 	watch: { refreshKey() { this.$refs.calendar?.getApi().refetchEvents() } },
 	methods: {
 		async fetchEvents(info, success, failure) {

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace OCA\Employees\AppInfo;
 
 use OCA\Employees\Command\SeedOfficialHolidays;
+use OCA\Employees\Command\SeedDemoDataCommand;
 use OCA\Employees\Listener\FileMovementListener;
 use OCP\IDBConnection;
 use OCA\Employees\Cron\TimeReportsReminder;
 use OCA\Employees\Cron\VacationBonusReminder;
 use OCA\Employees\BackgroundJob\RecalculateVacationsJob;
 use OCA\Employees\Service\AnniversarySyncService;
+use OCA\Employees\Service\DemoDataSeeder;
 use OCA\Employees\Db\VacationHistoryMapper;
 use OCA\Employees\BackgroundJob\RecalculateVariableHolidaysJob;
 use OCA\Employees\Dashboard\ReportsWidget;
@@ -29,6 +31,8 @@ use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\Events\Node\NodeDeletedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
+use OCP\Files\IRootFolder;
+use OCP\IUserManager;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'employees';
@@ -70,6 +74,16 @@ class Application extends App implements IBootstrap {
 				$c->query(IDBConnection::class),
 				$c->query(\OCA\Employees\Db\HolidayMapper::class)
 			);
+		});
+		$context->registerService(DemoDataSeeder::class, function($c) {
+			return new DemoDataSeeder(
+				$c->query(IDBConnection::class),
+				$c->query(IUserManager::class),
+				$c->query(IRootFolder::class),
+			);
+		});
+		$context->registerService(SeedDemoDataCommand::class, function($c) {
+			return new SeedDemoDataCommand($c->query(DemoDataSeeder::class));
 		});
 	}
 

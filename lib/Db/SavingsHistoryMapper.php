@@ -30,11 +30,12 @@ class SavingsHistoryMapper extends QBMapper {
 	public function GetHistoryPanel(string $options_fechas_value, string $options_estado_values): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
+		$qb->select('o.*', 'x.id_user')
+			->selectAlias('c.id_user', 'uid')
+			->selectAlias('c.id_user', 'displayname')
 			->from($this->getTableName(), 'o')
 			->innerJoin('o', 'user_savings', 'x', $qb->expr()->eq('x.id_savings', 'o.id_savings'))
 			->innerJoin('x', 'employees', 'c', $qb->expr()->eq('c.id_employees', 'x.id_user'))
-			->innerJoin('c', 'users', 'u', $qb->expr()->eq('u.uid', 'c.id_user'))
 			->where($qb->expr()->eq('o.status', $qb->createNamedParameter($options_estado_values)))
 			->andWhere($qb->expr()->like('o.date_request', $qb->createNamedParameter('%' . $options_fechas_value)));
 

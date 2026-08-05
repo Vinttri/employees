@@ -19,15 +19,15 @@ class PurchaseRequest extends Entity implements JsonSerializable {
 	protected $title;
 	protected $description;
 	protected $justification;
-	protected $estimatedAmount;
-	protected $finalAmount;
+	protected $amountEstimated;
+	protected $amountFinal;
 	protected $currency;
 	protected $priority;
 	protected $status;
-	protected $requiredDate;
-	protected $sentDate;
-	protected $authorizationDate;
-	protected $closingDate;
+	protected $dateRequired;
+	protected $dateSent;
+	protected $dateAuthorization;
+	protected $dateClosing;
 	protected $selectedSupplier;
 	protected $createdAt;
 	protected $updatedAt;
@@ -77,6 +77,10 @@ class PurchaseRequest extends Entity implements JsonSerializable {
 		$this->addType('signedFileId', 'integer');
 	}
 
+	public function getEstimatedAmount() { return $this->amountEstimated; }
+	public function getFinalAmount() { return $this->amountFinal; }
+	public function getRequiredDate() { return $this->dateRequired; }
+
 	public function jsonSerialize(): array {
 		return [
 			'id_request' => $this->idRequest,
@@ -89,15 +93,15 @@ class PurchaseRequest extends Entity implements JsonSerializable {
 			'title' => $this->title,
 			'description' => $this->description,
 			'justification' => $this->justification,
-			'amount_estimated' => $this->estimatedAmount,
-			'amount_final' => $this->finalAmount,
+			'amount_estimated' => $this->amountEstimated,
+			'amount_final' => $this->amountFinal,
 			'currency' => $this->currency,
 			'priority' => $this->priority,
 			'status' => $this->status,
-			'date_required' => $this->requiredDate,
-			'date_sent' => $this->sentDate,
-			'date_authorization' => $this->authorizationDate,
-			'date_closing' => $this->closingDate,
+			'date_required' => $this->dateRequired,
+			'date_sent' => $this->dateSent,
+			'date_authorization' => $this->dateAuthorization,
+			'date_closing' => $this->dateClosing,
 			'selected_supplier' => $this->selectedSupplier,
 			'created_at' => $this->createdAt,
 			'updated_at' => $this->updatedAt,

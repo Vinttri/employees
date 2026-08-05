@@ -74,6 +74,21 @@ class EmployeeMapper extends QBMapper {
 		return $users;
 	}
 
+	/** @return array<int, array<string, mixed>> */
+	public function getActiveBasic(): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('e.id_employees', 'e.id_user', 'e.salary')
+			->selectAlias('e.id_user', 'displayname')
+			->from($this->getTableName(), 'e')
+			->where($qb->expr()->eq('e.status', $qb->createNamedParameter('1')))
+			->orderBy('e.id_user', 'ASC');
+
+		$result = $qb->executeQuery();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
+		$result->closeCursor();
+		return $rows;
+	}
+
 	/** @return array<string, mixed>|null */
 	public function findByUserId(string $uid): ?array {
 		$qb = $this->db->getQueryBuilder();

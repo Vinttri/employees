@@ -46,11 +46,11 @@ class MaintenanceAsset extends Entity implements JsonSerializable {
 	protected $technicianUid;
 	protected $technicianName;
 	protected $type;
-	protected $scheduledDate;
-	protected $scheduledStartTime;
-	protected $scheduledEndTime;
-	protected $actualStartDate;
-	protected $actualEndDate;
+	protected $dateScheduled;
+	protected $timeStartScheduled;
+	protected $timeEndScheduled;
+	protected $dateStartActual;
+	protected $dateEndActual;
 	protected $status;
 	protected $result;
 	protected $actionsPerformed;
@@ -60,14 +60,26 @@ class MaintenanceAsset extends Entity implements JsonSerializable {
 	protected $nextDate;
 	protected $createdBy;
 	protected $updatedBy;
-	protected $createdAt;
-	protected $updatedAt;
+	protected $dateCreation;
+	protected $dateUpdate;
 
 	public function __construct() {
 		foreach (['id', 'idGroup', 'idTeam', 'idModel', 'idEmployee', 'idDepartment'] as $field) {
 			$this->addType($field, 'integer');
 		}
 	}
+
+	// Backward-compatible domain accessors used by MaintenanceService.
+	public function getScheduledDate() { return $this->dateScheduled; }
+	public function setScheduledDate($value): void { $this->dateScheduled = $value; }
+	public function getScheduledStartTime() { return $this->timeStartScheduled; }
+	public function setScheduledStartTime($value): void { $this->timeStartScheduled = $value; }
+	public function getScheduledEndTime() { return $this->timeEndScheduled; }
+	public function setScheduledEndTime($value): void { $this->timeEndScheduled = $value; }
+	public function getActualStartDate() { return $this->dateStartActual; }
+	public function setActualStartDate($value): void { $this->dateStartActual = $value; }
+	public function getActualEndDate() { return $this->dateEndActual; }
+	public function setActualEndDate($value): void { $this->dateEndActual = $value; }
 
 	public function jsonSerialize(): array {
 		return [
@@ -87,11 +99,11 @@ class MaintenanceAsset extends Entity implements JsonSerializable {
 			'technician_uid' => $this->technicianUid,
 			'technician_name' => $this->technicianName,
 			'type' => $this->type,
-			'date_scheduled' => $this->scheduledDate,
-			'time_start_scheduled' => $this->scheduledStartTime,
-			'time_end_scheduled' => $this->scheduledEndTime,
-			'date_start_actual' => $this->actualStartDate,
-			'date_end_actual' => $this->actualEndDate,
+			'date_scheduled' => $this->dateScheduled,
+			'time_start_scheduled' => $this->timeStartScheduled,
+			'time_end_scheduled' => $this->timeEndScheduled,
+			'date_start_actual' => $this->dateStartActual,
+			'date_end_actual' => $this->dateEndActual,
 			'status' => $this->status,
 			'result' => $this->result,
 			'actions_performed' => $this->actionsPerformed,
@@ -101,8 +113,8 @@ class MaintenanceAsset extends Entity implements JsonSerializable {
 			'next_date' => $this->nextDate,
 			'created_by' => $this->createdBy,
 			'updated_by' => $this->updatedBy,
-			'date_creation' => $this->createdAt,
-			'date_update' => $this->updatedAt,
+			'date_creation' => $this->dateCreation,
+			'date_update' => $this->dateUpdate,
 		];
 	}
 }

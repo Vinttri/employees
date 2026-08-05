@@ -1056,8 +1056,13 @@ class TimeReportsController extends BaseController {
 		}
 
 		$userId = $user->getUID();
-		$boss = $this->EmployeeMapper->GetMyEmployeeInfo($userId);
-		$equipoEmpleado = $this->EmployeeMapper->GetSubordinates($userId);
+		if ($this->groupManager->isAdmin($userId)) {
+			$boss = [];
+			$equipoEmpleado = $this->EmployeeMapper->getActiveBasic();
+		} else {
+			$boss = $this->EmployeeMapper->GetMyEmployeeInfo($userId);
+			$equipoEmpleado = $this->EmployeeMapper->GetSubordinates($userId);
+		}
 
 		if (!is_array($equipoEmpleado)) {
 			$equipoEmpleado = [];
@@ -1288,6 +1293,9 @@ class TimeReportsController extends BaseController {
 		}
 
 		$userId = $user->getUID();
+		if ($this->groupManager->isAdmin($userId)) {
+			return $this->EmployeeMapper->getActiveBasic();
+		}
 
 		$boss = $this->EmployeeMapper->GetMyEmployeeInfo($userId);
 		$equipoEmpleado = $this->EmployeeMapper->GetSubordinates($userId);
