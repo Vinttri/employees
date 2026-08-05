@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Migration;
 
 use Closure;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -80,7 +81,7 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 					'name_file' => $insert->createNamedParameter($mapped['name_file']),
 					'mime_type' => $insert->createNamedParameter($mapped['mime_type']),
 					'size' => $insert->createNamedParameter($mapped['size']),
-					'is_folder' => $insert->createNamedParameter($mapped['is_folder']),
+					'is_folder' => $insert->createNamedParameter((bool)$mapped['is_folder'], IQueryBuilder::PARAM_BOOL),
 					'date_event' => $insert->createNamedParameter($mapped['date_event']),
 					'remote_addr' => $insert->createNamedParameter($mapped['remote_addr']),
 					'user_agent' => $insert->createNamedParameter($mapped['user_agent']),
@@ -108,7 +109,7 @@ class Version2037Date20260805180000 extends SimpleMigrationStep {
 			'name_file' => $row['nombre_archivo'],
 			'mime_type' => $row['mime_type'],
 			'size' => $row['tamanio'],
-			'is_folder' => $row['es_carpeta'],
+			'is_folder' => (bool)$row['es_carpeta'],
 			'date_event' => $row['fecha_evento'],
 			'remote_addr' => $row['remote_addr'],
 			'user_agent' => $row['user_agent'],
