@@ -38,6 +38,11 @@ class Version2041Date20260805220000 extends SimpleMigrationStep {
 		foreach (self::RELATION_COLUMNS as $columnName) {
 			$column = $platform->quoteIdentifier($columnName);
 			$this->db->executeStatement(sprintf(
+				'ALTER TABLE %s ALTER COLUMN %s DROP DEFAULT',
+				$table,
+				$column,
+			));
+			$this->db->executeStatement(sprintf(
 				"ALTER TABLE %s ALTER COLUMN %s TYPE INTEGER USING NULLIF(BTRIM(%s::text), '')::integer",
 				$table,
 				$column,
