@@ -21,7 +21,7 @@ class Activity extends Entity {
 	protected ?string $timeActual = null; // horas decimales
 	protected ?bool $billable = false;
 	protected ?string $systemCode = null;
-	protected string $activityType = self::TIPO_CLIENTE;
+	protected string $typeActivity = self::TIPO_CLIENTE;
 	protected string $scope = self::ALCANCE_GLOBAL;
 
 	public function __construct() {
@@ -32,7 +32,7 @@ class Activity extends Entity {
 		$this->addType('timeActual', 'float');
 		$this->addType('billable', 'bool');
 		$this->addType('systemCode', 'string');
-		$this->addType('activityType', 'string');
+		$this->addType('typeActivity', 'string');
 		$this->addType('scope', 'string');
 	}
 
@@ -45,7 +45,7 @@ class Activity extends Entity {
 			'time_actual' => $this->timeActual,
 			'billable' => $this->billable,
 			'system_code' => $this->systemCode,
-			'type_activity' => $this->activityType,
+			'type_activity' => $this->typeActivity,
 			'scope' => $this->scope,
 		];
 	}

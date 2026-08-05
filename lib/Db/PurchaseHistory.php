@@ -12,8 +12,8 @@ class PurchaseHistory extends Entity implements JsonSerializable {
 	protected $idHistory;
 	protected $idRequest;
 	protected $action;
-	protected $previousStatus;
-	protected $newStatus;
+	protected $statusPrevious;
+	protected $statusNew;
 	protected $comment;
 	protected $metadata;
 	protected $createdBy;
@@ -29,8 +29,8 @@ class PurchaseHistory extends Entity implements JsonSerializable {
 			'id_history' => $this->idHistory,
 			'id_request' => $this->idRequest,
 			'action' => $this->action,
-			'status_previous' => $this->previousStatus,
-			'status_new' => $this->newStatus,
+			'status_previous' => $this->statusPrevious,
+			'status_new' => $this->statusNew,
 			'comment' => $this->comment,
 			'metadata' => $this->metadata,
 			'created_by' => $this->createdBy,

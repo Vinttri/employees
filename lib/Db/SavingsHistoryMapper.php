@@ -29,6 +29,10 @@ class SavingsHistoryMapper extends QBMapper {
 
 	public function GetHistoryPanel(string $options_fechas_value, string $options_estado_values): array {
 		$qb = $this->db->getQueryBuilder();
+		$year = max(1970, min(2100, (int)$options_fechas_value));
+		$yearStart = sprintf('%04d-01-01', $year);
+		$yearEnd = sprintf('%04d-12-31', $year);
+		$status = in_array(strtolower($options_estado_values), ['1', 'true', 'approved'], true);
 
 		$qb->select('o.*', 'x.id_user')
 			->selectAlias('c.id_user', 'uid')
@@ -36,8 +40,9 @@ class SavingsHistoryMapper extends QBMapper {
 			->from($this->getTableName(), 'o')
 			->innerJoin('o', 'user_savings', 'x', $qb->expr()->eq('x.id_savings', 'o.id_savings'))
 			->innerJoin('x', 'employees', 'c', $qb->expr()->eq('c.id_employees', 'x.id_user'))
-			->where($qb->expr()->eq('o.status', $qb->createNamedParameter($options_estado_values)))
-			->andWhere($qb->expr()->like('o.date_request', $qb->createNamedParameter('%' . $options_fechas_value)));
+			->where($qb->expr()->eq('o.status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($qb->expr()->gte('o.date_request', $qb->createNamedParameter($yearStart)))
+			->andWhere($qb->expr()->lte('o.date_request', $qb->createNamedParameter($yearEnd)));
 
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());
@@ -46,8 +51,8 @@ class SavingsHistoryMapper extends QBMapper {
 		return $users;
 	}
 
-	public function EnviarSolicitud(int $id_savings, float $quantity_requested, string $quantity_total, string $note): void {
-		$nowTimestamp = date("d-m-Y");
+	public function EnviarSolicitud(int $id_savings, float $quantity_requested, float $quantity_total, string $note): void {
+		$nowDate = date('Y-m-d');
 
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert($this->getTableName())
@@ -55,8 +60,8 @@ class SavingsHistoryMapper extends QBMapper {
 				'id_savings' => $insert->createNamedParameter($id_savings, IQueryBuilder::PARAM_INT),
 				'quantity_requested' => $insert->createNamedParameter($quantity_requested),
 				'quantity_total' => $insert->createNamedParameter($quantity_total),
-				'date_request' => $insert->createNamedParameter($nowTimestamp),
-				'status' => $insert->createNamedParameter('0'),
+				'date_request' => $insert->createNamedParameter($nowDate),
+				'status' => $insert->createNamedParameter(false, IQueryBuilder::PARAM_BOOL),
 				'note' => $insert->createNamedParameter($note),
 			]);
 
@@ -80,7 +85,7 @@ class SavingsHistoryMapper extends QBMapper {
 	public function AceptarAhorro(int $id): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
-			->set('status', $query->createNamedParameter('1'))
+			->set('status', $query->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 			->where($query->expr()->eq('id_history', $query->createNamedParameter($id)));
 
 		$query->executeStatement();

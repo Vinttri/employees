@@ -26,7 +26,7 @@ class MaintenanceChecklist extends Entity implements JsonSerializable {
 	protected $result;
 	protected $observation;
 	protected $updatedBy;
-	protected $updatedAt;
+	protected $dateUpdate;
 
 	public function __construct() {
 		$this->addType('id', 'integer');
@@ -44,7 +44,7 @@ class MaintenanceChecklist extends Entity implements JsonSerializable {
 			'result' => $this->result,
 			'observation' => $this->observation,
 			'updated_by' => $this->updatedBy,
-			'date_update' => $this->updatedAt,
+			'date_update' => $this->dateUpdate,
 		];
 	}
 }

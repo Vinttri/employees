@@ -9,14 +9,14 @@ use OCP\AppFramework\Db\Entity;
 
 class HumanResources extends Entity {
     
-    protected string $humanResourcesId = '';
-    protected string $idEmployee = '';
+	protected ?int $humanResourcesId = null;
+	protected ?int $idEmployee = null;
     protected string $createdAt = '';
     protected string $updatedAt = '';
 
 	public function __construct() {
-        $this->addType('humanResourcesId', 'string');
-        $this->addType('idEmployee', 'string');
+		$this->addType('humanResourcesId', 'integer');
+		$this->addType('idEmployee', 'integer');
 		$this->addType('createdAt', 'string');
 		$this->addType('updatedAt', 'string');
 	}

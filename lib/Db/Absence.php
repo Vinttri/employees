@@ -13,7 +13,7 @@ class Absence extends Entity {
 	protected ?int $idEmployee = null;
 	protected ?float $daysAvailable = null;
 	protected ?int $numberAbsences = null;
-	protected ?int $bonusVacation = null;
+	protected ?bool $bonusVacation = null;
 	protected ?\DateTime $timestamp = null;
 
 	public function __construct() {
@@ -22,12 +22,13 @@ class Absence extends Entity {
 		$this->addType('idEmployee', Types::INTEGER);
 		$this->addType('daysAvailable', Types::FLOAT);
 		$this->addType('numberAbsences', Types::INTEGER);
-		$this->addType('bonusVacation', Types::INTEGER);
+		$this->addType('bonusVacation', Types::BOOLEAN);
 		$this->addType('timestamp', Types::DATETIME);
 	}
 
 	public function read(): array {
 		return [
+			'absence_id' => $this->absenceId,
 			'id_anniversary' => $this->idAnniversary,
 			'id_employee' => $this->idEmployee,
 			'days_available' => $this->daysAvailable,

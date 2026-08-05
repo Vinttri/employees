@@ -56,7 +56,7 @@ class PositionMapper extends QBMapper {
         $qb = $this->db->getQueryBuilder();
         $qb->insert($this->getTableName())->values([
             'name' => $qb->createNamedParameter($name),
-            'level' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+            'level' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
             'created_at' => $qb->createNamedParameter(date('Y-m-d')),
             'updated_at' => $qb->createNamedParameter(date('Y-m-d')),
         ]);

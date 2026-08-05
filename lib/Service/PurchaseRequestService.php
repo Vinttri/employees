@@ -200,7 +200,7 @@ class PurchaseRequestService {
 			'direct_manager_name' => $this->emptyToNull($data['direct_manager_name'] ?? null),
 
 			'purchase_type' => $this->emptyToNull($data['purchase_type'] ?? null),
-			'warranty' => $this->toBoolInt($data['warranty'] ?? 0),
+			'warranty' => $this->toBool($data['warranty'] ?? false),
 			'purchase_use' => $this->emptyToNull($data['purchase_use'] ?? 'empresa'),
 			'information' => $this->emptyToNull($data['information'] ?? $data['description'] ?? null),
 			'reason' => $this->emptyToNull($data['reason'] ?? $data['justification'] ?? null),
@@ -309,7 +309,7 @@ class PurchaseRequestService {
 			'direct_manager_name' => $data['direct_manager_name'] ?? $solicitud->getDirectManagerName(),
 
 			'purchase_type' => $data['purchase_type'] ?? $solicitud->getPurchaseType(),
-			'warranty' => array_key_exists('warranty', $data) ? $this->toBoolInt($data['warranty']) : $solicitud->getWarranty(),
+			'warranty' => array_key_exists('warranty', $data) ? $this->toBool($data['warranty']) : $solicitud->getWarranty(),
 			'purchase_use' => $data['purchase_use'] ?? $solicitud->getPurchaseUse(),
 			'information' => $data['information'] ?? $solicitud->getInformation(),
 			'reason' => $data['reason'] ?? $solicitud->getReason(),
@@ -617,18 +617,18 @@ class PurchaseRequestService {
 		return (int)$value;
 	}
 
-	private function toBoolInt($value): int {
+	private function toBool($value): bool {
 		if (is_bool($value)) {
-			return $value ? 1 : 0;
+			return $value;
 		}
 
 		if (is_numeric($value)) {
-			return ((int)$value) === 1 ? 1 : 0;
+			return ((int)$value) === 1;
 		}
 
 		$value = strtolower(trim((string)$value));
 
-		return in_array($value, ['1', 'true', 'si', 'sí', 'yes'], true) ? 1 : 0;
+		return in_array($value, ['1', 'true', 'si', 'sí', 'yes'], true);
 	}
 
 	public function cancelar(int $idRequest, string $userId, ?string $comment = null): array {

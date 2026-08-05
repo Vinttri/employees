@@ -17,13 +17,14 @@ class PurchaseAuthorization extends Entity implements JsonSerializable {
 	protected $level;
 	protected $status;
 	protected $comment;
-	protected $authorizationDate;
+	protected $dateAuthorization;
 	protected $createdAt;
 	protected $updatedAt;
 
 	public function __construct() {
 		$this->addType('idAuthorization', 'integer');
 		$this->addType('idRequest', 'integer');
+		$this->addType('idEmployeeAuthorizer', 'integer');
 		$this->addType('level', 'integer');
 	}
 
@@ -38,7 +39,7 @@ class PurchaseAuthorization extends Entity implements JsonSerializable {
 			'level' => $this->level,
 			'status' => $this->status,
 			'comment' => $this->comment,
-			'date_authorization' => $this->authorizationDate,
+			'date_authorization' => $this->dateAuthorization,
 			'created_at' => $this->createdAt,
 			'updated_at' => $this->updatedAt,
 		];

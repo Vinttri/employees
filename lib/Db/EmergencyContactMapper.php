@@ -62,7 +62,7 @@ class EmergencyContactMapper extends QBMapper {
 	private function clearPrincipal(int $idEmployee): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('is_primary', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('is_primary', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 			->set('primary_employee', $qb->createNamedParameter(null))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT)))
 			->executeStatement();

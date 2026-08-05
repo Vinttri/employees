@@ -138,9 +138,9 @@ class ClientMapper extends QBMapper {
 			->set('phone', $query->createNamedParameter($phone))
 			->set('email', $query->createNamedParameter($email))
 			->set('location', $query->createNamedParameter($location))
-			->set('special', $query->createNamedParameter((int)($special ?? false), IQueryBuilder::PARAM_INT))
+			->set('special', $query->createNamedParameter((bool)($special ?? false), IQueryBuilder::PARAM_BOOL))
 			->set('client_parent', $query->createNamedParameter($client_parent))
-			->set('status', $query->createNamedParameter((int)($status ?? true), IQueryBuilder::PARAM_INT))
+			->set('status', $query->createNamedParameter((bool)($status ?? true), IQueryBuilder::PARAM_BOOL))
 			->where(
 				$query->expr()->eq(
 					'id',

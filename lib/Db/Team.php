@@ -9,14 +9,14 @@ use OCP\AppFramework\Db\Entity;
 
 class Team extends Entity {
     
-    protected string $idTeam = '';
-	protected string $teamLeaderId = '';
-    protected string $name = '';
+	protected ?int $idTeam = null;
+	protected ?string $teamLeaderId = null;
+    protected ?string $name = null;
     protected string $createdAt = '';
     protected string $updatedAt = '';
 
 	public function __construct() {
-        $this->addType('idTeam', 'string');
+		$this->addType('idTeam', 'integer');
         $this->addType('teamLeaderId', 'string');
 		$this->addType('name', 'string');
 		$this->addType('createdAt', 'string');

@@ -11,14 +11,14 @@ class EmployeeOnboarding extends Entity {
 	protected int $idEmployee = 0;
 	protected int $idBoarding = 0;
 	protected string $name = '';
-	protected int $status = 0;
+	protected bool $status = false;
 
 	public function __construct() {
 		$this->addType('idEmployeeBoarding', 'integer');
 		$this->addType('idEmployee', 'integer');
 		$this->addType('idBoarding', 'integer');
 		$this->addType('name', 'string');
-		$this->addType('status', 'integer');
+		$this->addType('status', 'boolean');
 	}
 
 	public function read(): array {

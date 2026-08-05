@@ -55,7 +55,7 @@ class DepartmentMapper extends QBMapper {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert($this->getTableName())->values([
-			'id_parent' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+			'id_parent' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
 			'name' => $qb->createNamedParameter($name),
 			'created_at' => $qb->createNamedParameter(date('Y-m-d')),
 			'updated_at' => $qb->createNamedParameter(date('Y-m-d')),

@@ -7,6 +7,7 @@ namespace OCA\Employees\Cron;
 use OCP\BackgroundJob\Job;
 use Carbon\Carbon;
 use OCP\IDBConnection;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use Psr\Log\LoggerInterface;
 use OCA\Employees\Db\SettingsMapper;
 
@@ -28,7 +29,6 @@ class UpdateAnniversaries extends Job {
 
 
 		$hoy = Carbon::now();
-		$fechaHoy = $hoy->format('m-d');
 		$fechaHoyStr = $hoy->format('Y-m-d');
 
 		$qb = $connection->getQueryBuilder();
@@ -42,12 +42,11 @@ class UpdateAnniversaries extends Job {
 			)
 			->from('employees', 'e')
 			->join('e', 'absences', 'a', 'a.id_employee = e.id_employees')
-			->where($qb->expr()->eq(
-				$qb->createFunction("DATE_FORMAT(`hire_date`, '%m-%d')"),
-				$qb->createNamedParameter($fechaHoy)
-			));
+			->where($qb->expr()->isNotNull('e.hire_date'));
 
-		$rows = $qb->execute()->fetchAll();
+		$result = $qb->executeQuery();
+		$rows = $result->fetchAll();
+		$result->closeCursor();
 
 		foreach ($rows as $row) {
 			if (empty($row['hire_date'])) {
@@ -56,6 +55,9 @@ class UpdateAnniversaries extends Job {
 
 			try {
 				$hireDate = new Carbon($row['hire_date']);
+				if ($hireDate->format('m-d') !== $hoy->format('m-d')) {
+					continue;
+				}
 				$anios = $hireDate->diffInYears($hoy);
 
 				// Verifica si ya se ejecutó hoy
@@ -78,11 +80,11 @@ class UpdateAnniversaries extends Job {
 
 						$update = $connection->getQueryBuilder();
 						$update->update('absences')
-							->set('id_anniversary', $update->createNamedParameter($anios))
+							->set('id_anniversary', $update->createNamedParameter($anios, IQueryBuilder::PARAM_INT))
 							->set('days_available', $update->createNamedParameter($nuevoTotalDias))
-							->set('bonus_vacation', $update->createNamedParameter(0))
+							->set('bonus_vacation', $update->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 							->set('timestamp', $update->createNamedParameter($hoy->format('Y-m-d H:i:s')))
-							->where($update->expr()->eq('absence_id', $update->createNamedParameter($row['absence_id'])))
+							->where($update->expr()->eq('absence_id', $update->createNamedParameter((int)$row['absence_id'], IQueryBuilder::PARAM_INT)))
 							->executeStatement();
 
 						$logger->info("🎉 Aniversario actualizado: empleado {$row['id_employees']} → {$anios} años, {$nuevoTotalDias} días disponibles.");

@@ -166,12 +166,15 @@ class AbsenceHistoryMapper extends QBMapper {
 	 */
 	public function PrimaVacacionalUsadaEsteAnio(int $absence_id, int $anio, int $exclude_id = 0): bool {
 		$qb = $this->db->getQueryBuilder();
+		$yearStart = sprintf('%04d-01-01', $anio);
+		$yearEnd = sprintf('%04d-12-31', $anio);
 
 		$qb->select($qb->createFunction('COUNT(*)'))
 			->from($this->getTableName())
 			->where($qb->expr()->eq('absence_id', $qb->createNamedParameter($absence_id)))
-			->andWhere($qb->expr()->eq($qb->createFunction('YEAR(date_from)'), $qb->createNamedParameter($anio, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('bonus_vacation', $qb->createNamedParameter(1, \OCP\DB\QueryBuilder\IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->gte('date_from', $qb->createNamedParameter($yearStart)))
+			->andWhere($qb->expr()->lte('date_from', $qb->createNamedParameter($yearEnd)))
+			->andWhere($qb->expr()->eq('bonus_vacation', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			// Excluir canceladas (3) Y rechazadas (2) en ambos roles
 			->andWhere(
 				$qb->expr()->andX(
@@ -255,7 +258,7 @@ class AbsenceHistoryMapper extends QBMapper {
 				't.request_bonus_vacation',
 				'e.id_user AS employee_name',
 				'e.id_employees AS id_employee',
-				'e.hireDate AS employee_hire_date'
+				'e.hire_date AS employee_hire_date'
 			)
 			->from($this->getTableName(), 'h')
 			->innerJoin('h', 'absence_types', 't', $qb->expr()->eq('h.absence_type_id', 't.absence_type_id'))

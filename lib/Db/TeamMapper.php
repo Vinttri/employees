@@ -49,7 +49,7 @@ class TeamMapper extends QBMapper {
 
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert($this->getTableName())->values([
-			'team_leader_id' => $insert->createNamedParameter(null, IQueryBuilder::PARAM_INT),
+			'team_leader_id' => $insert->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
 			'name' => $insert->createNamedParameter($name),
 			'created_at' => $insert->createNamedParameter(date('Y-m-d')),
 			'updated_at' => $insert->createNamedParameter(date('Y-m-d')),

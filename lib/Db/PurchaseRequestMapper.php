@@ -136,7 +136,7 @@ class PurchaseRequestMapper extends QBMapper {
 
 		foreach ($fields as $field) {
 			if (array_key_exists($field, $data)) {
-				$values[$field] = $qb->createNamedParameter($data[$field]);
+				$values[$field] = $this->parameter($qb, $field, $data[$field]);
 			}
 		}
 
@@ -157,7 +157,7 @@ class PurchaseRequestMapper extends QBMapper {
 
 		foreach ($fields as $field) {
 			if (array_key_exists($field, $data)) {
-				$qb->set($field, $qb->createNamedParameter($data[$field]));
+				$qb->set($field, $this->parameter($qb, $field, $data[$field]));
 			}
 		}
 
@@ -170,6 +170,19 @@ class PurchaseRequestMapper extends QBMapper {
 		$this->executeStatement($qb);
 
 		return $this->find($id);
+	}
+
+	private function parameter(IQueryBuilder $qb, string $field, mixed $value): string {
+		if ($field === 'warranty') {
+			return $qb->createNamedParameter((bool)$value, IQueryBuilder::PARAM_BOOL);
+		}
+		if (in_array($field, [
+			'id_employee', 'id_department', 'id_team', 'id_client',
+			'selected_supplier', 'installments', 'pdf_file_id', 'signed_file_id',
+		], true)) {
+			return $qb->createNamedParameter($value === null || $value === '' ? null : (int)$value, IQueryBuilder::PARAM_INT);
+		}
+		return $qb->createNamedParameter($value);
 	}
 
 	public function cambiarEstado(

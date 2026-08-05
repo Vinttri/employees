@@ -111,7 +111,7 @@ class EmployeeOnboardingMapper extends QBMapper {
 				)
 			)
 			->andWhere(
-				$qb->expr()->eq('b.on', $qb->createNamedParameter($on, IQueryBuilder::PARAM_INT))
+				$qb->expr()->eq('b.on', $qb->createNamedParameter((bool)$on, IQueryBuilder::PARAM_BOOL))
 			)
 			->orderBy('b.name', 'ASC');
 
@@ -194,7 +194,7 @@ class EmployeeOnboardingMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
-			->set('status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_INT))
+			->set('status', $qb->createNamedParameter((bool)$status, IQueryBuilder::PARAM_BOOL))
 			->where(
 				$qb->expr()->eq(
 					'id_employee_boarding',

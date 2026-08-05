@@ -75,7 +75,7 @@ class OnboardingItemMapper extends QBMapper {
 			->where(
 				$qb->expr()->eq(
 					'on',
-					$qb->createNamedParameter($on, IQueryBuilder::PARAM_INT)
+					$qb->createNamedParameter((bool)$on, IQueryBuilder::PARAM_BOOL)
 				)
 			)
 			->orderBy('name', 'ASC');
@@ -102,7 +102,7 @@ class OnboardingItemMapper extends QBMapper {
 				$qb->expr()->eq('name', $qb->createNamedParameter($name))
 			)
 			->andWhere(
-				$qb->expr()->eq('on', $qb->createNamedParameter($on, IQueryBuilder::PARAM_INT))
+				$qb->expr()->eq('on', $qb->createNamedParameter((bool)$on, IQueryBuilder::PARAM_BOOL))
 			);
 
 		return (int)$qb->executeQuery()->fetchOne() > 0;
@@ -139,7 +139,7 @@ class OnboardingItemMapper extends QBMapper {
 
 		$qb->update($this->getTableName())
 			->set('name', $qb->createNamedParameter($name))
-			->set('on', $qb->createNamedParameter($on, IQueryBuilder::PARAM_INT))
+			->set('on', $qb->createNamedParameter((bool)$on, IQueryBuilder::PARAM_BOOL))
 			->where(
 				$qb->expr()->eq(
 					'id_boarding',

@@ -31,30 +31,30 @@ class InventoryMovement extends Entity {
 	];
 
 	protected $idTeam;
-	protected $movementType;
+	protected $typeMovement;
 	protected $actorUid;
 	protected $actorName;
-	protected $previousEmployeeUid;
-	protected $previousEmployeeName;
-	protected $newEmployeeUid;
-	protected $newEmployeeName;
-	protected $previousStatus;
-	protected $newStatus;
+	protected $employeePreviousUid;
+	protected $employeePreviousName;
+	protected $employeeNewUid;
+	protected $employeeNewName;
+	protected $statusPrevious;
+	protected $statusNew;
 	protected $description;
 	protected $changes;
 	protected $date;
 
 	public function __construct() {
 		$this->addType('idTeam', 'integer');
-		$this->addType('movementType', 'string');
+		$this->addType('typeMovement', 'string');
 		$this->addType('actorUid', 'string');
 		$this->addType('actorName', 'string');
-		$this->addType('previousEmployeeUid', 'string');
-		$this->addType('previousEmployeeName', 'string');
-		$this->addType('newEmployeeUid', 'string');
-		$this->addType('newEmployeeName', 'string');
-		$this->addType('previousStatus', 'string');
-		$this->addType('newStatus', 'string');
+		$this->addType('employeePreviousUid', 'string');
+		$this->addType('employeePreviousName', 'string');
+		$this->addType('employeeNewUid', 'string');
+		$this->addType('employeeNewName', 'string');
+		$this->addType('statusPrevious', 'string');
+		$this->addType('statusNew', 'string');
 		$this->addType('description', 'string');
 		$this->addType('changes', 'string');
 		$this->addType('date', 'string');

@@ -83,16 +83,16 @@
 						<NotesTab
 							:data="data"
 							:show="show"
-							:Employee="Empleados"
+							:Employee="employeesProp"
 							:automaticsave="automatic_save_note" />
 					</VTab>
 
 					<VTab :title="t('employees', 'Personal')">
-						<PersonalDetailsTab :data="data" :show="show" :Employee="Empleados" />
+						<PersonalDetailsTab :data="data" :show="show" :Employee="employeesProp" />
 					</VTab>
 
 					<VTab :title="t('employees', 'Files')">
-						<FilesTab :data="data" :show="show" :Employee="Empleados" />
+						<FilesTab :data="data" :show="show" :Employee="employeesProp" />
 					</VTab>
 				</VueTabs>
 			</div>
@@ -179,7 +179,6 @@ export default {
 		return {
 			show: false,
 			automatic_save_note: this.Settings.automatic_save_note,
-			Empleados: [],
 			showDeactiveUserDialog: false,
 			SelectedEmpleado: null,
 			showCropper: false,

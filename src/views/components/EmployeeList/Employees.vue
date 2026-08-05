@@ -44,13 +44,34 @@ export default {
 				const payload = response?.data?.ocs?.data ?? response?.data ?? {}
 				const employees = payload?.Employees ?? payload?.Empleados ?? payload
 
-				this.Empleados = Array.isArray(employees) ? employees : []
+				this.Empleados = Array.isArray(employees)
+					? employees.map(this.normalizeEmployee)
+					: []
 			} catch (err) {
 				console.error(err)
 				this.Empleados = []
 				showError(t('employees', 'Could not fetch your information'))
 			} finally {
 				this.loading = false
+			}
+		},
+
+		normalizeEmployee(employee) {
+			const source = employee && typeof employee === 'object' ? employee : {}
+			const uid = String(source.id_user ?? source.employee_uid ?? source.uid ?? '').trim()
+			const displayName = String(
+				source.displayname
+				?? source.display_name
+				?? source.name
+				?? uid,
+			).trim()
+
+			return {
+				...source,
+				id_employees: Number(source.id_employees ?? source.id_employee),
+				id_user: uid,
+				uid,
+				displayname: displayName || uid,
 			}
 		},
 	},

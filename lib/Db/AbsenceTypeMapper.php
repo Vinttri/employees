@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class AbsenceTypeMapper extends QBMapper {
@@ -41,7 +42,7 @@ class AbsenceTypeMapper extends QBMapper {
 			->from($this->getTableName());
 
 		if (!$isPrivileged) {
-			$qb->where($qb->expr()->eq('private', $qb->createNamedParameter(0, \PDO::PARAM_INT)));
+			$qb->where($qb->expr()->eq('private', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		}
 
 		$result = $qb->executeQuery();
@@ -75,7 +76,7 @@ class AbsenceTypeMapper extends QBMapper {
 		$entidad->setRequestFile((bool) $request_file);
 		$entidad->setRequestBonusVacation((bool) $request_bonus_vacation);
 		$entidad->setcargable((bool) $billable);
-		$entidad->setprivado($private);
+		$entidad->setprivado((bool) $private);
 
 		return $this->insert($entidad);
 	}
@@ -85,11 +86,11 @@ class AbsenceTypeMapper extends QBMapper {
 		$query->update($this->getTableName())
 			->set('name', $query->createNamedParameter($name))
 			->set('description', $query->createNamedParameter($description))
-			->set('request_file', $query->createNamedParameter($request_file))
-			->set('request_bonus_vacation', $query->createNamedParameter($request_bonus_vacation))
-			->set('billable', $query->createNamedParameter($billable))
-			->set('private', $query->createNamedParameter($private))
-			->where($query->expr()->eq('absence_type_id', $query->createNamedParameter($absence_type_id)));
+			->set('request_file', $query->createNamedParameter((bool)$request_file, IQueryBuilder::PARAM_BOOL))
+			->set('request_bonus_vacation', $query->createNamedParameter((bool)$request_bonus_vacation, IQueryBuilder::PARAM_BOOL))
+			->set('billable', $query->createNamedParameter((bool)$billable, IQueryBuilder::PARAM_BOOL))
+			->set('private', $query->createNamedParameter((bool)$private, IQueryBuilder::PARAM_BOOL))
+			->where($query->expr()->eq('absence_type_id', $query->createNamedParameter($absence_type_id, IQueryBuilder::PARAM_INT)));
 
 		$query->executeStatement();
 	}

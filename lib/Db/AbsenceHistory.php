@@ -8,9 +8,10 @@ use OCP\AppFramework\Db\Entity;
 
 class AbsenceHistory extends Entity {
 
-	protected string $absenceId = '';
-	protected ?string $idAnniversary = null;
-	protected string $absenceTypeId = '';
+	protected ?int $absenceHistoryId = null;
+	protected ?int $absenceId = null;
+	protected ?int $idAnniversary = null;
+	protected ?int $absenceTypeId = null;
 	protected string $dateFrom = '';
 	protected string $dateUntil = '';
 	protected ?bool $bonusVacation = false;
@@ -21,12 +22,13 @@ class AbsenceHistory extends Entity {
 	protected ?int $canAccessHumanResources = 0;
     protected string $notes = '';
 	protected int $daysRequested = 0;
+	protected float $daysFromAccrued = 0.0;
 
 	public function __construct() {
-		$this->addType('absenceHistoryId', 'string');
-		$this->addType('absenceId', 'string');
-		$this->addType('idAnniversary', 'string');
-		$this->addType('absenceTypeId', 'string');
+		$this->addType('absenceHistoryId', 'integer');
+		$this->addType('absenceId', 'integer');
+		$this->addType('idAnniversary', 'integer');
+		$this->addType('absenceTypeId', 'integer');
 		$this->addType('dateFrom', 'string');
 		$this->addType('dateUntil', 'string');
 		$this->addType('bonusVacation', 'bool');
@@ -37,6 +39,7 @@ class AbsenceHistory extends Entity {
 		$this->addType('canAccessHumanResources', 'integer');
 		$this->addType('notes', 'string');
 		$this->addType('daysRequested', 'integer');
+		$this->addType('daysFromAccrued', 'float');
 	}
 
 	public function read(): array {
@@ -55,6 +58,7 @@ class AbsenceHistory extends Entity {
 			'can_access_human_resources' => $this->canAccessHumanResources,
 			'notes' => $this->notes,
 			'days_requested' => $this->daysRequested,
+			'days_from_accrued' => $this->daysFromAccrued,
 		];
 	}
 }

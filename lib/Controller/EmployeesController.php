@@ -792,7 +792,7 @@ class EmployeesController extends BaseController {
     private function aplicarContacto(EmergencyContact $contact, array $values, bool $principal): void {
         $contact->setName($values['name']);
         $contact->setRelationship($values['relationship']);
-        $contact->setContactNumber($values['numero']);
+        $contact->setNumberContact($values['numero']);
         $contact->setAlternateMethod($values['alternativo'] ?: null);
         $contact->setAssistanceType($values['ayuda'] ?: null);
         $contact->setNotes($values['notes'] ?: null);
@@ -804,7 +804,7 @@ class EmployeesController extends BaseController {
         return [
             'id' => $contact->getId(), 'id_employee' => $contact->getIdEmployee(),
             'name' => $contact->getName(), 'relationship' => $contact->getRelationship(),
-            'number_contact' => $contact->getContactNumber(), 'alternate_method' => $contact->getAlternateMethod(),
+            'number_contact' => $contact->getNumberContact(), 'alternate_method' => $contact->getAlternateMethod(),
             'assistance_type' => $contact->getAssistanceType(), 'notes' => $contact->getNotes(),
             'is_primary' => (bool)$contact->getIsPrimary(), 'order' => $contact->getOrder(),
         ];

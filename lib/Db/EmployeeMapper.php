@@ -148,15 +148,27 @@ class EmployeeMapper extends QBMapper {
 
 		$qb->select('e.*', 'a.*', 'i.*', 'e.id_employees')
 			->selectAlias('e.id_user', 'employee_uid')
+			->selectAlias('u.displayname', 'employee_displayname')
 			->from('employees', 'e')
 			->innerJoin('e', 'absences', 'a', $qb->expr()->eq('a.id_employee', 'e.id_employees'))
 			->innerJoin('e', 'user_savings', 'i', $qb->expr()->eq('i.id_user', 'e.id_employees'))
-			->where($qb->expr()->eq('e.status', $qb->createNamedParameter(1)));
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('e.status', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 
 		
 		$result = $qb->executeQuery();
-		$users = LegacyRowCompat::rows($result->fetchAll());
+		$users = array_map(static function (array $row): array {
+			$uid = (string)($row['employee_uid'] ?? $row['id_user'] ?? '');
+			$displayName = trim((string)($row['employee_displayname'] ?? ''));
+
+			$row['id_user'] = $uid;
+			$row['uid'] = $uid;
+			$row['displayname'] = $displayName !== '' ? $displayName : $uid;
+			unset($row['employee_uid'], $row['employee_displayname']);
+
+			return $row;
+		}, LegacyRowCompat::rows($result->fetchAll()));
 		$result->closeCursor();
 	
 		return $users;

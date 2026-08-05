@@ -9,15 +9,15 @@ use OCP\AppFramework\Db\Entity;
 
 class Department extends Entity {
     
-    protected string $idDepartment = '';
-    protected string $idParent = '';
+	protected ?int $idDepartment = null;
+	protected ?int $idParent = null;
     protected string $name = '';
     protected string $createdAt = '';
     protected string $updatedAt = '';
 
 	public function __construct() {
-        $this->addType('idDepartment', 'string');
-        $this->addType('idParent', 'string');
+		$this->addType('idDepartment', 'integer');
+		$this->addType('idParent', 'integer');
 		$this->addType('name', 'string');
 		$this->addType('createdAt', 'string');
 		$this->addType('updatedAt', 'string');

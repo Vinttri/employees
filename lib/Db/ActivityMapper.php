@@ -97,7 +97,7 @@ class ActivityMapper extends QBMapper {
 			if ($id !== false) {
 				$update = $this->db->getQueryBuilder();
 				$update->update($this->getTableName())
-					->set('billable', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+					->set('billable', $update->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 					->set('type_activity', $update->createNamedParameter(Activity::TIPO_INTERNO))
 					->set('scope', $update->createNamedParameter($scope))
 					->where($update->expr()->eq('id_activity', $update->createNamedParameter((int)$id, IQueryBuilder::PARAM_INT)))
@@ -111,7 +111,7 @@ class ActivityMapper extends QBMapper {
 			'name' => $insert->createNamedParameter($name),
 			'details' => $insert->createNamedParameter($details),
 			'time_estimated' => $insert->createNamedParameter(0),
-				'billable' => $insert->createNamedParameter(0, IQueryBuilder::PARAM_INT),
+				'billable' => $insert->createNamedParameter(false, IQueryBuilder::PARAM_BOOL),
 				'system_code' => $insert->createNamedParameter($key),
 				'type_activity' => $insert->createNamedParameter(Activity::TIPO_INTERNO),
 				'scope' => $insert->createNamedParameter($scope),
@@ -139,7 +139,7 @@ class ActivityMapper extends QBMapper {
 				'name' => $insert->createNamedParameter($name),
 				'details' => $insert->createNamedParameter($details),
 				'time_estimated' => $insert->createNamedParameter($estimatedTime),
-				'billable' => $insert->createNamedParameter((int)$billable, IQueryBuilder::PARAM_INT),
+				'billable' => $insert->createNamedParameter((bool)$billable, IQueryBuilder::PARAM_BOOL),
 				'system_code' => $insert->createNamedParameter(null),
 				'type_activity' => $insert->createNamedParameter($activityType),
 				'scope' => $insert->createNamedParameter($scope),
@@ -177,7 +177,7 @@ class ActivityMapper extends QBMapper {
             ->set('name', $query->createNamedParameter($name))
             ->set('details', $query->createNamedParameter($details))
             ->set('time_estimated', $query->createNamedParameter($tiempoestimado))
-	            ->set('billable', $query->createNamedParameter((int)$billable, IQueryBuilder::PARAM_INT))
+	            ->set('billable', $query->createNamedParameter((bool)$billable, IQueryBuilder::PARAM_BOOL))
 				->set('type_activity', $query->createNamedParameter($activityType))
 				->set('scope', $query->createNamedParameter($scope))
             ->where(
@@ -220,7 +220,7 @@ class ActivityMapper extends QBMapper {
                 'name'          => $insert->createNamedParameter('Ausencia'),
                 'details'        => $insert->createNamedParameter('Actividad para reportes generados por Absence.'),
                 'time_estimated' => $insert->createNamedParameter(0),
-	                'billable'        => $insert->createNamedParameter(0, IQueryBuilder::PARAM_INT),
+	                'billable'        => $insert->createNamedParameter(false, IQueryBuilder::PARAM_BOOL),
 					'type_activity'  => $insert->createNamedParameter(Activity::TIPO_CLIENTE),
 					'scope'         => $insert->createNamedParameter(Activity::ALCANCE_GLOBAL),
 	            ]);

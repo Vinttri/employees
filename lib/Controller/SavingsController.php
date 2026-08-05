@@ -96,7 +96,7 @@ class SavingsController extends BaseController {
 			$this->SavingsHistoryMapper->EnviarSolicitud(
 				$id_savings,
 				$quantity_requested,
-				$employee[0]['savings_fund'],
+				(float)$employee[0]['savings_fund'],
 				$note
 			);
 

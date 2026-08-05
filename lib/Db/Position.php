@@ -8,14 +8,14 @@ use OCP\AppFramework\Db\Entity;
 
 class Position extends Entity {
 
-    protected string $idPositions = '';
+	protected ?int $idPositions = null;
     protected string $name = '';
     protected ?int $level = null;
     protected string $createdAt = '';
     protected string $updatedAt = '';
 
     public function __construct() {
-        $this->addType('idPositions', 'string');
+		$this->addType('idPositions', 'integer');
         $this->addType('name', 'string');
         $this->addType('level', 'integer');
         $this->addType('createdAt', 'string');

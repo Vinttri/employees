@@ -100,7 +100,7 @@ export default {
 			connectMode: false,
 			connectionSourceId: null,
 			connectionPending: false,
-			viewMode: 'network',
+			viewMode: 'traditional',
 			ringRadii: [0, 0, 0, 0, 0, 0],
 			espacioPorEmpleado: 70,
 			radioMinimoEntreAnillos: 300,
@@ -190,7 +190,10 @@ export default {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetOrgChart'))
 				const data = response?.data?.ocs?.data ?? response?.data ?? {}
-				this.Employee = data?.Employee || []
+				const employees = data?.employees ?? data?.Employee ?? []
+				this.Employee = Array.isArray(employees)
+					? employees.map(this.normalizeEmployee)
+					: []
 				this.relaciones = data?.relaciones || []
 
 				const posMap = {}
@@ -205,6 +208,20 @@ export default {
 
 		avatarUrl(userId) {
 			return generateUrl('/avatar/{userId}/64', { userId })
+		},
+
+		normalizeEmployee(employee) {
+			const source = employee && typeof employee === 'object' ? employee : {}
+			const uid = String(source.id_user ?? source.employee_uid ?? source.uid ?? '').trim()
+			const displayName = String(source.displayname ?? source.display_name ?? source.name ?? uid).trim()
+
+			return {
+				...source,
+				id_employees: Number(source.id_employees ?? source.id_employee),
+				id_user: uid,
+				uid,
+				displayname: displayName || uid,
+			}
 		},
 
 		// Calcula el level jerárquico (anillo) de cada empleado a partir de las

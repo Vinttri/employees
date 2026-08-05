@@ -79,7 +79,7 @@ class InventoryModelMapper extends QBMapper {
 				'ram' => $qb->createNamedParameter($data['ram'] ?? null),
 				'disk_drive' => $qb->createNamedParameter($data['disk_drive'] ?? null),
 				'type' => $qb->createNamedParameter($data['type'] ?? null),
-				'touch' => $qb->createNamedParameter(!empty($data['touch']) ? 1 : 0, IQueryBuilder::PARAM_INT),
+				'touch' => $qb->createNamedParameter(!empty($data['touch']), IQueryBuilder::PARAM_BOOL),
 				'created_at' => $qb->createNamedParameter($now),
 				'updated_at' => $qb->createNamedParameter($now),
 			]);
@@ -99,7 +99,7 @@ class InventoryModelMapper extends QBMapper {
 			->set('ram', $qb->createNamedParameter($data['ram'] ?? null))
 			->set('disk_drive', $qb->createNamedParameter($data['disk_drive'] ?? null))
 			->set('type', $qb->createNamedParameter($data['type'] ?? null))
-			->set('touch', $qb->createNamedParameter(!empty($data['touch']) ? 1 : 0, IQueryBuilder::PARAM_INT))
+			->set('touch', $qb->createNamedParameter(!empty($data['touch']), IQueryBuilder::PARAM_BOOL))
 			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
 			->where(
 				$qb->expr()->eq('id_model', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))

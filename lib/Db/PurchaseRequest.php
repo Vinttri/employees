@@ -69,9 +69,19 @@ class PurchaseRequest extends Entity implements JsonSerializable {
 
 	public function __construct() {
 		$this->addType('idRequest', 'integer');
+		$this->addType('idEmployee', 'integer');
+		$this->addType('idDepartment', 'integer');
+		$this->addType('idTeam', 'integer');
 		$this->addType('idClient', 'integer');
 		$this->addType('selectedSupplier', 'integer');
-		$this->addType('warranty', 'integer');
+		$this->addType('warranty', 'boolean');
+		$this->addType('amountEstimated', 'float');
+		$this->addType('amountFinal', 'float');
+		$this->addType('officePercentage', 'float');
+		$this->addType('employeePercentage', 'float');
+		$this->addType('totalExcludingTax', 'float');
+		$this->addType('taxAmount', 'float');
+		$this->addType('totalIncludingTax', 'float');
 		$this->addType('installments', 'integer');
 		$this->addType('pdfFileId', 'integer');
 		$this->addType('signedFileId', 'integer');

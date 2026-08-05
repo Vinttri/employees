@@ -9,21 +9,21 @@ use OCP\AppFramework\Db\Entity;
 
 class SavingsHistory extends Entity {
     
-    protected string $idHistory = '';
-    protected string $idSavings = '';
-    protected string $quantityRequested = '';
-    protected string $quantityTotal = '';
-    protected string $dateRequest = '';
-    protected string $status = '';
-    protected string $note = '';
+	protected ?int $idHistory = null;
+	protected ?int $idSavings = null;
+	protected float $quantityRequested = 0.0;
+	protected float $quantityTotal = 0.0;
+	protected ?string $dateRequest = null;
+	protected bool $status = false;
+	protected ?string $note = null;
 
 	public function __construct() {
-        $this->addType('idHistory', 'string');
-		$this->addType('idSavings', 'string');
-		$this->addType('quantityRequested', 'string');
-		$this->addType('quantityTotal', 'string');
+		$this->addType('idHistory', 'integer');
+		$this->addType('idSavings', 'integer');
+		$this->addType('quantityRequested', 'float');
+		$this->addType('quantityTotal', 'float');
 		$this->addType('dateRequest', 'string');
-		$this->addType('status', 'string');
+		$this->addType('status', 'boolean');
 		$this->addType('note', 'string');
 	}
 
@@ -34,7 +34,7 @@ class SavingsHistory extends Entity {
 			'quantity_requested' => $this->quantityRequested,
 			'quantity_total' => $this->quantityTotal,
 			'date_request' => $this->dateRequest,
-			'status' => $this->status,'status' => $this->status,
+			'status' => $this->status,
 			'note' => $this->note,
 		];
 	}

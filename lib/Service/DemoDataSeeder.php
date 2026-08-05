@@ -183,10 +183,10 @@ final class DemoDataSeeder {
 
 	private function seedAbsenceTypes(array &$counts): array {
 		$fixtures = [
-			'Vacation' => ['description' => 'Paid annual leave (demo)', 'request_file' => 0, 'request_bonus_vacation' => 1, 'billable' => 0, 'private' => 0],
-			'Sick leave' => ['description' => 'Medical leave (demo)', 'request_file' => 1, 'request_bonus_vacation' => 0, 'billable' => 0, 'private' => 1],
-			'Personal day' => ['description' => 'Personal day (demo)', 'request_file' => 0, 'request_bonus_vacation' => 0, 'billable' => 0, 'private' => 1],
-			'Remote work' => ['description' => 'Remote-work schedule (demo)', 'request_file' => 0, 'request_bonus_vacation' => 0, 'billable' => 1, 'private' => 0],
+			'Vacation' => ['description' => 'Paid annual leave (demo)', 'request_file' => false, 'request_bonus_vacation' => true, 'billable' => false, 'private' => false],
+			'Sick leave' => ['description' => 'Medical leave (demo)', 'request_file' => true, 'request_bonus_vacation' => false, 'billable' => false, 'private' => true],
+			'Personal day' => ['description' => 'Personal day (demo)', 'request_file' => false, 'request_bonus_vacation' => false, 'billable' => false, 'private' => true],
+			'Remote work' => ['description' => 'Remote-work schedule (demo)', 'request_file' => false, 'request_bonus_vacation' => false, 'billable' => true, 'private' => false],
 		];
 
 		$ids = [];
@@ -220,10 +220,10 @@ final class DemoDataSeeder {
 				'id_manager' => $fixture['manager'],
 				'id_partner' => 'hr.head',
 				'fund_code' => sprintf('DEMO-FUND-%03d', $ordinal),
-				'savings_fund' => (string)(500 + $ordinal * 75),
+				'savings_fund' => (float)(500 + $ordinal * 75),
 				'number_account' => sprintf('DEMO-ACCOUNT-%04d', $ordinal),
 				'team_assigned' => $fixture['team'],
-				'salary' => $fixture['salary'],
+				'salary' => (float)$fixture['salary'],
 				'notes' => '[DEMO] Synthetic employee record for TEST only.',
 				'date_birth' => sprintf('19%02d-%02d-%02d', 80 + ($ordinal % 15), (($ordinal - 1) % 12) + 1, (($ordinal * 2) % 27) + 1),
 				'status' => '1',
@@ -266,7 +266,7 @@ final class DemoDataSeeder {
 				'alternate_method' => "demo-contact-{$ordinal}@example.test",
 				'assistance_type' => 'Emergency',
 				'notes' => '[DEMO] Synthetic emergency contact.',
-				'is_primary' => 1,
+				'is_primary' => true,
 				'primary_employee' => $ids[$uid],
 				'order' => 1,
 				'created_at' => self::DEMO_DATE,
@@ -280,6 +280,16 @@ final class DemoDataSeeder {
 
 	/** @param array<string, array<string, mixed>> $employees */
 	private function seedOrganization(array $employees, array $employeeIds, array &$counts): void {
+		$positionOrdinal = 0;
+		foreach ($employeeIds as $employeeId) {
+			$this->upsert('org_chart_positions', ['id_employee' => $employeeId], [
+				'pos_x' => (float)(120 + ($positionOrdinal % 4) * 280),
+				'pos_y' => (float)(80 + intdiv($positionOrdinal, 4) * 180),
+			], 'id_employee');
+			$this->increment($counts, 'organization_positions');
+			$positionOrdinal++;
+		}
+
 		foreach ($employees as $uid => $fixture) {
 			$managerUid = $fixture['manager'];
 			if ($managerUid === null || !isset($employeeIds[$managerUid])) {
@@ -352,8 +362,8 @@ final class DemoDataSeeder {
 				'accrued_days' => '3.00',
 				'remaining_accrued_days' => '2.00',
 				'accrued_expiration_date' => '2027-03-31',
-				'accrued_calculated' => 1,
-				'manually_assigned' => 0,
+				'accrued_calculated' => true,
+				'manually_assigned' => false,
 				'created_at' => self::DEMO_DATE,
 				'updated_at' => self::DEMO_DATE,
 			], 'id_history');
@@ -381,10 +391,10 @@ final class DemoDataSeeder {
 					'id_savings' => $savingsId,
 					'note' => "[DEMO:SAVINGS:{$uid}:{$sequence}]",
 				], [
-					'quantity_requested' => (string)(250 * $sequence),
-					'quantity_total' => (string)(1000 + $ordinal * 100),
-					'date_request' => sprintf('15-%02d-2026', 5 + $sequence),
-					'status' => $sequence === 1 ? '1' : '0',
+					'quantity_requested' => (float)(250 * $sequence),
+					'quantity_total' => (float)(1000 + $ordinal * 100),
+					'date_request' => sprintf('2026-%02d-15', 5 + $sequence),
+					'status' => $sequence === 1,
 				], 'id_history');
 				$this->increment($counts, 'savings_history');
 			}
@@ -398,7 +408,7 @@ final class DemoDataSeeder {
 		];
 		$itemIds = [];
 		foreach ($items as $index => $name) {
-			$itemIds[$name] = $this->upsert('onboarding_catalog', ['name' => $name], ['on' => 1], 'id_boarding');
+			$itemIds[$name] = $this->upsert('onboarding_catalog', ['name' => $name], ['on' => true], 'id_boarding');
 			$this->increment($counts, 'onboarding_catalog');
 		}
 
@@ -409,7 +419,7 @@ final class DemoDataSeeder {
 					'id_boarding' => $itemId,
 				], [
 					'name' => $name,
-					'status' => str_contains($name, 'review') ? 0 : 1,
+					'status' => !str_contains($name, 'review'),
 				], 'id_employee_boarding');
 				$this->increment($counts, 'employee_onboarding');
 			}
@@ -436,9 +446,9 @@ final class DemoDataSeeder {
 				'phone' => '+357-2200-0000',
 				'email' => $fixture['email'],
 				'location' => $fixture['location'],
-				'special' => 0,
+				'special' => false,
 				'client_parent' => null,
-				'status' => 1,
+				'status' => true,
 			], 'id');
 			$this->increment($counts, 'clients');
 		}
@@ -464,7 +474,7 @@ final class DemoDataSeeder {
 				'details' => '[DEMO] Synthetic time-report activity.',
 				'time_estimated' => $estimate,
 				'time_actual' => '0.00',
-				'billable' => $billable,
+				'billable' => (bool)$billable,
 				'type_activity' => $type,
 				'scope' => $scope,
 			], 'id_activity');
@@ -497,7 +507,7 @@ final class DemoDataSeeder {
 					'source' => 'demo',
 					'source_id' => $sourceId,
 				], [
-					'id_employee' => (string)$employeeId,
+					'id_employee' => $employeeId,
 					'id_client' => $clients[($ordinal + $sequence) % count($clients)],
 					'id_activity' => $activities[($ordinal + $sequence) % count($activities)],
 					'description' => "[DEMO] Work log {$sequence} for {$uid}",
@@ -612,7 +622,7 @@ final class DemoDataSeeder {
 				'contact' => 'Demo Supplier Contact',
 				'address' => 'Demo Supplier Street, Nicosia',
 				'notes' => '[DEMO] Synthetic supplier.',
-				'active' => 1,
+				'active' => true,
 				'created_at' => self::DEMO_TIMESTAMP,
 				'updated_at' => self::DEMO_TIMESTAMP,
 			], 'id_supplier');
@@ -631,9 +641,9 @@ final class DemoDataSeeder {
 			$amount = (string)(1200 + $index * 850);
 			$requestId = $this->upsert('purchase_requests', ['reference' => $reference], [
 				'id_user' => $uid,
-				'id_employee' => (string)$employeeIds[$uid],
-				'id_department' => (string)$departmentIds[$fixture['department']],
-				'id_team' => (string)$teamIds[$fixture['team']],
+				'id_employee' => $employeeIds[$uid],
+				'id_department' => $departmentIds[$fixture['department']],
+				'id_team' => $teamIds[$fixture['team']],
 				'id_client' => $clientValues[$index % count($clientValues)],
 				'title' => "[DEMO] Purchase request {$index}",
 				'description' => 'Synthetic purchase request for TEST validation.',
@@ -657,7 +667,7 @@ final class DemoDataSeeder {
 				'requester_position' => $fixture['position'],
 				'direct_manager_name' => $fixture['manager'] ?? '',
 				'purchase_type' => $index % 2 === 0 ? 'equipment' : 'service',
-				'warranty' => $index % 2,
+				'warranty' => $index % 2 === 1,
 				'purchase_use' => 'business',
 				'information' => '[DEMO] Additional purchase information.',
 				'reason' => 'Demo workflow coverage',
@@ -706,7 +716,7 @@ final class DemoDataSeeder {
 				], [
 					'amount' => (string)((float)$amount + $quoteIndex * 125),
 					'currency' => 'EUR',
-					'selected' => $status === 'autorizada' && $quoteIndex === $index % count($supplierValues) ? 1 : 0,
+					'selected' => $status === 'autorizada' && $quoteIndex === $index % count($supplierValues),
 					'notes' => '[DEMO] Synthetic quote.',
 					'created_by' => $uid,
 					'created_at' => self::DEMO_TIMESTAMP,
@@ -720,7 +730,7 @@ final class DemoDataSeeder {
 					'id_authorizer' => 'finance.cfo',
 					'level' => 1,
 				], [
-					'id_employee_authorizer' => (string)($employeeIds['finance.cfo'] ?? ''),
+					'id_employee_authorizer' => $employeeIds['finance.cfo'] ?? null,
 					'status' => $status === 'autorizada' ? 'aprobada' : ($status === 'rechazada' ? 'rechazada' : 'pendiente'),
 					'comment' => '[DEMO] Synthetic approval decision.',
 					'date_authorization' => in_array($status, ['autorizada', 'rechazada'], true) ? self::DEMO_TIMESTAMP : null,
@@ -744,6 +754,47 @@ final class DemoDataSeeder {
 				'created_at' => self::DEMO_TIMESTAMP,
 			], 'id_history');
 			$this->increment($counts, 'purchase_history');
+
+			$this->upsert('purchase_attachments', [
+				'id_request' => $requestId,
+				'type' => 'demo_metadata',
+			], [
+				'file_id' => null,
+				'name_file' => "{$reference}-demo.txt",
+				'mime' => 'text/plain',
+				'size' => 128,
+				'created_by' => $uid,
+				'created_at' => self::DEMO_TIMESTAMP,
+			], 'id_attachment');
+			$this->increment($counts, 'purchase_attachments');
+
+			$this->upsert('purchase_documents', [
+				'id_request' => $requestId,
+				'type_doc' => 'demo_summary',
+			], [
+				'version' => 1,
+				'file_id' => null,
+				'name_file' => "{$reference}-summary.pdf",
+				'token' => "demo-document-{$requestId}",
+				'qr_text' => "DEMO:{$reference}",
+				'generated_by' => $uid,
+				'generated_at' => self::DEMO_TIMESTAMP,
+			], 'id_doc');
+			$this->increment($counts, 'purchase_documents');
+
+			$this->upsert('purchase_signatures', [
+				'id_request' => $requestId,
+				'role' => 'requester',
+			], [
+				'uid' => $uid,
+				'name' => $this->userManager->get($uid)?->getDisplayName() ?? $uid,
+				'status' => $status === 'borrador' ? 'pendiente' : 'firmada',
+				'comment' => '[DEMO] Synthetic requester signature.',
+				'date_signature' => $status === 'borrador' ? null : self::DEMO_TIMESTAMP,
+				'created_at' => self::DEMO_TIMESTAMP,
+				'updated_at' => self::DEMO_TIMESTAMP,
+			], 'id_signature');
+			$this->increment($counts, 'purchase_signatures');
 
 			if ($status === 'autorizada') {
 				$this->upsert('purchase_orders', ['reference_order' => str_replace('PR', 'PO', $reference)], [
@@ -822,6 +873,20 @@ final class DemoDataSeeder {
 				], 'id');
 				$this->increment($counts, 'maintenance_records');
 
+				$this->upsert('maintenance_changes', [
+					'id_group' => $groupId,
+					'id_maintenance' => $recordId,
+					'change_type' => 'demo_seed',
+				], [
+					'value_previous' => null,
+					'value_new' => 'scheduled',
+					'comment' => '[DEMO] Synthetic audit entry.',
+					'user_uid' => 'admin',
+					'user_name' => 'Administrator',
+					'date' => self::DEMO_TIMESTAMP,
+				], 'id');
+				$this->increment($counts, 'maintenance_changes');
+
 				foreach ([
 					'visual' => 'Visual inspection',
 					'updates' => 'Operating-system updates',
@@ -855,8 +920,8 @@ final class DemoDataSeeder {
 				'date_start' => '2026-07-01',
 				'date_end' => '2026-12-31',
 				'number_installments' => 6,
-				'active' => 1,
-				'special' => 0,
+				'active' => true,
+				'special' => false,
 				'type_fee' => 'monthly',
 			], 'id_fee');
 			$this->increment($counts, 'professional_fees');
@@ -886,7 +951,7 @@ final class DemoDataSeeder {
 			$this->upsert('holidays', ['name' => $name], [
 				'date' => $date,
 				'type' => $type,
-				'official' => 1,
+				'official' => true,
 				'year_calculated' => 2026,
 			], 'id_holiday');
 			$this->increment($counts, 'holidays');

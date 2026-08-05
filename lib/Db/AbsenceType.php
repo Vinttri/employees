@@ -15,7 +15,7 @@ class AbsenceType extends Entity {
     protected ?bool $requestFile = null;
     protected ?bool $requestBonusVacation = null;
 	protected ?bool $billable = null;
-	protected ?int $private = null;
+	protected ?bool $private = null;
 
 	public function __construct() {
         $this->addType('absenceTypeId', 'int');
@@ -24,7 +24,7 @@ class AbsenceType extends Entity {
 		$this->addType('requestFile', 'bool');
 		$this->addType('requestBonusVacation', 'bool');
 		$this->addType('billable', 'bool');
-		$this->addType('private', 'int');
+		$this->addType('private', 'bool');
 	}
 
 	public function read(): array {

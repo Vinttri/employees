@@ -14,7 +14,7 @@ class PurchaseDetail extends Entity implements JsonSerializable {
 	protected $description;
 	protected $quantity;
 	protected $unit;
-	protected $estimatedPrice;
+	protected $priceEstimated;
 	protected $subtotal;
 	protected $notes;
 	protected $createdAt;
@@ -31,6 +31,11 @@ class PurchaseDetail extends Entity implements JsonSerializable {
 	public function __construct() {
 		$this->addType('idDetail', 'integer');
 		$this->addType('idRequest', 'integer');
+		$this->addType('quantity', 'float');
+		$this->addType('priceEstimated', 'float');
+		$this->addType('subtotal', 'float');
+		$this->addType('taxAmount', 'float');
+		$this->addType('total', 'float');
 	}
 
 	public function jsonSerialize(): array {
@@ -40,7 +45,7 @@ class PurchaseDetail extends Entity implements JsonSerializable {
 			'description' => $this->description,
 			'quantity' => $this->quantity,
 			'unit' => $this->unit,
-			'price_estimated' => $this->estimatedPrice,
+			'price_estimated' => $this->priceEstimated,
 			'subtotal' => $this->subtotal,
 			'notes' => $this->notes,
 			'created_at' => $this->createdAt,

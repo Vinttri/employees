@@ -392,7 +392,10 @@
 									<div class="rst-title">
 										<div class="title_flex">
 											<div class="subtitle_flex">
-												<NcAvatar :user="Equipo.jefe" :display-name="Equipo.jefe" :size="20" />
+												<NcAvatar v-if="teamLeaderUid(Equipo)"
+													:user="teamLeaderUid(Equipo)"
+													:display-name="teamLeaderName(Equipo)"
+													:size="20" />
 											</div>
 											<div>
 												<h1> {{ Equipo.label }} </h1>
@@ -686,7 +689,8 @@ export default {
 	},
 
 	async mounted() {
-		this.EmpleadosList = this.employees.map(Employee => ({
+		const employees = Array.isArray(this.Employee) ? this.Employee : []
+		this.EmpleadosList = employees.map(Employee => ({
 			id: Employee.id_user,
 			displayName: Employee.displayname ? Employee.displayname : Employee.id_user,
 			isNoUser: false,
@@ -843,11 +847,14 @@ export default {
 			this.GetAllEquipo(Equipo)
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetTeamsList'))
-				const data = response?.data?.ocs?.data
+				const payload = response?.data?.ocs?.data ?? response?.data ?? []
+				const data = Array.isArray(payload) ? payload : []
 				this.optionsteams = data.map(equipo => ({
 					value: equipo.id_team,
 					label: equipo.name,
-					jefe: equipo.team_leader_id,
+					team_leader_id: equipo.team_leader_id,
+					leader_uid: this.employeeUidById(equipo.team_leader_id),
+					leader_name: this.employeeNameById(equipo.team_leader_id),
 				}))
 				if (Equipo && Equipo.length !== 0) {
 					this.Equipo = this.optionsteams.find(role => role.value === parseInt(Equipo))
@@ -857,6 +864,28 @@ export default {
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepción [01] [{error}]', { error: String(err), close: true }))
 			}
+		},
+
+		employeeById(employeeId) {
+			const employees = Array.isArray(this.Employee) ? this.Employee : []
+			return employees.find(employee => String(employee.id_employees) === String(employeeId))
+		},
+
+		employeeUidById(employeeId) {
+			return String(this.employeeById(employeeId)?.id_user || '')
+		},
+
+		employeeNameById(employeeId) {
+			const employee = this.employeeById(employeeId)
+			return String(employee?.displayname || employee?.id_user || '')
+		},
+
+		teamLeaderUid(team) {
+			return String(team?.leader_uid || this.employeeUidById(team?.team_leader_id) || '')
+		},
+
+		teamLeaderName(team) {
+			return String(team?.leader_name || this.employeeNameById(team?.team_leader_id) || this.teamLeaderUid(team))
 		},
 
 		async GetAllEquipo(equipo) {

@@ -24,8 +24,8 @@ class MaintenanceChange extends Entity implements JsonSerializable {
 	protected $idGroup;
 	protected $idMaintenance;
 	protected $changeType;
-	protected $previousValue;
-	protected $newValue;
+	protected $valuePrevious;
+	protected $valueNew;
 	protected $comment;
 	protected $userUid;
 	protected $userName;
@@ -43,8 +43,8 @@ class MaintenanceChange extends Entity implements JsonSerializable {
 			'id_group' => $this->idGroup,
 			'id_maintenance' => $this->idMaintenance,
 			'change_type' => $this->changeType,
-			'value_previous' => $this->previousValue,
-			'value_new' => $this->newValue,
+			'value_previous' => $this->valuePrevious,
+			'value_new' => $this->valueNew,
 			'comment' => $this->comment,
 			'user_uid' => $this->userUid,
 			'user_name' => $this->userName,

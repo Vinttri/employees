@@ -10,7 +10,7 @@ class EmergencyContact extends Entity {
 	protected $idEmployee = 0;
 	protected $name = '';
 	protected $relationship = '';
-	protected $contactNumber = '';
+	protected $numberContact = '';
 	protected $alternateMethod = null;
 	protected $assistanceType = null;
 	protected $notes = null;
@@ -24,11 +24,11 @@ class EmergencyContact extends Entity {
 		$this->addType('idEmployee', 'integer');
 		$this->addType('name', 'string');
 		$this->addType('relationship', 'string');
-		$this->addType('contactNumber', 'string');
+		$this->addType('numberContact', 'string');
 		$this->addType('alternateMethod', 'string');
 		$this->addType('assistanceType', 'string');
 		$this->addType('notes', 'string');
-		$this->addType('isPrimary', 'integer');
+		$this->addType('isPrimary', 'boolean');
 		$this->addType('primaryEmployee', 'integer');
 		$this->addType('order', 'integer');
 		$this->addType('createdAt', 'string');

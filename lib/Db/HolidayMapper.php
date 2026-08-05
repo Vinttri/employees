@@ -157,11 +157,11 @@ class HolidayMapper extends QBMapper {
 		$festivo->setName($name);
 		$festivo->setDate($date);
 		$festivo->setType($type);
-		$festivo->setOficial($official);
+		$festivo->setOfficial((bool)$official);
 		$festivo->setMonthRule($monthRule);
-		$festivo->setWeekRule($weekRule);
+		$festivo->setRuleWeek($weekRule);
 		$festivo->setWeekdayRule($weekdayRule);
-		$festivo->setCalculatedYear($calculatedYear);
+		$festivo->setYearCalculated($calculatedYear);
 
 		$this->insert($festivo);
 
@@ -234,7 +234,7 @@ class HolidayMapper extends QBMapper {
 
 		$qb->delete($this->getTableName())
 			->where(
-				$qb->expr()->eq('official', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+				$qb->expr()->eq('official', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 			);
 
 		$qb->executeStatement();

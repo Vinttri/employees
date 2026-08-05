@@ -103,7 +103,7 @@ class VacationHistoryMapper extends QBMapper {
 				'accrued_days'            => $insert->createNamedParameter($accrued_days),
 				'remaining_accrued_days'  => $insert->createNamedParameter($accrued_days),
 				'accrued_expiration_date' => $insert->createNamedParameter($accrued_expiration_date),
-				'accrued_calculated'        => $insert->createNamedParameter(1, IQueryBuilder::PARAM_INT),
+				'accrued_calculated'        => $insert->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
 			]);
 		$insert->executeStatement();
 	}
@@ -122,7 +122,7 @@ class VacationHistoryMapper extends QBMapper {
 			->set('accrued_days', $qb->createNamedParameter($accrued_days))
 			->set('remaining_accrued_days', $qb->createNamedParameter($accrued_days))
 			->set('accrued_expiration_date', $qb->createNamedParameter($accrued_expiration_date))
-			->set('accrued_calculated', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT))
+			->set('accrued_calculated', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($id_employee)))
 			->andWhere($qb->expr()->eq('number_anniversary', $qb->createNamedParameter($number_anniversary)));
 		$qb->executeStatement();
@@ -164,7 +164,7 @@ class VacationHistoryMapper extends QBMapper {
 		$qb->select($qb->createFunction('COUNT(*)'))
 			->from($this->getTableName())
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('manually_assigned', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
+			->andWhere($qb->expr()->eq('manually_assigned', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)));
 
 		$result = $qb->executeQuery();
 		$count = (int) $result->fetchOne();
@@ -180,7 +180,7 @@ class VacationHistoryMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
 			->set('days_entitlement', $qb->createNamedParameter($diasDerecho))
-			->set('manually_assigned', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT))
+			->set('manually_assigned', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('number_anniversary', $qb->createNamedParameter($numeroAniversario, IQueryBuilder::PARAM_INT)));
@@ -194,7 +194,7 @@ class VacationHistoryMapper extends QBMapper {
 			->set('accrued_days', $qb->createNamedParameter(0))
 			->set('remaining_accrued_days', $qb->createNamedParameter(0))
 			->set('accrued_expiration_date', $qb->createNamedParameter(null))
-			->set('accrued_calculated', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('accrued_calculated', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('number_anniversary', $qb->createNamedParameter($numeroAniversario, IQueryBuilder::PARAM_INT)));
@@ -217,7 +217,7 @@ class VacationHistoryMapper extends QBMapper {
 			->set('accrued_days', $qb->createNamedParameter($accrued_days))
 			->set('remaining_accrued_days', $qb->createNamedParameter($accrued_days))
 			->set('accrued_expiration_date', $qb->createNamedParameter($accrued_expiration_date))
-			->set('accrued_calculated', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT))
+			->set('accrued_calculated', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($id_employee, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('number_anniversary', $qb->createNamedParameter($number_anniversary, IQueryBuilder::PARAM_INT)));
@@ -227,7 +227,7 @@ class VacationHistoryMapper extends QBMapper {
 	public function invalidarAcumulado(int $idEmployee, int $numeroAniversario): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
-			->set('accrued_calculated', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('accrued_calculated', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
 			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($idEmployee, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('number_anniversary', $qb->createNamedParameter($numeroAniversario, IQueryBuilder::PARAM_INT)));
 		$qb->executeStatement();

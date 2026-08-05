@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PermissionGroupMapper extends QBMapper {
@@ -18,7 +19,7 @@ class PermissionGroupMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(1)))
+			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('sort_order', 'ASC')
 			->addOrderBy('label', 'ASC');
 
@@ -42,8 +43,8 @@ class PermissionGroupMapper extends QBMapper {
 
 		$qb->select('group_id')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(1)))
-			->andWhere($qb->expr()->eq('restricted', $qb->createNamedParameter(1)));
+			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($qb->expr()->eq('restricted', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)));
 
 		$result = $qb->executeQuery();
 		$rows = LegacyRowCompat::rows($result->fetchAll());
@@ -59,7 +60,7 @@ class PermissionGroupMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(1)))
+			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($qb->expr()->eq('module', $qb->createNamedParameter($module)))
 			->orderBy('sort_order', 'ASC')
 			->addOrderBy('label', 'ASC');
@@ -76,7 +77,7 @@ class PermissionGroupMapper extends QBMapper {
 
 		$qb->select('id')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(1)))
+			->where($qb->expr()->eq('enabled', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($qb->expr()->eq('group_id', $qb->createNamedParameter($groupId)))
 			->setMaxResults(1);
 
@@ -137,8 +138,8 @@ class PermissionGroupMapper extends QBMapper {
 				'group_id' => $qb->createNamedParameter($groupId),
 				'label' => $qb->createNamedParameter($label),
 				'description' => $qb->createNamedParameter($description),
-				'restricted' => $qb->createNamedParameter($restricted),
-				'enabled' => $qb->createNamedParameter($enabled),
+				'restricted' => $qb->createNamedParameter((bool)$restricted, IQueryBuilder::PARAM_BOOL),
+				'enabled' => $qb->createNamedParameter((bool)$enabled, IQueryBuilder::PARAM_BOOL),
 				'sort_order' => $qb->createNamedParameter($sortOrder),
 			]);
 
@@ -166,8 +167,8 @@ class PermissionGroupMapper extends QBMapper {
 			->set('group_id', $qb->createNamedParameter($groupId))
 			->set('label', $qb->createNamedParameter($label))
 			->set('description', $qb->createNamedParameter($description))
-			->set('restricted', $qb->createNamedParameter($restricted))
-			->set('enabled', $qb->createNamedParameter($enabled))
+			->set('restricted', $qb->createNamedParameter((bool)$restricted, IQueryBuilder::PARAM_BOOL))
+			->set('enabled', $qb->createNamedParameter((bool)$enabled, IQueryBuilder::PARAM_BOOL))
 			->set('sort_order', $qb->createNamedParameter($sortOrder))
 			->set('updated_at', $qb->createNamedParameter($timestamp))
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
@@ -181,7 +182,7 @@ class PermissionGroupMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
-			->set('enabled', $qb->createNamedParameter($enabled))
+			->set('enabled', $qb->createNamedParameter((bool)$enabled, IQueryBuilder::PARAM_BOOL))
 			->set('updated_at', $qb->createNamedParameter($timestamp))
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 

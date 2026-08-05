@@ -9,18 +9,18 @@ use OCP\AppFramework\Db\Entity;
 
 class UserSavings extends Entity {
     
-    protected string $idSavings = '';
-    protected string $idUser = '';
+	protected ?int $idSavings = null;
+	protected ?int $idUser = null;
     protected string $idPermission = '';
     protected string $state = '';
     protected string $lastModified = '';
 
 	public function __construct() {
-        $this->addType('idSavings', 'string');
-        $this->addType('idUser', 'string');
+		$this->addType('idSavings', 'integer');
+		$this->addType('idUser', 'integer');
 		$this->addType('idPermission', 'string');
 		$this->addType('state', 'string');
-		$this->addType('lastModified', 'integer');
+		$this->addType('lastModified', 'string');
 	}
 
 	public function read(): array {

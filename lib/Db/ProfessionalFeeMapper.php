@@ -252,8 +252,8 @@ class ProfessionalFeeMapper extends QBMapper {
 			->set(
 				'special',
 				$qb->createNamedParameter(
-					$special,
-					IQueryBuilder::PARAM_INT
+					(bool)$special,
+					IQueryBuilder::PARAM_BOOL
 				)
 			)
 			->where(
@@ -341,8 +341,8 @@ class ProfessionalFeeMapper extends QBMapper {
 			->set(
 				'active',
 				$qb->createNamedParameter(
-					0,
-					IQueryBuilder::PARAM_INT
+					false,
+					IQueryBuilder::PARAM_BOOL
 				)
 			)
 			->where(
@@ -362,7 +362,7 @@ class ProfessionalFeeMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
-			->set('active', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT))
+			->set('active', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 			->where($qb->expr()->eq(
 				'id_fee',
 				$qb->createNamedParameter($idHonorario, IQueryBuilder::PARAM_INT)
@@ -374,21 +374,33 @@ class ProfessionalFeeMapper extends QBMapper {
 	public function getResumenPorCliente(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select(
-				'id_client',
-				$qb->createFunction('SUM(amount_total) AS amount_total'),
-				$qb->createFunction('MIN(date_start) AS date_start'),
-				$qb->createFunction('MAX(date_end) AS date_end'),
-				$qb->createFunction('GROUP_CONCAT(DISTINCT type_currency) AS monedas')
-			)
-			->from($this->getTableName())
-			->groupBy('id_client');
+		$qb->select('id_client', 'amount_total', 'date_start', 'date_end', 'type_currency')
+			->from($this->getTableName());
 
 		$result = $qb->executeQuery();
 		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
-		return $data;
+		$summary = [];
+		foreach ($data as $row) {
+			$id = (int)$row['id_client'];
+			$summary[$id] ??= [
+				'id_client' => $id, 'amount_total' => 0.0,
+				'date_start' => null, 'date_end' => null, 'currencies' => [],
+			];
+			$summary[$id]['amount_total'] += (float)$row['amount_total'];
+			$start = $row['date_start'] ?? null;
+			$end = $row['date_end'] ?? null;
+			if ($start !== null && ($summary[$id]['date_start'] === null || $start < $summary[$id]['date_start'])) $summary[$id]['date_start'] = $start;
+			if ($end !== null && ($summary[$id]['date_end'] === null || $end > $summary[$id]['date_end'])) $summary[$id]['date_end'] = $end;
+			$summary[$id]['currencies'][(string)$row['type_currency']] = true;
+		}
+		foreach ($summary as &$row) {
+			$row['monedas'] = implode(',', array_keys($row['currencies']));
+			unset($row['currencies']);
+		}
+		unset($row);
+		return array_values($summary);
 	}
 
 	/**
@@ -406,7 +418,7 @@ class ProfessionalFeeMapper extends QBMapper {
 		$qb->update($this->getTableName())
 			->set('service_type', $qb->createNamedParameter($service_type))
 			->set('type_currency', $qb->createNamedParameter($type_currency))
-			->set('special', $qb->createNamedParameter($special, IQueryBuilder::PARAM_INT))
+			->set('special', $qb->createNamedParameter($special, IQueryBuilder::PARAM_BOOL))
 			->where(
 				$qb->expr()->eq(
 					'id_fee',

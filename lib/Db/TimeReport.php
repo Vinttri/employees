@@ -29,11 +29,11 @@ class TimeReport extends Entity {
 	protected ?bool $billable = null;
 	protected ?int $idTeam = null;
 	protected ?string $deviceName = null;
-	protected ?string $workType = null;
+	protected ?string $typeWork = null;
 
 	public function __construct() {
 		$this->addType('idReport', 'integer');
-		$this->addType('idEmployee', 'string');
+		$this->addType('idEmployee', 'integer');
 		$this->addType('idClient', 'integer');
 		$this->addType('idActivity', 'integer');
 		$this->addType('description', 'string');
@@ -47,7 +47,16 @@ class TimeReport extends Entity {
 		$this->addType('billable', 'bool');
 		$this->addType('idTeam', 'integer');
 		$this->addType('deviceName', 'string');
-		$this->addType('workType', 'string');
+		$this->addType('typeWork', 'string');
+	}
+
+	/** Backward-compatible API for callers written before the column was normalized. */
+	public function setWorkType(?string $workType): void {
+		$this->setTypeWork($workType);
+	}
+
+	public function getWorkType(): ?string {
+		return $this->getTypeWork();
 	}
 
 	public function read(): array {
@@ -67,7 +76,7 @@ class TimeReport extends Entity {
 			'billable'          => $this->billable,
 			'id_team'         => $this->idTeam,
 				'device_name' => $this->deviceName,
-				'type_work'      => $this->workType,
+				'type_work'      => $this->typeWork,
 		];
 	}
 }

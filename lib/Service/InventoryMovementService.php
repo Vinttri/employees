@@ -430,15 +430,15 @@ class InventoryMovementService {
 		return [
 			'id' => $movimiento->getId(),
 			'id_team' => $movimiento->getIdTeam(),
-			'type_movement' => $movimiento->getMovementType(),
+			'type_movement' => $movimiento->getTypeMovement(),
 			'actor_uid' => $movimiento->getActorUid(),
 			'actor_name' => $movimiento->getActorName(),
-			'employee_previous_uid' => $movimiento->getPreviousEmployeeUid(),
-			'employee_previous_name' => $movimiento->getPreviousEmployeeName(),
-			'employee_new_uid' => $movimiento->getNewEmployeeUid(),
-			'employee_new_name' => $movimiento->getNewEmployeeName(),
-			'status_previous' => $movimiento->getPreviousStatus(),
-			'status_new' => $movimiento->getNewStatus(),
+			'employee_previous_uid' => $movimiento->getEmployeePreviousUid(),
+			'employee_previous_name' => $movimiento->getEmployeePreviousName(),
+			'employee_new_uid' => $movimiento->getEmployeeNewUid(),
+			'employee_new_name' => $movimiento->getEmployeeNewName(),
+			'status_previous' => $movimiento->getStatusPrevious(),
+			'status_new' => $movimiento->getStatusNew(),
 			'description' => $movimiento->getDescription(),
 			'changes' => $changes ? (json_decode($changes, true) ?: []) : [],
 			'date' => $movimiento->getDate(),
@@ -465,15 +465,15 @@ class InventoryMovementService {
 		$actor = $this->actorSnapshot();
 		$movimiento = new InventoryMovement();
 		$movimiento->setIdTeam($idTeam);
-		$movimiento->setMovementType($type);
+		$movimiento->setTypeMovement($type);
 		$movimiento->setActorUid($actor['uid']);
 		$movimiento->setActorName($actor['name']);
-		$movimiento->setPreviousEmployeeUid($anterior['uid'] ?? null);
-		$movimiento->setPreviousEmployeeName($anterior['name'] ?? null);
-		$movimiento->setNewEmployeeUid($nuevo['uid'] ?? null);
-		$movimiento->setNewEmployeeName($nuevo['name'] ?? null);
-		$movimiento->setPreviousStatus($previousStatus ?: null);
-		$movimiento->setNewStatus($newStatus ?: null);
+		$movimiento->setEmployeePreviousUid($anterior['uid'] ?? null);
+		$movimiento->setEmployeePreviousName($anterior['name'] ?? null);
+		$movimiento->setEmployeeNewUid($nuevo['uid'] ?? null);
+		$movimiento->setEmployeeNewName($nuevo['name'] ?? null);
+		$movimiento->setStatusPrevious($previousStatus ?: null);
+		$movimiento->setStatusNew($newStatus ?: null);
 		$movimiento->setDescription($description);
 		$movimiento->setChanges($changes ? json_encode($changes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) : null);
 		$movimiento->setDate(date('Y-m-d H:i:s'));

@@ -131,16 +131,12 @@ export default {
 		},
 
 		matchSearch(displayname, uid) {
-			try {
-				if (this.query.trim() !== '') {
-					return displayname.toString().toLowerCase().includes(this.query.trim().toLowerCase())
-				}
-			} catch (error) {
-				if (this.query.trim() !== '') {
-					return uid.toString().toLowerCase().includes(this.query.trim().toLowerCase())
-				}
-			}
-			return true
+			const normalizedQuery = String(this.query || '').trim().toLocaleLowerCase()
+			if (!normalizedQuery) return true
+
+			return [displayname, uid]
+				.map(value => String(value || '').toLocaleLowerCase())
+				.some(value => value.includes(normalizedQuery))
 		},
 
 		Exportar() {

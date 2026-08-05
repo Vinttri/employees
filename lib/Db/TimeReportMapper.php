@@ -462,7 +462,7 @@ class TimeReportMapper extends QBMapper {
 			)
 			->selectAlias(
 				$qb->createFunction(
-					'COALESCE(SUM(CASE WHEN a.billable = 1 THEN r.recorded_time ELSE 0 END), 0)'
+					'COALESCE(SUM(CASE WHEN a.billable = TRUE THEN r.recorded_time ELSE 0 END), 0)'
 				),
 				'minutos_cargables'
 			)
@@ -875,7 +875,7 @@ class TimeReportMapper extends QBMapper {
 			))
 			->andWhere($qb->expr()->eq(
 				'c.status',
-				$qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)
+				$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)
 			))
 			->andWhere($qb->expr()->eq(
 				'e.status',
@@ -1116,7 +1116,7 @@ class TimeReportMapper extends QBMapper {
 			)
 			->selectAlias(
 				$qb->createFunction(
-					'COALESCE(SUM(CASE WHEN a.billable = 1 THEN r.recorded_time ELSE 0 END), 0)'
+					'COALESCE(SUM(CASE WHEN a.billable = TRUE THEN r.recorded_time ELSE 0 END), 0)'
 				),
 				'minutos_cargables_historicos'
 			)
@@ -1162,7 +1162,7 @@ class TimeReportMapper extends QBMapper {
 			)
 			->selectAlias(
 				$qb->createFunction(
-					"COALESCE(SUM(CASE WHEN {$condicionEmpresa} AND a.billable = 1 THEN r.recorded_time ELSE 0 END), 0)"
+					"COALESCE(SUM(CASE WHEN {$condicionEmpresa} AND a.billable = TRUE THEN r.recorded_time ELSE 0 END), 0)"
 				),
 				'minutos_cargables_empresa'
 			)
@@ -1542,7 +1542,7 @@ class TimeReportMapper extends QBMapper {
 			->selectAlias($qb->createFunction("COALESCE(SUM(CASE WHEN $client THEN r.recorded_time ELSE 0 END), 0)"), 'minutos_cliente')
 			->selectAlias($qb->createFunction("COALESCE(SUM(CASE WHEN $internal THEN r.recorded_time ELSE 0 END), 0)"), 'minutos_internos')
 			->selectAlias($qb->createFunction("COALESCE(SUM(CASE WHEN $absence THEN r.recorded_time ELSE 0 END), 0)"), 'minutos_ausencia')
-			->selectAlias($qb->createFunction("COALESCE(SUM(CASE WHEN $client AND a.billable = 1 THEN r.recorded_time ELSE 0 END), 0)"), 'minutos_cargables')
+			->selectAlias($qb->createFunction("COALESCE(SUM(CASE WHEN $client AND a.billable = TRUE THEN r.recorded_time ELSE 0 END), 0)"), 'minutos_cargables')
 			->selectAlias($qb->createFunction('COUNT(*)'), 'total_reportes')
 			->selectAlias($qb->createFunction('COUNT(DISTINCT r.id_employee)'), 'empleados_con_reportes')
 			->selectAlias($qb->createFunction("COUNT(DISTINCT CASE WHEN $client THEN r.id_client ELSE NULL END)"), 'proyectos_activos')
@@ -1654,11 +1654,7 @@ class TimeReportMapper extends QBMapper {
 			->selectAlias('d.name', 'area_name')
 			->from($this->getTableName(), 'r')
 			->leftJoin('r', 'employee_activities', 'a', 'a.id_activity = r.id_activity')
-			// Legacy installations store time-report employee IDs as VARCHAR while
-			// the employee directory uses INTEGER. Cast the numeric directory key
-			// to text so the join works consistently on PostgreSQL, MariaDB and
-			// SQLite without rejecting non-numeric legacy report values.
-			->leftJoin('r', 'employees', 'e', 'CAST(e.id_employees AS VARCHAR) = r.id_employee')
+			->leftJoin('r', 'employees', 'e', 'e.id_employees = r.id_employee')
 			->leftJoin('e', 'users', 'u', 'u.uid = e.id_user')
 			->leftJoin('e', 'departments', 'd', 'd.id_department = e.id_department')
 			->where($this->internalWorkExpression($qb, 'r'))
