@@ -77,6 +77,10 @@ export default {
 	},
 
 	computed: {
+		employees() {
+			return Array.isArray(this.Employee) ? this.Employee : []
+		},
+
 		organizationTree() {
 			return this.buildOrganizationTree()
 		},

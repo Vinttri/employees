@@ -103,7 +103,8 @@ export default {
 
 	computed: {
 		filteredList() {
-			return this.employees.filter(item => this.matchSearch(item.displayname, item.uid))
+			return (Array.isArray(this.employees) ? this.employees : [])
+				.filter(item => this.matchSearch(item.displayname, item.uid))
 		},
 	},
 

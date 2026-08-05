@@ -330,6 +330,10 @@ export default {
 			return this.employee || {}
 		},
 
+		employees() {
+			return this.extractPlainArray(this.Employee)
+		},
+
 		greeting() {
 			const name = this.currentEmployee?.displayname
 				|| this.currentEmployee?.id_user

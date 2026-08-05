@@ -16,9 +16,9 @@ class AbsenceHistory extends Entity {
 	protected ?bool $bonusVacation = false;
 	protected ?string $file = null;
 	protected string $timestamp = '';
-	protected ?bool $isPartner = false;
-	protected ?bool $isManager = false;
-	protected ?bool $canAccessHumanResources = false;
+	protected ?int $isPartner = 0;
+	protected ?int $isManager = 0;
+	protected ?int $canAccessHumanResources = 0;
     protected string $notes = '';
 	protected int $daysRequested = 0;
 
@@ -32,9 +32,9 @@ class AbsenceHistory extends Entity {
 		$this->addType('bonusVacation', 'bool');
 		$this->addType('file', 'string');
 		$this->addType('timestamp', 'string');
-		$this->addType('isPartner', 'bool');
-		$this->addType('isManager', 'bool');
-		$this->addType('canAccessHumanResources', 'bool');
+		$this->addType('isPartner', 'integer');
+		$this->addType('isManager', 'integer');
+		$this->addType('canAccessHumanResources', 'integer');
 		$this->addType('notes', 'string');
 		$this->addType('daysRequested', 'integer');
 	}

@@ -115,6 +115,10 @@ export default {
 	},
 
 	computed: {
+		employees() {
+			return Array.isArray(this.Employee) ? this.Employee : []
+		},
+
 		employeesById() {
 			const map = {}
 			this.employees.forEach(emp => {

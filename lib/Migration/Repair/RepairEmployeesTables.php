@@ -690,9 +690,9 @@ final class RepairEmployeesTables implements IRepairStep {
  \"bonus_vacation\" BOOLEAN NULL DEFAULT FALSE,
  \"file\" VARCHAR(255) NULL,
  \"timestamp\" TIMESTAMP NOT NULL,
- \"is_partner\" BOOLEAN NULL DEFAULT FALSE,
- \"is_manager\" BOOLEAN NULL DEFAULT FALSE,
- \"can_access_human_resources\" BOOLEAN NULL DEFAULT FALSE
+ \"is_partner\" INTEGER NULL DEFAULT 0,
+ \"is_manager\" INTEGER NULL DEFAULT 0,
+ \"can_access_human_resources\" INTEGER NULL DEFAULT 0
 )"
                 );
                 $this->db->executeStatement("CREATE INDEX absence_history_absence_idx  ON \"$phys\" (\"absence_id\")");

@@ -298,9 +298,9 @@ class Version2000Date20260424181244 extends SimpleMigrationStep {
 			'notnull' => true,
 			'default' => 'CURRENT_TIMESTAMP',
 		]);
-		$table->addColumn('is_partner', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('is_manager', 'boolean', ['notnull' => false, 'default' => false]);
-		$table->addColumn('can_access_human_resources', 'boolean', ['notnull' => false, 'default' => false]);
+		$table->addColumn('is_partner', 'integer', ['notnull' => false, 'default' => 0]);
+		$table->addColumn('is_manager', 'integer', ['notnull' => false, 'default' => 0]);
+		$table->addColumn('can_access_human_resources', 'integer', ['notnull' => false, 'default' => 0]);
 		$table->addColumn('notes', 'string', ['notnull' => false, 'length' => 255]);
 
 		$table->setPrimaryKey(['absence_history_id']);

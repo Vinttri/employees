@@ -31,7 +31,12 @@
 				</div>
 			</section>
 
-			<section class="summary-grid">
+			<NcNoteCard
+				v-if="!hasEmployeeProfile"
+				type="warning"
+				:text="t('employees', 'Your user is not linked to an employee profile.')" />
+
+			<section v-if="hasEmployeeProfile" class="summary-grid">
 				<article class="summary-card summary-card-accent">
 					<span>{{ t('employees', 'Current savings') }}</span>
 					<strong>{{ savingsFormateado }}</strong>
@@ -52,19 +57,19 @@
 			</section>
 
 			<NcNoteCard
-				v-if="userdata.state == 2"
+				v-if="hasEmployeeProfile && userdata.state == 2"
 				type="success"
 				:text="t('employees', 'Your request has been sent, please wait for a response.')" />
 
 			<NcNoteCard
-				v-if="userdata.state == 0 || !userdata.state"
+				v-if="hasEmployeeProfile && (userdata.state == 0 || !userdata.state)"
 				type="info"
 				:text="t('employees', 'Your profile is in read-only mode.')" />
 		</div>
 
 		<!-- Request modal -->
 		<NcModal
-			v-if="modal && userdata.state == 1"
+			v-if="hasEmployeeProfile && modal && userdata.state == 1"
 			ref="modalRef"
 			size="large"
 			:name="t('employees', 'Request')"
@@ -130,7 +135,7 @@
 			</div>
 		</NcModal>
 
-		<historial :id="userdata.id_savings" />
+		<historial v-if="hasEmployeeProfile" :id="userdata.id_savings" />
 	</NcAppContent>
 </template>
 
@@ -156,7 +161,7 @@ import {
 	NcCheckboxRadioSwitch,
 } from '@nextcloud/vue'
 
-import { translate as t } from '@nextcloud/l10n'
+import { getLocale, translate as t } from '@nextcloud/l10n'
 
 export default {
 	name: 'Request',
@@ -175,7 +180,9 @@ export default {
 		historial,
 	},
 
-	inject: ['employee'],
+	inject: {
+		employee: { default: () => [] },
+	},
 
 	data() {
 		return {
@@ -193,6 +200,17 @@ export default {
 	},
 
 	computed: {
+		currentEmployee() {
+			if (Array.isArray(this.employee)) {
+				return this.employee[0] || null
+			}
+			return this.employee || null
+		},
+
+		hasEmployeeProfile() {
+			return Boolean(this.currentEmployee?.id_employees)
+		},
+
 		cantidadFormateada() {
 			if (this.quantity === '') return ''
 			const partes = this.quantity.toString().split('.')
@@ -201,7 +219,7 @@ export default {
 		},
 
 		savingsFormateado() {
-			return this.formatMoney(this.toNumber(this.employee?.[0]?.savings_fund))
+			return this.formatMoney(this.toNumber(this.currentEmployee?.savings_fund))
 		},
 
 		estadoSolicitud() {
@@ -234,8 +252,13 @@ export default {
 	},
 
 	mounted() {
-		this.employee[0].savings_fund = this.employee[0].savings_fund === null ? '0' : this.employee[0].savings_fund
-		this.aproxValor = this.toNumber(this.employee[0].savings_fund) * 0.9
+		if (!this.hasEmployeeProfile) {
+			this.loading = false
+			return
+		}
+
+		const savingsFund = this.currentEmployee.savings_fund ?? '0'
+		this.aproxValor = this.toNumber(savingsFund) * 0.9
 		this.aproxFormateado = this.formatMoney(this.aproxValor)
 		this.getAll()
 	},
@@ -251,24 +274,31 @@ export default {
 		},
 
 		formatMoney(value) {
-			return Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
+			const locale = String(getLocale() || 'en').replace('_', '-')
+			return Intl.NumberFormat(locale, { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
 		},
 
 		async getAll() {
+			if (!this.hasEmployeeProfile) {
+				this.loading = false
+				return
+			}
+
 			this.loading = true
 			try {
-				await axios.post(generateUrl('/apps/employees/GetInfoAhorro'), {
-					id_user: this.employee[0].id_employees,
+				const response = await axios.post(generateUrl('/apps/employees/GetInfoAhorro'), {
+					id_user: this.currentEmployee.id_employees,
 				})
-					.then(
-						(response) => {
-							this.userdata = response?.data?.ocs?.data[0]
-							this.loading = false
-						},
-						(err) => { showError(err) },
-					)
+				const payload = response?.data?.ocs?.data ?? response?.data ?? []
+				const savings = Array.isArray(payload) ? payload : (Array.isArray(payload?.data) ? payload.data : [])
+
+				this.userdata = savings[0] || {}
 			} catch (err) {
-				showError(t('employees', 'Se ha producido una excepcion [03] [{error}]', { error: String(err) }))
+				console.error(err)
+				this.userdata = {}
+				showError(t('employees', 'Could not fetch your information'))
+			} finally {
+				this.loading = false
 			}
 		},
 

@@ -75,7 +75,7 @@
 						<EmployeeTab
 							:data="data"
 							:show="show"
-							:Employee="empleadosProp"
+							:Employee="employeesProp"
 							:automaticsave="automatic_save_note" />
 					</VTab>
 
@@ -170,7 +170,7 @@ export default {
 			type: Object,
 			default: () => ({}),
 		},
-		empleadosProp: {
+		employeesProp: {
 			type: Array,
 			default: () => [],
 		},
@@ -197,20 +197,20 @@ export default {
 		},
 
 		activeEmployees() {
-			return this.empleadosProp.filter((empleado) => {
-				return empleado.status === 1
-					|| empleado.status === '1'
-					|| empleado.enabled === true
-					|| empleado.disabled === false
+			return this.employeesProp.filter((employee) => {
+				return employee.status === 1
+					|| employee.status === '1'
+					|| employee.enabled === true
+					|| employee.disabled === false
 			}).length
 		},
 
 		inactiveEmployees() {
-			return this.empleadosProp.filter((empleado) => {
-				return empleado.status === 0
-					|| empleado.status === '0'
-					|| empleado.enabled === false
-					|| empleado.disabled === true
+			return this.employeesProp.filter((employee) => {
+				return employee.status === 0
+					|| employee.status === '0'
+					|| employee.enabled === false
+					|| employee.disabled === true
 			}).length
 		},
 	},

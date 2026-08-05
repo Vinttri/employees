@@ -11,12 +11,12 @@
 		<!-- contacts list -->
 		<template #list>
 			<ContentList
-				:employees="empleadosProp"
+				:employees="employeesProp"
 				:search-query="searchQuery" />
 		</template>
 
 		<!-- main contacts details -->
-		<EmployeeDetails :data="data_empleado" :employees-prop="empleadosProp" />
+		<EmployeeDetails :data="data_empleado" :employees-prop="employeesProp" />
 	</NcAppContent>
 </template>
 
@@ -43,7 +43,7 @@ export default {
 	},
 
 	props: {
-		empleadosProp: {
+		employeesProp: {
 			type: Array,
 			required: true,
 		},

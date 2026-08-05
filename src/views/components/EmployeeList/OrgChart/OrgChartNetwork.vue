@@ -108,6 +108,10 @@ export default {
 	},
 
 	computed: {
+		employees() {
+			return Array.isArray(this.Employee) ? this.Employee : []
+		},
+
 		viewHint() {
 			if (this.connectMode) {
 				const source = this.employees.find(
@@ -132,10 +136,10 @@ export default {
 		ringLabels() {
 			return [
 				null,
-				t('employees', 'Socios'),
-				t('employees', 'Gerentes'),
-				t('employees', 'Supervisores'),
-				t('employees', 'Analistas'),
+				t('employees', 'Partners'),
+				t('employees', 'Managers'),
+				t('employees', 'Supervisors'),
+				t('employees', 'Analysts'),
 				t('employees', 'Staff'),
 			]
 		},
@@ -145,7 +149,7 @@ export default {
 		window.addEventListener('keydown', this.handleKeydown)
 		await this.cargarDatos()
 		this.loading = false
-		this.$nextTick(() => this.buildNetwork())
+		this.initializeNetwork()
 	},
 
 	beforeDestroy() {
@@ -157,6 +161,14 @@ export default {
 
 	methods: {
 		t,
+
+		initializeNetwork(attempt = 0) {
+			this.$nextTick(() => {
+				if (this._isDestroyed || this._isBeingDestroyed) return
+				if (this.buildNetwork() || attempt >= 3) return
+				window.setTimeout(() => this.initializeNetwork(attempt + 1), 50)
+			})
+		},
 
 		setViewMode(viewMode) {
 			const previousViewMode = this.viewMode
@@ -177,7 +189,7 @@ export default {
 		async cargarDatos() {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetOrgChart'))
-				const data = response?.data?.ocs?.data
+				const data = response?.data?.ocs?.data ?? response?.data ?? {}
 				this.Employee = data?.Employee || []
 				this.relaciones = data?.relaciones || []
 
@@ -300,6 +312,14 @@ export default {
 		},
 
 		buildNetwork() {
+			const container = this.$refs.networkContainer
+			if (!container) return false
+
+			if (this.network) {
+				this.network.destroy()
+				this.network = null
+			}
+
 			const niveles = this.calcularNiveles()
 			this.ringRadii = this.calcularRadios(niveles)
 			const angulos = this.calcularAngulos(niveles)
@@ -367,7 +387,7 @@ export default {
 			}
 
 			this.network = new Network(
-				this.$refs.networkContainer,
+				container,
 				{ nodes, edges },
 				options,
 			)
@@ -429,6 +449,8 @@ export default {
 				if (!this.connectMode || params.nodes.length !== 1) return
 				this.completeConnection(params.nodes[0])
 			})
+
+			return true
 		},
 
 		handleKeydown(event) {

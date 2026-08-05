@@ -40,26 +40,17 @@ export default {
 
 		async getall() {
 			try {
-				await axios.get(generateUrl('/apps/employees/GetEmpleadosList'))
-					.then(
-						(response) => {
-							if (response?.data?.ocs?.meta?.status !== 'ok') {
-								showError(response?.data?.ocs?.meta?.message)
-								this.loading = false
-								window.location.href = '/apps/employees/#/'
-								return
-							}
-							this.Empleados = response?.data?.ocs?.data.Empleados
-							this.loading = false
-						},
-						(err) => {
-							this.loading = false
-							showError(err)
-						},
-					)
+				const response = await axios.get(generateUrl('/apps/employees/GetEmpleadosList'))
+				const payload = response?.data?.ocs?.data ?? response?.data ?? {}
+				const employees = payload?.Employees ?? payload?.Empleados ?? payload
+
+				this.Empleados = Array.isArray(employees) ? employees : []
 			} catch (err) {
+				console.error(err)
+				this.Empleados = []
+				showError(t('employees', 'Could not fetch your information'))
+			} finally {
 				this.loading = false
-				showError(t('employees', 'An exception has occurred [01] [{error}]', { error: String(err) }))
 			}
 		},
 	},

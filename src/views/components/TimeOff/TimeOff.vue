@@ -36,16 +36,23 @@
 												</span>
 
 												<NcLoadingIcon
-													v-if="Ausencias.days_available === undefined || Ausencias.days_available === null"
+													v-if="absenceLoading"
 													:size="22" />
 
-												<template v-else>
+												<template v-else-if="hasEmployeeProfile">
 													<strong class="vacation-card__value">
-														{{ Ausencias.days_available }}
+														{{ Ausencias.days_available ?? 0 }}
 													</strong>
 
 													<span class="vacation-card__subtitle">
 														{{ t('employees', 'Days available') }}
+													</span>
+												</template>
+
+												<template v-else>
+													<strong class="vacation-card__value">—</strong>
+													<span class="vacation-card__subtitle">
+														{{ t('employees', 'Your user is not linked to an employee profile.') }}
 													</span>
 												</template>
 											</div>
@@ -555,6 +562,8 @@ import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth'
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import ruLocale from '@fullcalendar/core/locales/ru'
 
 import { ref } from 'vue'
 
@@ -562,7 +571,7 @@ import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { showError, showInfo } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { translate as t } from '@nextcloud/l10n'
+import { getLanguage, translate as t } from '@nextcloud/l10n'
 
 import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 import AccountGroup from 'vue-material-design-icons/AccountGroup.vue'
@@ -580,6 +589,10 @@ import {
 	NcLoadingIcon,
 	NcNoteCard,
 } from '@nextcloud/vue'
+
+const fullCalendarLocale = String(getLanguage() || 'en').toLowerCase().startsWith('ru')
+	? ruLocale
+	: enGbLocale
 
 export default {
 	name: 'TimeOff',
@@ -607,7 +620,12 @@ export default {
 		AbsenceReport,
 	},
 
-	inject: ['employee', 'Settings', 'groupuser', 'subordinates'],
+	inject: {
+		employee: { default: () => [] },
+		Settings: { default: () => ({}) },
+		groupuser: { default: () => ({}) },
+		subordinates: { default: () => [] },
+	},
 
 	data() {
 		return {
@@ -635,7 +653,7 @@ export default {
 					right: 'multiMonthYear,dayGridMonth,today,prev,next',
 				},
 				initialView: 'dayGridMonth',
-				locale: 'es',
+				locale: fullCalendarLocale,
 				plugins: [dayGridPlugin, interactionPlugin, multiMonthPlugin],
 				events: this.fetchEvents,
 				dateClick: this.onDateClick,
@@ -685,6 +703,7 @@ export default {
 			notificaciones: false,
 			notifications_counter: 0,
 			loading: false,
+			absenceLoading: true,
 			notifications_result: [],
 			isShaking: false,
 			selectedEventId: null,
@@ -695,6 +714,17 @@ export default {
 	},
 
 	computed: {
+		currentEmployee() {
+			if (Array.isArray(this.employee)) {
+				return this.employee[0] || null
+			}
+			return this.employee || null
+		},
+
+		hasEmployeeProfile() {
+			return Boolean(this.currentEmployee?.id_employees)
+		},
+
 		AniversariosAgrupados() {
 			const agrupados = []
 			let inicio = null
@@ -756,8 +786,10 @@ export default {
 		if (this.isAdmin()) {
 			this.updateList()
 		}
-		this.getTeams()
-		this.GetAllEquipo()
+		if (this.currentEmployee) {
+			this.getTeams()
+			this.GetAllEquipo()
+		}
 		this.getFestivosCalendario()
 		this.checkNotifications()
 		this.$nextTick(() => {
@@ -773,6 +805,22 @@ export default {
 	methods: {
 		t,
 
+		responsePayload(response) {
+			return response?.data?.ocs?.data ?? response?.data ?? null
+		},
+
+		responseArray(response, ...keys) {
+			const payload = this.responsePayload(response)
+			const candidates = [payload, payload?.data, payload?.message]
+			keys.forEach(key => candidates.push(payload?.[key]))
+			return candidates.find(Array.isArray) || []
+		},
+
+		reportLoadError(error) {
+			console.error(error)
+			showError(t('employees', 'Could not fetch your information'))
+		},
+
 		/**
 		 * Trae la lista de Holiday (date en formato MM-DD, se repite cada
 		 * año) para pintarlos en el calendar. Como fullCalendar ya montó
@@ -783,7 +831,7 @@ export default {
 		async getFestivosCalendario() {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/getFestivos'))
-				this.Festivos = response?.data?.ocs?.data ?? response?.data ?? []
+				this.Festivos = this.responseArray(response)
 				this.$nextTick(() => {
 					this.$refs.fullCalendar?.getApi()?.render()
 				})
@@ -795,6 +843,7 @@ export default {
 
 		/**
 		 * Convierte un Date a 'MM-DD' (mismo formato que usa la tabla de Holiday).
+		 * @param date
 		 */
 		formatMesDia(date) {
 			const mes = String(date.getMonth() + 1).padStart(2, '0')
@@ -805,6 +854,7 @@ export default {
 		/**
 		 * Indica si una date determinada corresponde a un día festivo
 		 * registrado (usa el mismo diccionario 'MM-DD' -> name).
+		 * @param date
 		 */
 		esFestivo(date) {
 			return Boolean(this.festivosPorFecha[this.formatMesDia(date)])
@@ -821,6 +871,7 @@ export default {
 		 * verde desaparecía. Como excepción: si la celda es "hoy", dejamos
 		 * que se vea el resaltado amarillo propio de FullCalendar aunque
 		 * el día sea festivo (solo se mantienen la label y el bloqueo).
+		 * @param arg
 		 */
 		onDayCellDidMount(arg) {
 			const mesDia = this.formatMesDia(arg.date)
@@ -881,7 +932,7 @@ export default {
 					),
 				)
 
-				const data = response?.data?.ocs?.data ?? []
+				const data = this.responseArray(response)
 
 				if (Array.isArray(data) && data.length > 0) {
 					this.notificaciones = true
@@ -894,13 +945,7 @@ export default {
 					this.notifications_result = []
 				}
 			} catch (err) {
-				showError(
-					t(
-						'employees',
-						'An exception has occurred [01] [{err}]',
-						{ err },
-					),
-				)
+				this.reportLoadError(err)
 			}
 		},
 
@@ -933,23 +978,36 @@ export default {
 		},
 
 		async GetAusencias() {
+			this.absenceLoading = true
+			if (!this.hasEmployeeProfile) {
+				this.Ausencias = {}
+				this.absenceLoading = false
+				return
+			}
+
 			try {
 				const response = await axios.post(generateUrl('/apps/employees/GetAusenciasByUser'), {
-					id: this.employee[0].id_employees,
+					id: this.currentEmployee.id_employees,
 				})
-				this.Ausencias = response?.data?.ocs?.data[0]
+				this.Ausencias = {
+					days_available: 0,
+					...(this.responseArray(response)[0] || {}),
+				}
 			} catch (err) {
-				showError(t('employees', 'An exception has occurred [03] [{err}]', { err }))
+				this.Ausencias = {}
+				this.reportLoadError(err)
+			} finally {
+				this.absenceLoading = false
 			}
 		},
 
 		async getAniversarios() {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/Getaniversarios'))
-				this.Aniversarios = response?.data?.ocs?.data
+				this.Aniversarios = this.responseArray(response)
 				this.ModalAniversario = true
 			} catch (err) {
-				showError(t('employees', 'An exception has occurred [01] [{err}]', { err }))
+				this.reportLoadError(err)
 			}
 		},
 
@@ -1034,17 +1092,22 @@ export default {
 		},
 
 		getMyAusencias(fetchInfo, success, failure) {
+			if (!this.currentEmployee?.id_user) {
+				success([])
+				return
+			}
+
 			axios.post(generateUrl('/apps/employees/GetAusenciasHistory'), {
 				desde: fetchInfo.startStr,
 				hasta: fetchInfo.endStr,
 			})
 				.then(r => {
-					const data = r?.data?.ocs?.data ?? []
+					const data = this.responseArray(r, 'message')
 					const events = data.map(item => {
 						const startDate = new Date(item.date_from)
 						const fechaHasta = new Date(item.date_until)
 						fechaHasta.setDate(fechaHasta.getDate() + 1)
-						const estilo = this.estiloEventoAusencia(item, this.employee[0].id_user)
+						const estilo = this.estiloEventoAusencia(item, this.currentEmployee.id_user)
 						return {
 							id: item.absence_history_id,
 							title: item.type_name,
@@ -1052,7 +1115,7 @@ export default {
 							end: fechaHasta.toISOString(),
 							allDay: true,
 							classNames: estilo.classNames,
-							employee_name: this.employee[0].id_user,
+							employee_name: this.currentEmployee.id_user,
 						}
 					})
 					success(events)
@@ -1066,7 +1129,7 @@ export default {
 				hasta: fetchInfo.endStr,
 			})
 				.then(r => {
-					const data = r?.data?.ocs?.data?.message || r?.data?.message || []
+					const data = this.responseArray(r, 'message')
 					const events = data.map(item => {
 						const startDate = new Date(item.date_from)
 						const fechaHasta = new Date(item.date_until)
@@ -1093,7 +1156,7 @@ export default {
 				hasta: fetchInfo.endStr,
 			})
 				.then(r => {
-					const data = r?.data?.ocs?.data?.message || r?.data?.message || []
+					const data = this.responseArray(r, 'message')
 					const events = data.map(item => {
 						const startDate = new Date(item.date_from)
 						const fechaHasta = new Date(item.date_until)
@@ -1125,7 +1188,7 @@ export default {
 				hasta: fetchInfo.endStr,
 			})
 				.then(r => {
-					const data = r?.data?.ocs?.data?.message || r?.data?.message || []
+					const data = this.responseArray(r, 'message')
 					const events = data.map(item => {
 						const startDate = new Date(item.date_from)
 						const fechaHasta = new Date(item.date_until)
@@ -1236,8 +1299,8 @@ export default {
 		async updateList() {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetEmpleadosList'))
-				const Employee = response?.data?.ocs?.data.Empleados || []
-				this.propsEmployees.options = Employee.map(user => ({
+				const employees = this.responseArray(response, 'Employees', 'Empleados')
+				this.propsEmployees.options = employees.map(user => ({
 					id_employees: user.id_employees,
 					displayName: user.name || user.id_user,
 					isNoUser: false,
@@ -1250,8 +1313,7 @@ export default {
 					},
 				}))
 			} catch (err) {
-				showError(t('employees', 'An exception has occurred: {err}', { err }))
-				console.error(err)
+				this.reportLoadError(err)
 			}
 		},
 
@@ -1306,27 +1368,26 @@ export default {
 
 		async GetAllEquipo() {
 			try {
-				await axios.get(generateUrl('/apps/employees/GetMyEquipo'))
-					.then((response) => {
-						this.peopleEquipo = response?.data?.ocs?.data
-					})
+				const response = await axios.get(generateUrl('/apps/employees/GetMyEquipo'))
+				this.peopleEquipo = this.responseArray(response)
 			} catch (err) {
-				// eslint-disable-next-line no-console
-				console.log(err)
+				this.reportLoadError(err)
 			}
 		},
 
 		async getTeams() {
-			axios.post(generateUrl(generateUrl('/apps/employees/GetEquipoJefe')), {
-				id: this.employee[0].id_team,
-			})
-				.then(r => {
-					const response = r?.data?.ocs?.data || []
-					this.Equipo = response[0] || {}
+			if (!this.currentEmployee?.id_team) {
+				this.Equipo = {}
+				return
+			}
+			try {
+				const response = await axios.post(generateUrl('/apps/employees/GetEquipoJefe'), {
+					id: this.currentEmployee.id_team,
 				})
-				.catch(error => {
-					console.error('Error getting team lead:', error)
-				})
+				this.Equipo = this.responseArray(response)[0] || {}
+			} catch (error) {
+				this.reportLoadError(error)
+			}
 		},
 
 		onEmployeesChange(news) {
