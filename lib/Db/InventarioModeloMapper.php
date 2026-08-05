@@ -43,7 +43,7 @@ class InventarioModeloMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -60,7 +60,7 @@ class InventarioModeloMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row ?: null;

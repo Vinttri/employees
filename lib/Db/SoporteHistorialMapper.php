@@ -28,7 +28,7 @@ class SoporteHistorialMapper extends QBMapper {
 			->addOrderBy('s.id_soporte', 'DESC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -45,7 +45,7 @@ class SoporteHistorialMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row ?: null;
@@ -74,7 +74,7 @@ class SoporteHistorialMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row ?: null;
@@ -131,7 +131,7 @@ class SoporteHistorialMapper extends QBMapper {
 			->orderBy('s.id_soporte', 'ASC')
 			->setMaxResults(max(1, $limit));
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;

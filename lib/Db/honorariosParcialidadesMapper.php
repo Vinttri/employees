@@ -33,7 +33,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $data ?: [];
@@ -53,7 +53,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			->orderBy('numero_parcialidad', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -140,7 +140,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 		);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		$pendientes = (int)($row['total'] ?? 0);
@@ -293,7 +293,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			));
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		if (!$row) {
@@ -329,7 +329,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$last = $result->fetch();
+		$last = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		$nextNum = $last ? (int)$last['numero_parcialidad'] + 1 : 1;
@@ -343,7 +343,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 				$qb2->createNamedParameter($idHonorario, IQueryBuilder::PARAM_INT)
 			));
 		$r2 = $qb2->executeQuery();
-		$hon = $r2->fetch();
+		$hon = LegacyRowCompat::row($r2->fetch());
 		$r2->closeCursor();
 
 		$importeMensual = $hon ? (float)$hon['importe_total'] : 0;
@@ -394,7 +394,7 @@ class honorariosParcialidadesMapper extends QBMapper {
 			->groupBy('id_honorario');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		$sums = [];

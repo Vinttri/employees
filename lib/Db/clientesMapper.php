@@ -27,7 +27,7 @@ class clientesMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		if (!$data) {
@@ -85,7 +85,7 @@ class clientesMapper extends QBMapper {
 			->setFirstResult($offset);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		foreach ($data as &$row) {

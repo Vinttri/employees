@@ -117,7 +117,7 @@ class CompraSolicitudMapper extends QBMapper {
 		$this->applyListFilters($qb, $idUser, $estado);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return [

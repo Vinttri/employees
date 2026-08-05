@@ -19,7 +19,7 @@ class configuracionesMapper extends QBMapper {
 			->from($this->getTableName());
 
 		$result = $qb->executeQuery();
-		$config = $result->fetchAll();
+		$config = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $config;
@@ -28,8 +28,8 @@ class configuracionesMapper extends QBMapper {
 	public function ActualizarGestor($id_gestor): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
-			->set('Data', $query->createNamedParameter($id_gestor))
-			->where($query->expr()->eq('Nombre', $query->createNamedParameter('usuario_almacenamiento')));
+			->set('data', $query->createNamedParameter($id_gestor))
+			->where($query->expr()->eq('nombre', $query->createNamedParameter('usuario_almacenamiento')));
 
 		$query->executeStatement();
 	}
@@ -37,8 +37,8 @@ class configuracionesMapper extends QBMapper {
 	public function ActualizarConfiguracion($id_configuracion, $data): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
-			->set('Data', $query->createNamedParameter($data))
-			->where($query->expr()->eq('Nombre', $query->createNamedParameter($id_configuracion)));
+			->set('data', $query->createNamedParameter($data))
+			->where($query->expr()->eq('nombre', $query->createNamedParameter($id_configuracion)));
 
 		$query->executeStatement();
 	}
@@ -46,12 +46,12 @@ class configuracionesMapper extends QBMapper {
 	public function GetNotasGuardado(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Data')
+		$qb->select('data')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Nombre', $qb->createNamedParameter('automatic_save_note')));
+			->where($qb->expr()->eq('nombre', $qb->createNamedParameter('automatic_save_note')));
 
 		$result = $qb->executeQuery();
-		$config = $result->fetchAll();
+		$config = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $config;
@@ -60,12 +60,12 @@ class configuracionesMapper extends QBMapper {
 	public function GetGestor(): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('Data')
+		$qb->select('data')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Nombre', $qb->createNamedParameter('usuario_almacenamiento')));
+			->where($qb->expr()->eq('nombre', $qb->createNamedParameter('usuario_almacenamiento')));
 
 		$result = $qb->executeQuery();
-		$config = $result->fetchAll();
+		$config = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $config;
@@ -81,9 +81,9 @@ class configuracionesMapper extends QBMapper {
 
 		foreach ($defaults as $name => $value) {
 			$qb = $this->db->getQueryBuilder();
-			$qb->select('Nombre')
+			$qb->select('nombre')
 				->from($table)
-				->where($qb->expr()->eq('Nombre', $qb->createNamedParameter($name)))
+				->where($qb->expr()->eq('nombre', $qb->createNamedParameter($name)))
 				->setMaxResults(1);
 
 			$exists = (bool) $qb->executeQuery()->fetchOne();
@@ -93,8 +93,8 @@ class configuracionesMapper extends QBMapper {
 
 			$ins = $this->db->getQueryBuilder();
 			$ins->insert($table)->values([
-				'Nombre' => $ins->createNamedParameter($name),
-				'Data'   => $ins->createNamedParameter($value),
+				'nombre' => $ins->createNamedParameter($name),
+				'data'   => $ins->createNamedParameter($value),
 			]);
 
 			$ins->executeStatement();

@@ -48,7 +48,7 @@ class honorariosMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $data ?: [];
@@ -71,7 +71,7 @@ class honorariosMapper extends QBMapper {
 			->setFirstResult($offset);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -94,7 +94,7 @@ class honorariosMapper extends QBMapper {
 			->orderBy('id_honorario', 'DESC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		if (empty($data)) {
@@ -385,7 +385,7 @@ class honorariosMapper extends QBMapper {
 			->groupBy('id_cliente');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;

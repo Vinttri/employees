@@ -29,7 +29,7 @@ class userahorroMapper extends QBMapper {
 			->innerJoin('o', 'users', 'c', $qb->expr()->eq('uid', 'id_user'));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -42,7 +42,7 @@ class userahorroMapper extends QBMapper {
 			->from('users');
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -85,7 +85,7 @@ class userahorroMapper extends QBMapper {
 			->where($qb->expr()->eq('id_user', $qb->createNamedParameter($id_user)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -99,7 +99,7 @@ class userahorroMapper extends QBMapper {
 			->where($qb->expr()->eq('id_ahorro', $qb->createNamedParameter($id_user)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;

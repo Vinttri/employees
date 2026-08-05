@@ -24,7 +24,7 @@ class tipoausenciaMapper extends QBMapper {
 			->from($this->getTableName());
 
 		$result = $qb->executeQuery();
-		$tipo_ausencia = $result->fetchAll();
+		$tipo_ausencia = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $tipo_ausencia;
@@ -45,7 +45,7 @@ class tipoausenciaMapper extends QBMapper {
 		}
 
 		$result = $qb->executeQuery();
-		$tipo_ausencia = $result->fetchAll();
+		$tipo_ausencia = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $tipo_ausencia;
@@ -59,7 +59,7 @@ class tipoausenciaMapper extends QBMapper {
 			->where($qb->expr()->eq('id_tipo_ausencia', $qb->createNamedParameter($id)));
 
 		$result = $qb->executeQuery();
-		$tipo_ausencia = $result->fetchAll();
+		$tipo_ausencia = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $tipo_ausencia;

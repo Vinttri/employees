@@ -19,7 +19,7 @@ class ausenciasMapper extends QBMapper {
 			->from($this->getTableName());
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -33,7 +33,7 @@ class ausenciasMapper extends QBMapper {
 			->where($qb->expr()->eq('id_empleado', $qb->createNamedParameter($id)));
 
 		$result = $qb->executeQuery();
-		$ausencias = $result->fetchAll();
+		$ausencias = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $ausencias;
@@ -44,10 +44,10 @@ class ausenciasMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_ausencias)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_ausencias)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -94,7 +94,7 @@ class ausenciasMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_departamento)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_departamento)));
 
 		$qb->executeStatement();
 	}
@@ -119,7 +119,7 @@ class ausenciasMapper extends QBMapper {
 			->where($qb->expr()->eq('id_ausencias', $qb->createNamedParameter($id_ausencias)));
 
 		$result = $qb->executeQuery();
-		$rows   = $result->fetchAll();
+		$rows   = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;

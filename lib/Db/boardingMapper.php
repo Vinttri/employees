@@ -39,7 +39,7 @@ class boardingMapper extends QBMapper {
 			);
 
 		$result = $qb->executeQuery();
-		$data = $result->fetch();
+		$data = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $data ?: [];
@@ -57,7 +57,7 @@ class boardingMapper extends QBMapper {
 			->orderBy('nombre', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
@@ -81,7 +81,7 @@ class boardingMapper extends QBMapper {
 			->orderBy('nombre', 'ASC');
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;

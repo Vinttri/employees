@@ -19,7 +19,7 @@ class aniversarioMapper extends QBMapper {
 			->from($this->getTableName());
 
 		$result = $qb->executeQuery();
-		$aniversarios = $result->fetchAll();
+		$aniversarios = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $aniversarios;
@@ -30,10 +30,10 @@ class aniversarioMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_aniversarios)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_aniversarios)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -70,7 +70,7 @@ class aniversarioMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('Id_departamento', $qb->createNamedParameter($id_departamento)));
+			->where($qb->expr()->eq('id_departamento', $qb->createNamedParameter($id_departamento)));
 
 		$qb->executeStatement();
 	}
@@ -83,7 +83,7 @@ class aniversarioMapper extends QBMapper {
 			->where($qb->expr()->eq('numero_aniversario', $qb->createNamedParameter($ingreso)));
 
 		$result = $qb->executeQuery();
-		$aniversarios = $result->fetchAll();
+		$aniversarios = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $aniversarios;

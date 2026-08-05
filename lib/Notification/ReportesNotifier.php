@@ -26,7 +26,7 @@ class ReportesNotifier implements INotifier {
 	public function getName(): string {
 		return $this->l10nFactory
 			->get(Application::APP_ID)
-			->t('Empleados');
+			->t('Employees');
 	}
 
 	public function prepare(INotification $notification, string $languageCode): INotification {

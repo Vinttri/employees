@@ -23,7 +23,7 @@ class primavacacionalpagoMapper extends QBMapper {
 			->setMaxResults(1);
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = LegacyRowCompat::row($result->fetch());
 		$result->closeCursor();
 
 		return $row !== false ? $row : null;
@@ -38,7 +38,7 @@ class primavacacionalpagoMapper extends QBMapper {
 			->orderBy('numero_aniversario', 'ASC');
 
 		$result = $qb->executeQuery();
-		$rows = $result->fetchAll();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $rows;

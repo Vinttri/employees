@@ -20,7 +20,7 @@ class historialahorroMapper extends QBMapper {
 			->where($qb->expr()->eq('id_ahorro', $qb->createNamedParameter($id_user)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -32,13 +32,13 @@ class historialahorroMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName(), 'o')
 			->innerJoin('o', 'user_ahorro', 'x', $qb->expr()->eq('x.id_ahorro', 'o.id_ahorro'))
-			->innerJoin('x', 'empleados', 'c', $qb->expr()->eq('c.Id_empleados', 'x.id_user'))
-			->innerJoin('c', 'users', 'u', $qb->expr()->eq('u.uid', 'c.Id_user'))
+			->innerJoin('x', 'empleados', 'c', $qb->expr()->eq('c.id_empleados', 'x.id_user'))
+			->innerJoin('c', 'users', 'u', $qb->expr()->eq('u.uid', 'c.id_user'))
 			->where($qb->expr()->eq('o.estado', $qb->createNamedParameter($options_estado_values)))
 			->andWhere($qb->expr()->like('o.fecha_solicitud', $qb->createNamedParameter('%' . $options_fechas_value)));
 
 		$result = $qb->executeQuery();
-		$users = $result->fetchAll();
+		$users = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $users;
@@ -69,7 +69,7 @@ class historialahorroMapper extends QBMapper {
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 
 		$result = $qb->executeQuery();
-		$data = $result->fetchAll();
+		$data = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 
 		return $data;
