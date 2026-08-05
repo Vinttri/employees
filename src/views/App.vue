@@ -5,7 +5,7 @@
 		<NcEmptyContent v-else
 			:name="t('employees', 'Finish the initial setup')"
 			:description="t('employees', 'Go to global settings and select the data manager.')"
-			style="background-color: white;">
+			class="employees-initial-setup">
 			<template #icon>
 				<AlertCircleOutline />
 			</template>

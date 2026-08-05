@@ -103,11 +103,11 @@ class HumanResourcesController extends Controller {
 	}
 
 	private function processUserInsertion($userId, $gestor, $folderPath): void {
-		// Verificar si el grupo "recursos_humanos" existe
-		$group = $this->groupManager->get("recursos_humanos");
+		// Ensure the Human Resources group exists.
+		$group = $this->groupManager->get("hr");
 		if (!$group) {
-			$this->groupManager->createGroup("recursos_humanos");
-			$group = $this->groupManager->get("recursos_humanos");
+			$this->groupManager->createGroup("hr");
+			$group = $this->groupManager->get("hr");
 		}
 
 		$user = $this->userManager->get($userId);
@@ -120,7 +120,7 @@ class HumanResourcesController extends Controller {
 
 	private function processUserDeletion($userId, $gestor, $folderPath): void {
 		$user = $this->userManager->get($userId);
-		$group = $this->groupManager->get("recursos_humanos");
+		$group = $this->groupManager->get("hr");
 
 		if ($user && $group && $group->inGroup($user)) {
 			$group->removeUser($user);

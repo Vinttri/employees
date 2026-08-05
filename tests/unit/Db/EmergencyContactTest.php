@@ -30,7 +30,7 @@ class EmergencyContactTest extends TestCase {
 		$this->assertSame(7, $entity->getId());
 		$this->assertSame(12, $entity->getIdEmployee());
 		$this->assertSame('+52 871 123-4567', $entity->getContactNumber());
-		$this->assertSame(1, $entity->getIsPrimary());
+		$this->assertTrue($entity->getIsPrimary());
 		$this->assertNull($entity->getAlternateMethod());
 		$idProperty = (new \ReflectionClass(EmergencyContact::class))->getProperty('id');
 		$this->assertSame(Entity::class, $idProperty->getDeclaringClass()->getName());

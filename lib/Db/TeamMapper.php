@@ -99,15 +99,13 @@ class TeamMapper extends QBMapper {
 		$qb->executeStatement();
 	}
 
-	public function updateTeams($id_team, $team_leader_id): void {
+	public function updateTeams(int $id_team, string $team_leader_id, string $name): void {
 		$timestamp = date('Y-m-d');
-
-		if (empty($id_team) && $id_team != 0) { $id_team = null; }
-		if (empty($team_leader_id) && $team_leader_id != 0) { $team_leader_id = null; }
 
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
 			->set('team_leader_id', $query->createNamedParameter($team_leader_id))
+			->set('name', $query->createNamedParameter($name))
 			->set('updated_at', $query->createNamedParameter($timestamp))
 			->where($query->expr()->eq('id_team', $query->createNamedParameter($id_team)));
 

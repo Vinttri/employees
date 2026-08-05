@@ -10,6 +10,7 @@
 		</NcEmptyContent>
 
 		<OrganizationChart v-else
+			ref="organizationChart"
 			class="traditional-organigram__chart"
 			:datasource="organizationTree">
 			<template slot-scope="{ nodeData }">
@@ -76,6 +77,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			chartCenterTimer: null,
+		}
+	},
+
 	computed: {
 		employees() {
 			return Array.isArray(this.Employee) ? this.Employee : []
@@ -86,8 +93,55 @@ export default {
 		},
 	},
 
+	mounted() {
+		window.addEventListener('resize', this.centerChart)
+		this.scheduleChartCenter()
+	},
+
+	beforeDestroy() {
+		window.removeEventListener('resize', this.centerChart)
+		window.clearTimeout(this.chartCenterTimer)
+	},
+
+	watch: {
+		Employee: {
+			deep: true,
+			handler() {
+				this.scheduleChartCenter()
+			},
+		},
+		relaciones: {
+			deep: true,
+			handler() {
+				this.scheduleChartCenter()
+			},
+		},
+	},
+
 	methods: {
 		t,
+
+		scheduleChartCenter() {
+			window.clearTimeout(this.chartCenterTimer)
+			this.$nextTick(() => {
+				this.chartCenterTimer = window.setTimeout(this.centerChart, 80)
+			})
+		},
+
+		centerChart() {
+			const container = this.$refs.organizationChart?.$el
+			if (!container) return
+			const rootNode = container.querySelector('.organization-node')
+			if (!rootNode) return
+			const containerRect = container.getBoundingClientRect()
+			const nodeRect = rootNode.getBoundingClientRect()
+			const rootCenterInContent = container.scrollLeft
+				+ nodeRect.left
+				- containerRect.left
+				+ (nodeRect.width / 2)
+			container.scrollLeft = Math.max(0, rootCenterInContent - (container.clientWidth / 2))
+			container.scrollTop = 0
+		},
 
 		avatarUrl(userId) {
 			return generateUrl('/avatar/{userId}/64', { userId })
@@ -348,9 +402,10 @@ export default {
 }
 
 ::v-deep .traditional-organigram__chart .orgchart {
-	min-width: 900px;
+	width: max-content;
+	min-width: 100%;
 	min-height: 100%;
-	padding: 32px 48px 104px;
+	padding: 32px 48px;
 	border: 0;
 	background: var(--color-main-background);
 	background-image: none;
@@ -499,7 +554,7 @@ export default {
 @media (max-width: 600px) {
 	::v-deep .traditional-organigram__chart .orgchart {
 		min-width: 720px;
-		padding: 24px 28px 104px;
+		padding: 24px 28px;
 	}
 }
 </style>

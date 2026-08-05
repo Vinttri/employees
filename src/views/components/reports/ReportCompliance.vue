@@ -11,6 +11,8 @@
 			<div class="header-actions">
 				<NcDateTimePicker
 					v-model="date"
+					:aria-label="t('employees', 'Pick a date')"
+					:placeholder="t('employees', 'Pick a date')"
 					type="date"
 					class="date-picker"
 					@input="loadCumplimiento" />

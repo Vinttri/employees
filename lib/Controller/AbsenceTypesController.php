@@ -58,7 +58,7 @@ class AbsenceTypesController extends Controller {
         }
         $uid = $user->getUID();
         return $this->groupManager->isInGroup($uid, 'admin')
-            || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+            || $this->groupManager->isInGroup($uid, 'hr');
     }
 
     /**

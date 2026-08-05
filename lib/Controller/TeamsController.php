@@ -88,7 +88,7 @@ class TeamsController extends BaseController {
     #[UseSession]
     #[NoAdminRequired]
     public function GetTeamsFix(): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         $response = array_map(fn($equipo) => [
             'value' => $equipo['id_teams'],
             'label' => $equipo['name'],
@@ -103,7 +103,7 @@ class TeamsController extends BaseController {
     #[UseSession]
     #[NoAdminRequired]
     public function GetTeamsList(): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         return new DataResponse($this->TeamMapper->GetTeamsList(), Http::STATUS_OK);
     }
 
@@ -124,7 +124,7 @@ class TeamsController extends BaseController {
      * Exporta la lista de Team a un file XLSX.
      */
     public function ExportListTeams(): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         $Team = $this->TeamMapper->GetTeamsList();
 
         $books = [[
@@ -169,17 +169,18 @@ class TeamsController extends BaseController {
     /**
      * Importa la lista de Team desde un file XLSX.
      */
-    public function ImportListTeams(): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+	public function ImportListTeams(): DataResponse {
+		$this->requireHumanResourcesAccess();
         $file = $this->getUploadedFile('equipofileXLSX');
         if ($xlsx = \Shuchkin\SimpleXLSX::parse($file['tmp_name'])) {
             foreach ($xlsx->rows() as $row) {
                 if (!empty($row[0])) {
-                    $this->TeamMapper->updateTeams((string) $row[0], (string) $row[1]);
+					$this->TeamMapper->updateTeams((int)$row[0], (string)($row[3] ?? ''), (string)$row[1]);
                 } else {
                     $timestamp = date('Y-m-d');
-                    $equipo = new Team();
-                    $equipo->setnombre((string) $row[1]);
+					$equipo = new Team();
+					$equipo->setnombre((string) $row[1]);
+					$equipo->setTeamLeaderId((string)($row[3] ?? ''));
                     $equipo->setCreatedAt($timestamp);
                     $equipo->setUpdatedAt($timestamp);
                     $this->TeamMapper->insert($equipo);
@@ -196,7 +197,7 @@ class TeamsController extends BaseController {
     #[UseSession]
     #[NoAdminRequired]
     public function EliminarEquipo(int $id_team): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
 
         try {
             $row = $this->TeamMapper->deleteByIdReturningRow((string)$id_team);
@@ -236,8 +237,8 @@ class TeamsController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function GuardarCambioEquipo(int $Id_Equipo, string $team_leader_id): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+	public function GuardarCambioEquipo(int $Id_Equipo, string $team_leader_id, string $name): DataResponse {
+		$this->requireHumanResourcesAccess();
 
         try {
             // 1) Leer status actual
@@ -250,7 +251,7 @@ class TeamsController extends BaseController {
                 ], Http::STATUS_NOT_FOUND);
             }
 
-            $groupName = $old['name'] ?? $old['name'] ?? null;
+			$groupName = trim($name);
 
             if (!$groupName) {
                 return new DataResponse([
@@ -259,13 +260,18 @@ class TeamsController extends BaseController {
                 ], Http::STATUS_BAD_REQUEST);
             }
 
-            $oldJefe = $old['team_leader_id'] ?? $old['team_leader_id'] ?? null;
+			$oldJefe = $old['team_leader_id'] ?? null;
+			$newBoss = $this->userManager->get($team_leader_id);
 
-            // 2) Actualizar jefe en BD
-            $this->TeamMapper->updateTeams((string)$Id_Equipo, $team_leader_id);
+			if (!$newBoss) {
+				return new DataResponse([
+					'status' => 'error',
+					'message' => "Usuario '$team_leader_id' no existe",
+				], Http::STATUS_BAD_REQUEST);
+			}
 
-            // 3) Asegurar grupo
-            $group = $this->groupManager->get($groupName);
+			// 2) Ensure the target group can be resolved before changing the database.
+			$group = $this->groupManager->get($groupName);
 
             if (!$group) {
                 $this->groupManager->createGroup($groupName);
@@ -279,27 +285,20 @@ class TeamsController extends BaseController {
                 ], Http::STATUS_INTERNAL_SERVER_ERROR);
             }
 
-            // 4) New jefe
-            $newBoss = $this->userManager->get($team_leader_id);
+			// 3) Persist the validated name and UID-based team leader.
+			$this->TeamMapper->updateTeams($Id_Equipo, $team_leader_id, $groupName);
 
-            if (!$newBoss) {
-                return new DataResponse([
-                    'status' => 'error',
-                    'message' => "Usuario '$team_leader_id' no existe",
-                ], Http::STATUS_BAD_REQUEST);
-            }
-
-            // 5) Asegurar que el jefe sea miembro del grupo
+			// 4) Asegurar que el jefe sea miembro del grupo
             if (!$group->inGroup($newBoss)) {
                 $group->addUser($newBoss);
             }
 
-            // 6) Promover solo si todavía no es subadmin
+			// 5) Promover solo si todavía no es subadmin
             if (!$this->isSubAdminOfGroupSafe($newBoss, $group)) {
                 $this->subAdmin->createSubAdmin($newBoss, $group);
             }
 
-            // 7) Quitar subadmin anterior si cambió
+			// 6) Quitar subadmin anterior si cambió
             if ($oldJefe && $oldJefe !== $team_leader_id) {
                 $oldUser = $this->userManager->get($oldJefe);
 
@@ -326,7 +325,7 @@ class TeamsController extends BaseController {
     #[UseSession]
     #[NoAdminRequired]
     public function crearEquipo(string $name, string $jefe): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         $timestamp = date('Y-m-d');
         $equipo = new Team();
         $equipo->setnombre($name);
@@ -364,7 +363,7 @@ class TeamsController extends BaseController {
     #[UseSession]
     #[NoAdminRequired]
     public function promoverJefeDeEquipo(string $uid, string $gid): DataResponse {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         try {
             $user  = $this->userManager->get($uid);
             $group = $this->groupManager->get($gid);
@@ -392,7 +391,7 @@ class TeamsController extends BaseController {
      * Obtiene un file subido y maneja posibles errores.
      */
     private function getUploadedFile(string $key): array {
-        $this->checkAccess(['admin', 'recursos_humanos']);
+        $this->requireHumanResourcesAccess();
         $file = $this->request->getUploadedFile($key);
         if (empty($file) || ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
             throw new UploadException($this->l10n->t('Error en la subida del file.'));

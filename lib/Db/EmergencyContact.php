@@ -34,4 +34,18 @@ class EmergencyContact extends Entity {
 		$this->addType('createdAt', 'string');
 		$this->addType('updatedAt', 'string');
 	}
+
+	public static function fromRow(array $row): static {
+		if (array_key_exists('contact_number', $row) && !array_key_exists('number_contact', $row)) {
+			$row['number_contact'] = $row['contact_number'];
+			unset($row['contact_number']);
+		}
+
+		return parent::fromRow($row);
+	}
+
+	/** Compatibility with the natural English accessor used by API consumers. */
+	public function getContactNumber(): string {
+		return (string)$this->getNumberContact();
+	}
 }

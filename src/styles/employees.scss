@@ -1,0 +1,132 @@
+#content {
+	--employees-surface: var(--color-main-background);
+	--employees-surface-muted: var(--color-background-hover);
+	--employees-text: var(--color-main-text);
+	--employees-text-muted: var(--color-text-maxcontrast);
+	--employees-border: var(--color-border);
+	--employees-primary: var(--color-primary-element);
+	--employees-primary-text: var(--color-primary-element-text);
+	--employees-danger: var(--color-error);
+	--employees-radius: var(--border-radius-large);
+	--employees-space-1: 4px;
+	--employees-space-2: 8px;
+	--employees-space-3: 12px;
+	--employees-space-4: 16px;
+	--employees-space-6: 24px;
+}
+
+#content .inputtype,
+#content .organigrama-search,
+#content input[type='text'],
+#content input[type='number'],
+#content input[type='date'],
+#content input[type='email'],
+#content textarea {
+	border-color: var(--employees-border);
+	border-radius: var(--employees-radius);
+	background: var(--employees-surface);
+	color: var(--employees-text);
+}
+
+#content .inputtype:focus,
+#content .organigrama-search:focus,
+#content input:focus,
+#content textarea:focus {
+	border-color: var(--employees-primary);
+	box-shadow: 0 0 0 2px var(--color-primary-element-light);
+	outline: none;
+}
+
+#content :is(.empleado-switch-btn, .view-switch-btn, .stepper-btn, .acordeon-title, .acordeon-notification, .accordion-option, .pending-card, .manager-card__header) {
+	border-radius: var(--employees-radius);
+}
+
+#content :is(.area-hero, .position-hero, .team-hero, .employees-panel, .members-panel, .position-meta-card, .area-meta-card, .team-meta-card, .employee-card, .member-card, .kpi-card, .module-card, .app-tile, .date-card, .workspace-card) {
+	border-color: var(--employees-border);
+	border-radius: var(--employees-radius);
+	background: var(--employees-surface);
+	color: var(--employees-text);
+	box-shadow: none;
+	backdrop-filter: none;
+}
+
+#content :is(.area-hero__actions, .position-hero__actions, .team-hero__actions, .button-container) {
+	display: flex;
+	align-items: center;
+	gap: var(--employees-space-2);
+}
+
+#content .cards {
+	--sidebar-primary: var(--employees-primary);
+	--sidebar-primary-dark: var(--employees-primary);
+	--sidebar-primary-soft: var(--employees-surface-muted);
+	--sidebar-soft: var(--employees-surface-muted);
+	--sidebar-soft-hover: var(--color-background-dark);
+	--sidebar-border: var(--employees-border);
+	--sidebar-border-strong: var(--employees-border);
+	--sidebar-text: var(--employees-text);
+	--sidebar-muted: var(--employees-text-muted);
+	background: var(--employees-surface);
+	color: var(--employees-text);
+	border-color: var(--employees-border);
+	border-radius: var(--employees-radius);
+	box-shadow: none;
+}
+
+#content .headers {
+	background: var(--employees-primary);
+	border-radius: var(--employees-radius);
+	box-shadow: none;
+}
+
+#content :is(.vacations-grid, .vacation-card) {
+	background: var(--employees-surface);
+	color: var(--employees-text);
+	border-color: var(--employees-border);
+	border-radius: var(--employees-radius);
+	box-shadow: none;
+}
+
+#content :is(.vacation-card__title, .vacation-card__subtitle) {
+	color: var(--employees-text-muted);
+	white-space: normal;
+}
+
+#content .vacation-card__value { color: var(--employees-primary); }
+
+#content .hero {
+	border: 1px solid var(--employees-border);
+	border-radius: var(--employees-radius);
+	background: var(--employees-surface);
+	color: var(--employees-text);
+	box-shadow: none;
+}
+
+#content .inventory-table-wrapper,
+#content .table-wrapper {
+	overflow-x: auto;
+	scrollbar-gutter: stable;
+}
+
+#content .modal-form {
+	display: grid;
+	gap: var(--employees-space-4);
+	min-width: min(520px, calc(100vw - 48px));
+	padding: var(--employees-space-6);
+}
+
+@media (max-width: 700px) {
+	#content .employee-edit-toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	#content .employee-edit-toolbar__actions {
+		justify-content: flex-end;
+	}
+
+	#content :is(.area-hero, .position-hero, .team-hero) {
+		flex-direction: column;
+		padding: var(--employees-space-4);
+	}
+}

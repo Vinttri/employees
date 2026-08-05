@@ -958,7 +958,7 @@ export default {
 				purchases_solicitantes: t('employees', 'Can access the purchases module, create own purchase requests, edit drafts, send them for approval and follow their own requests.'),
 				purchases_autorizadores: t('employees', 'Can view purchase requests from all users and approve or reject requests pending approval.'),
 				purchases_contabilidad: t('employees', 'Can view purchase requests from all users for accounting review and tracking. Cannot approve or reject requests.'),
-				recursos_humanos: t('employees', 'Can manage employee-related information in the employees module. This does not grant purchase approval permissions.'),
+				hr: t('employees', 'Can manage employee-related information in the employees module. This does not grant purchase approval permissions.'),
 				clients_admin: t('employees', 'Can create, edit, delete, import and export customers.'),
 				clients_view: t('employees', 'Can view customers without editing the customer catalog.'),
 			}
@@ -991,7 +991,7 @@ export default {
 				purchases_solicitantes: t('employees', 'Does not allow viewing requests from other users.'),
 				purchases_autorizadores: t('employees', 'Does not allow selecting another requester when creating a request.'),
 				purchases_contabilidad: t('employees', 'Read-only for approvals: approval and rejection actions are hidden.'),
-				recursos_humanos: t('employees', 'Independent from purchase permissions.'),
+				hr: t('employees', 'Independent from purchase permissions.'),
 				clients_admin: t('employees', 'Administrative customer permission. Assign only to users who should maintain the customer catalog.'),
 				clients_view: t('employees', 'Read-only customer permission.'),
 			}

@@ -383,6 +383,7 @@ export default {
 				const arr = Array.isArray(response?.data?.ocs?.data) ? response.data.ocs.data : []
 				this.listas = arr.map((row) => {
 					const item = renameKeys(row, keyMap)
+					item.name = this.systemActivityName(item)
 					const typeLabel = item.system_code
 						? t('employees', 'System activity')
 						: item.type_activity === 'interno'
@@ -399,6 +400,22 @@ export default {
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepcion [01] [{error}]', { error: String(err) }))
 			}
+		},
+
+		systemActivityName(activity) {
+			const names = {
+				soporte_ti: 'IT Support',
+				'demo-discovery': 'Discovery and analysis',
+				'demo-development': 'Implementation',
+				'demo-meeting': 'Client meeting',
+				'demo-support': 'Technical support',
+				'demo-admin': 'Administration',
+				'demo-training': 'Training',
+				'demo-sales': 'Sales preparation',
+				'demo-review': 'Quality review',
+			}
+			const key = names[activity?.system_code]
+			return key ? t('employees', key) : activity?.name
 		},
 
 		async GetAreasList() {

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './views/App.vue'
+import './styles/employees.scss'
 
 import router from './router/index.js'
 import Router from 'vue-router'
@@ -105,7 +106,7 @@ const loadRuntimeConfigurations = async () => {
 
 	const adminReportsGroup = Settings?.Reportes?.admin_reports_group
 		|| Settings?.reportes_admin_reports_group
-		|| 'recursos_humanos'
+		|| 'hr'
 
 	Settings.CanAdminReports = isTruthy(Settings?.CanAdminReports)
 		|| userHasGroup('admin')

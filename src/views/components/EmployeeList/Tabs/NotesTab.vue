@@ -28,12 +28,12 @@
 					class="notes-textarea"
 					:label="t('employees', 'Employee notes')"
 					resize="vertical"
-					:disabled="show"
+					:disabled="!show"
 					:value.sync="inputValue" />
 			</div>
 
 			<NcButton
-				v-if="automaticsave === 'false'"
+				v-if="show && automaticsave === 'false'"
 				class="save-note-button"
 				:aria-label="t('employees', 'Save note')"
 				type="primary"
@@ -114,7 +114,7 @@ export default {
 		debouncePropertyChange() {
 			return debounce(function(value) {
 				this.notes = value
-				if (this.automaticsave === 'true') {
+				if (this.show && this.automaticsave === 'true') {
 					this.guardarNota()
 				}
 			}, 900)
@@ -139,17 +139,25 @@ export default {
 			this.showMarkdown = !this.showMarkdown
 		},
 
-		async guardarNota() {
+		async saveFromEmployeeToolbar() {
+			return this.guardarNota(false)
+		},
+
+		async guardarNota(showFeedback = true) {
 			try {
 				this.debouncePropertyChange.flush?.()
 				await axios.post(generateUrl('/apps/employees/GuardarNota'), {
 					id_employees: this.data.id_employees,
 					note: this.notes,
 				})
-				showSuccess(t('employees', 'Note has been updated'))
-				this.$bus?.emit('getall')
+				if (showFeedback) {
+					showSuccess(t('employees', 'Note has been updated'))
+					this.$bus?.emit('getall')
+				}
+				return true
 			} catch (err) {
 				showError(t('employees', 'An exception has occurred [03] [{error}]', { error: String(err) }))
+				return false
 			}
 		},
 	},

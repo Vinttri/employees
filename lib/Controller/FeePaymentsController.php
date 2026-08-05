@@ -75,7 +75,7 @@ class FeePaymentsController extends BaseController {
 		$this->requireClientesAccess();
 
 		return new DataResponse(
-			$this->FeePaymentMapper->findByHonorario($id_fee),
+			$this->FeePaymentMapper->findByFee($id_fee),
 			Http::STATUS_OK
 		);
 	}
@@ -89,7 +89,7 @@ class FeePaymentsController extends BaseController {
 		$this->requireClientesAdminAccess();
 
 		$idHonorarioFinalizado = $this->FeePaymentMapper
-			->marcarPagada(
+			->markPaid(
 				$id_installment,
 				$date_payment
 			);
@@ -111,7 +111,7 @@ class FeePaymentsController extends BaseController {
 		$this->requireClientesAdminAccess();
 
 		$this->FeePaymentMapper
-			->marcarFacturada($id_installment);
+			->markInvoiced($id_installment);
 
 		return new DataResponse(
 			['status' => 'ok'],
@@ -125,7 +125,7 @@ class FeePaymentsController extends BaseController {
 		$this->requireClientesAdminAccess();
 
 		$idHonorario = $this->FeePaymentMapper
-			->cancelarPago($id_installment);
+			->cancelPayment($id_installment);
 
 		if ($idHonorario !== null) {
 			$this->ProfessionalFeeMapper
@@ -144,7 +144,7 @@ class FeePaymentsController extends BaseController {
 		$this->requireClientesAdminAccess();
 
 		$this->FeePaymentMapper
-			->agregarParcialidadIguala($id_fee);
+			->addRetainerInstallment($id_fee);
 
 		return new DataResponse(
 			['status' => 'ok'],

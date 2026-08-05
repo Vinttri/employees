@@ -7,6 +7,47 @@
 		</NcEmptyContent>
 
 		<template v-else>
+			<div class="organigrama-toolbar">
+				<div class="organigrama-view-switch">
+					<button
+						type="button"
+						class="view-switch-btn"
+						:class="{ active: viewMode === 'traditional' }"
+						:aria-pressed="viewMode === 'traditional' ? 'true' : 'false'"
+						@click="setViewMode('traditional')">
+						{{ t('employees', 'Organization chart') }}
+					</button>
+					<button
+						type="button"
+						class="view-switch-btn"
+						:class="{ active: viewMode === 'table' }"
+						:aria-pressed="viewMode === 'table' ? 'true' : 'false'"
+						@click="setViewMode('table')">
+						{{ t('employees', 'Table') }}
+					</button>
+					<button
+						type="button"
+						class="view-switch-btn"
+						:class="{ active: viewMode === 'network' }"
+						:aria-pressed="viewMode === 'network' ? 'true' : 'false'"
+						@click="setViewMode('network')">
+						{{ t('employees', 'Network') }}
+					</button>
+				</div>
+				<div v-if="viewMode === 'network'" class="organigrama-network-actions">
+					<button type="button" class="view-switch-btn" @click="fitNetwork">
+						{{ t('employees', 'Fit') }}
+					</button>
+					<button
+						type="button"
+						class="view-switch-btn"
+						:class="{ active: networkEditMode }"
+						:aria-pressed="networkEditMode ? 'true' : 'false'"
+						@click="toggleNetworkEditMode">
+						{{ networkEditMode ? t('employees', 'Finish editing') : t('employees', 'Edit relationships') }}
+					</button>
+				</div>
+			</div>
 			<div class="organigrama-hint" :class="{ 'organigrama-hint--active': connectMode }">
 				<span>{{ viewHint }}</span>
 				<button
@@ -34,33 +75,6 @@
 					class="organigrama-network"
 					:Employee="employees"
 					:relaciones="relaciones" />
-
-				<div class="organigrama-view-switch">
-					<button
-						type="button"
-						class="view-switch-btn"
-						:class="{ active: viewMode === 'network' }"
-						:aria-pressed="viewMode === 'network' ? 'true' : 'false'"
-						@click="setViewMode('network')">
-						{{ t('employees', 'Network') }}
-					</button>
-					<button
-						type="button"
-						class="view-switch-btn"
-						:class="{ active: viewMode === 'traditional' }"
-						:aria-pressed="viewMode === 'traditional' ? 'true' : 'false'"
-						@click="setViewMode('traditional')">
-						{{ t('employees', 'Organization chart') }}
-					</button>
-					<button
-						type="button"
-						class="view-switch-btn"
-						:class="{ active: viewMode === 'table' }"
-						:aria-pressed="viewMode === 'table' ? 'true' : 'false'"
-						@click="setViewMode('table')">
-						{{ t('employees', 'Table') }}
-					</button>
-				</div>
 			</div>
 		</template>
 	</div>
@@ -98,6 +112,7 @@ export default {
 			relaciones: [],
 			posiciones: {},
 			connectMode: false,
+			networkEditMode: false,
 			connectionSourceId: null,
 			connectionPending: false,
 			viewMode: 'traditional',
@@ -129,6 +144,9 @@ export default {
 			}
 			if (this.viewMode === 'table') {
 				return t('employees', 'Expand a manager to see all their direct and indirect reports.')
+			}
+			if (!this.networkEditMode) {
+				return t('employees', 'Network view is read-only. Select Edit relationships to change reporting lines.')
 			}
 			return t('employees', 'Drag an avatar to move it. To create a connection, double-click the manager and then click their dependent. Double-click a connection to remove it.')
 		},
@@ -184,6 +202,16 @@ export default {
 					this.network.fit()
 				})
 			}
+		},
+
+		fitNetwork() {
+			this.network?.fit({ animation: true })
+		},
+
+		toggleNetworkEditMode() {
+			this.networkEditMode = !this.networkEditMode
+			if (!this.networkEditMode) this.exitConnectMode()
+			this.initializeNetwork()
 		},
 
 		async cargarDatos() {
@@ -351,6 +379,7 @@ export default {
 					brokenImage: this.avatarUrl(emp.id_user),
 					size: 28,
 					physics: false,
+					fixed: !this.networkEditMode,
 				}
 
 				if (guardada) {
@@ -439,6 +468,7 @@ export default {
 			this.network.fit()
 
 			this.network.on('dragEnd', (params) => {
+				if (!this.networkEditMode) return
 				if (params.nodes.length === 1) {
 					const idEmployee = params.nodes[0]
 					const pos = this.network.getPositions([idEmployee])[idEmployee]
@@ -449,6 +479,7 @@ export default {
 			})
 
 			this.network.on('doubleClick', (params) => {
+				if (!this.networkEditMode) return
 				if (params.nodes.length === 1) {
 					if (!this.connectMode) {
 						this.enterConnectMode(params.nodes[0])
@@ -463,6 +494,7 @@ export default {
 			})
 
 			this.network.on('click', (params) => {
+				if (!this.networkEditMode) return
 				if (!this.connectMode || params.nodes.length !== 1) return
 				this.completeConnection(params.nodes[0])
 			})
@@ -587,6 +619,14 @@ export default {
 	height: 100%;
 }
 
+.organigrama-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 0;
+}
+
 .organigrama-hint {
 	display: flex;
 	align-items: center;
@@ -634,18 +674,18 @@ export default {
 }
 
 .organigrama-view-switch {
-	position: absolute;
-	left: 16px;
-	bottom: 16px;
-	z-index: 10;
 	display: inline-flex;
 	gap: 2px;
 	padding: 4px;
 	background: var(--color-main-background);
 	border: 1px solid var(--color-border);
 	border-radius: 999px;
-	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14);
-	backdrop-filter: blur(8px);
+}
+
+.organigrama-network-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 }
 
 .view-switch-btn {
@@ -672,11 +712,17 @@ export default {
 }
 
 @media (max-width: 600px) {
+	.organigrama-toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
 	.organigrama-view-switch {
-		right: 8px;
-		bottom: 8px;
-		left: 8px;
 		justify-content: center;
+	}
+
+	.organigrama-network-actions {
+		justify-content: flex-end;
 	}
 
 	.view-switch-btn {

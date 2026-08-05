@@ -7,9 +7,9 @@ namespace OCA\Employees\Db;
 use OCP\AppFramework\Db\Entity;
 
 class FeePayment extends Entity {
-	public const NO_PAGADO = 0;
-	public const PAGADO = 1;
-	public const FACTURADO = 2;
+	public const UNPAID = 0;
+	public const PAID = 1;
+	public const INVOICED = 2;
 
 	/*-------------- Relación ---------------*/
 	protected ?int $idInstallment = null;

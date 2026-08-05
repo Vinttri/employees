@@ -202,7 +202,7 @@ class SettingsController extends Controller {
                 'admin_reports_group' => $this->config->getAppValue(
                     Application::APP_ID,
                     'reportes_admin_reports_group',
-                    'recursos_humanos'
+                    'hr'
                 ),
             ],
 
@@ -219,11 +219,11 @@ class SettingsController extends Controller {
     public function ActualizarConfiguracionReportes(): DataResponse {
         $adminReportsGroup = trim((string)$this->request->getParam(
             'admin_reports_group',
-            'recursos_humanos'
+            'hr'
         ));
 
         if ($adminReportsGroup === '') {
-            $adminReportsGroup = 'recursos_humanos';
+            $adminReportsGroup = 'hr';
         }
 
         if ($this->groupManager->get($adminReportsGroup) === null) {
@@ -418,7 +418,7 @@ class SettingsController extends Controller {
         $groupId = trim($this->config->getAppValue(
             Application::APP_ID,
             'reportes_admin_reports_group',
-            'recursos_humanos'
+            'hr'
         ));
 
         if ($groupId === '') {

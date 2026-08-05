@@ -1293,7 +1293,7 @@ export default {
 		},
 
 		isAdmin() {
-			return 'admin' in this.groupuser || 'recursos_humanos' in this.groupuser
+			return 'admin' in this.groupuser || 'hr' in this.groupuser
 		},
 
 		async updateList() {

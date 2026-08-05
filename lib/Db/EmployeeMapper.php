@@ -319,8 +319,8 @@ class EmployeeMapper extends QBMapper {
 	
 			$query->executeStatement();
 		}
-		catch(Exception $e){
-			console.log($e);
+		catch(\Throwable $e){
+			throw $e;
 		}
 	}
 
@@ -339,18 +339,18 @@ class EmployeeMapper extends QBMapper {
 	
 			$query->executeStatement();
 		}
-		catch(Exception $e){
-			console.log($e);
+		catch(\Throwable $e){
+			throw $e;
 		}
 	}
 
-    public function GetEmpleadosArea(string $id_area): array {
+    public function GetEmpleadosArea(int $id_area): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
+		$qb->select('e.*', 'u.displayname')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
-			->where($qb->expr()->eq('id_department', $qb->createNamedParameter($id_area)));
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('e.id_department', $qb->createNamedParameter($id_area, IQueryBuilder::PARAM_INT)));
 		
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());
@@ -359,13 +359,13 @@ class EmployeeMapper extends QBMapper {
 		return $users;
 	}
 
-	public function GetEmpleadosPuesto(string $id_position): array {
+	public function GetEmpleadosPuesto(int $id_position): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
+		$qb->select('e.*', 'u.displayname')
 			->from($this->getTableName(), 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
-			->where($qb->expr()->eq('id_position', $qb->createNamedParameter($id_position)));
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->where($qb->expr()->eq('e.id_position', $qb->createNamedParameter($id_position, IQueryBuilder::PARAM_INT)));
 		
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());
@@ -374,15 +374,15 @@ class EmployeeMapper extends QBMapper {
 		return $users;
 	}
 
-	public function GetEmpleadosEquipo(string $id_team): array {
+	public function GetEmpleadosEquipo(int $id_team): array {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('u.uid', 'e.*', 'u.displayname', 'a.*', 'i.*', 'e.id_employees') // Solo traemos Employee sin duplicar
+		$qb->select('e.*', 'u.displayname', 'a.days_available', 'i.id_savings', 'i.state')
 			->from('employees', 'e')
-			->innerJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
-			->innerJoin('e', 'absences', 'a', $qb->expr()->eq('a.id_employee', 'e.id_employees'))
-			->innerJoin('e', 'user_savings', 'i', $qb->expr()->eq('i.id_user', 'e.id_employees'))
-			->where($qb->expr()->eq('id_team', $qb->createNamedParameter($id_team)));
+			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
+			->leftJoin('e', 'absences', 'a', $qb->expr()->eq('a.id_employee', 'e.id_employees'))
+			->leftJoin('e', 'user_savings', 'i', $qb->expr()->eq('i.id_user', 'e.id_employees'))
+			->where($qb->expr()->eq('e.id_team', $qb->createNamedParameter($id_team, IQueryBuilder::PARAM_INT)));
 
 		$result = $qb->executeQuery();
 		$users = LegacyRowCompat::rows($result->fetchAll());
@@ -456,8 +456,8 @@ class EmployeeMapper extends QBMapper {
 			$query->executeStatement();
 			
 		}
-		catch(Exception $e){
-			console.log($e);
+		catch(\Throwable $e){
+			throw $e;
 		}
 	}
 
@@ -497,8 +497,8 @@ class EmployeeMapper extends QBMapper {
 			$query->executeStatement();
 			
 		}
-		catch(Exception $e){
-			echo $e;
+		catch(\Throwable $e){
+			throw $e;
 		}
 	}
 

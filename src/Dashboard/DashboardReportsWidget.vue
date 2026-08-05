@@ -166,6 +166,7 @@ export default {
 	display: flex;
 	justify-content: flex-end;
 }
+
 .status-card {
 	border: 1px solid var(--color-border);
 	border-radius: 12px;

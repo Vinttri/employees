@@ -9,6 +9,7 @@ use OCA\Employees\Db\PermissionGroupMapper;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\AppFramework\OCS\OCSForbiddenException;
 
 class PermissionsService {
 
@@ -174,7 +175,7 @@ class PermissionsService {
 			return;
 		}
 
-		throw new \Exception('🚫 No tienes permiso para acceder a este apartado. Contacta al administrador.');
+		throw new OCSForbiddenException('You do not have permission to access this section.');
 	}
 
 	public function requireCanSeeAny(array $permissionKeys, ?string $uid = null): void {
@@ -182,7 +183,7 @@ class PermissionsService {
 			return;
 		}
 
-		throw new \Exception('🚫 No tienes permiso para acceder a este apartado. Contacta al administrador.');
+		throw new OCSForbiddenException('You do not have permission to access this section.');
 	}
 
 	/*

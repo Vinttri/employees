@@ -43,6 +43,19 @@ abstract class BaseController extends OCSController {
 
         // Recomendado: IDs directos para evitar firmas antiguas
         $allowed = is_array($allowedGroups) ? $allowedGroups : [$allowedGroups];
+		$aliases = [
+			'recursos_humanos' => 'hr',
+			'empleados_admin' => 'employees_admin',
+			'ausencias_admin' => 'absences_admin',
+			'reportes_admin' => 'reports_admin',
+			'ti_admin' => 'it_admin',
+			'ti_tecnicos' => 'it_technicians',
+			'ti_consulta' => 'it_viewers',
+		];
+		$allowed = array_values(array_unique(array_map(
+			static fn($groupId) => $aliases[(string)$groupId] ?? (string)$groupId,
+			$allowed
+		)));
         $userGroupIds = $this->groupManager->getUserGroupIds($user);
 
         if (!array_intersect($userGroupIds, $allowed)) {
@@ -53,7 +66,7 @@ abstract class BaseController extends OCSController {
 
     public function AdminCheckAccess($flag = true): void {
         if (!$flag) {
-            $allowedGroups = ['admin', 'recursos_humanos'];
+            $allowedGroups = ['admin', 'hr'];
             $user = $this->userSession->getUser();
 
             if (!$user) {

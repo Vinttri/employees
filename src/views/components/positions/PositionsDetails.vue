@@ -84,17 +84,16 @@
 						</div>
 					</div>
 					<div class="position-hero__actions">
+						<NcButton type="primary" @click="showEdit()">
+							<template #icon>
+								<AccountEdit :size="20" />
+							</template>
+							{{ t('employees', 'Edit') }}
+						</NcButton>
 						<NcActions>
 							<template #icon>
 								<AccountCog :size="20" />
 							</template>
-
-							<NcActionButton :close-after-click="true" @click="showEdit()">
-								<template #icon>
-									<AccountEdit :size="20" />
-								</template>
-								{{ t('employees', 'Enable editing') }}
-							</NcActionButton>
 
 							<NcActionButton :close-after-click="true" @click="ChangeView()">
 								<template #icon>

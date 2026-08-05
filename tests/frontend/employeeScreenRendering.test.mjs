@@ -26,6 +26,14 @@ assert.doesNotMatch(employeeTab, /:user="Equipo\.jefe"/)
 assert.match(employeeTab, /employeeUidById\(equipo\.team_leader_id\)/)
 assert.match(employeeTab, /teamLeaderUid\(team\)/)
 
+const saveMethod = employeeDetails.slice(
+	employeeDetails.indexOf('async saveChanges()'),
+	employeeDetails.indexOf('\n\t\tDeactiveUserDialog'),
+)
+assert.match(saveMethod, /this\.\$bus\.emit\('getall'\)/)
+assert.match(saveMethod, /this\.show = false/)
+assert.doesNotMatch(saveMethod, /editSessionKey\+\+/)
+
 assert.match(network, /viewMode: 'traditional'/)
 assert.match(network, /data\?\.employees \?\? data\?\.Employee/)
 assert.match(network, /employees\.map\(this\.normalizeEmployee\)/)

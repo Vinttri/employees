@@ -35,6 +35,12 @@
 					<div>
 						<div class="position-hero__actions">
 							<div v-if="showOptions" class="button-container">
+								<NcButton type="primary" @click="edit()">
+									<template #icon>
+										<AccountEdit :size="20" />
+									</template>
+									{{ t('employees', 'Edit') }}
+								</NcButton>
 								<NcActions>
 									<template #icon>
 										<AccountCog :size="20" />
@@ -52,15 +58,6 @@
 									<NcActionSeparator v-if="showToggleEstado" />
 
 									<slot name="buttons" />
-									<NcActionButton
-										:close-after-click="true"
-										@click="edit()">
-										<template #icon>
-											<AccountEdit :size="20" />
-										</template>
-										{{ t('employees', 'Enable editing') }}
-									</NcActionButton>
-									<NcActionSeparator />
 									<NcActionButton
 										:close-after-click="true"
 										@click="showDialog = true">
@@ -109,6 +106,7 @@ import {
 	NcActions,
 	NcActionSeparator,
 	NcDialog,
+	NcButton,
 	// NcTextField,
 	// NcSelect,
 	// NcButton,
@@ -132,6 +130,7 @@ export default {
 		// NcActionButton,
 		DeleteAlert,
 		NcDialog,
+		NcButton,
 		// NcTextField,
 		// NcSelect,
 		// NcButton,

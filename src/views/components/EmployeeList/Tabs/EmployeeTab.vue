@@ -179,6 +179,7 @@
 								<div class="topRefresh MarginRight">
 									<NcCheckboxRadioSwitch
 										v-model="state"
+										:disabled="!show"
 										type="switch">
 										{{ state ? t('employees', 'Can request') : t('employees', 'Read-only mode') }}
 									</NcCheckboxRadioSwitch>
@@ -424,16 +425,6 @@
 					</div>
 				</div>
 
-				<br>
-				<div class="div-center">
-					<NcButton
-						v-if="show"
-						aria-label="Guardar"
-						type="primary"
-						@click="CambiosEmpleado()">
-						{{ t('employees', 'Apply changes') }}
-					</NcButton>
-				</div>
 			</div>
 
 			<div v-else class="top">
@@ -450,7 +441,7 @@
 								class="OnboardingItem-toggle-btn"
 								:class="{ active: boardingOn === 1 }"
 								:aria-pressed="boardingOn === 1 ? 'true' : 'false'"
-								:disabled="boardingLoading"
+								:disabled="!show || boardingLoading"
 								@click="setBoardingOn(1)">
 								{{ t('employees', 'On') }}
 							</button>
@@ -459,7 +450,7 @@
 								class="OnboardingItem-toggle-btn"
 								:class="{ active: boardingOn === 0 }"
 								:aria-pressed="boardingOn === 0 ? 'true' : 'false'"
-								:disabled="boardingLoading"
+								:disabled="!show || boardingLoading"
 								@click="setBoardingOn(0)">
 								{{ t('employees', 'Off') }}
 							</button>
@@ -482,7 +473,7 @@
 							:class="{ 'onboarding-item--done': isChecked(item) }">
 							<NcCheckboxRadioSwitch
 								:checked="isChecked(item)"
-								:disabled="boardingSavingId === item.id_employee_boarding"
+								:disabled="!show || boardingSavingId === item.id_employee_boarding"
 								@update:checked="value => toggleItemStatus(item, value)">
 								{{ item.name }}
 							</NcCheckboxRadioSwitch>
@@ -636,13 +627,6 @@ export default {
 
 	watch: {
 		// FIX: la firma correcta es (newVal, oldVal)
-		state(newVal, oldVal) {
-			// Solo enviar si realmente cambió
-			if (newVal !== oldVal) {
-				// true => '1' (puede solicitar), false => '0' (solo lectura)
-				this.cambioEstado(newVal ? '1' : '0')
-			}
-		},
 		async data(news) {
 			if (news) {
 				this.setAttr(
@@ -802,12 +786,8 @@ export default {
 			this.Vacaciones = this.checknull(Vacaciones)
 			this.Aniversario = this.checknull(Aniversario)
 
-			// Mapeo de status: '1' = puede solicitar; '0'/'2' = solo lectura
-			if (state === '0' || state === '2') {
-				this.state = false
-			} else if (state === '1') {
-				this.state = true
-			}
+			// `1` means the employee may submit savings requests.
+			this.state = Number(state) === 1
 
 			this.getAreas(this.area)
 			this.getPositions(this.puesto)
@@ -817,11 +797,11 @@ export default {
 		async getAreas(Area) {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetAreasFix'))
-				this.optionsarea = response?.data?.ocs?.data
-				if (Area && Area.length !== 0) {
-					this.area = this.optionsarea.find(areas => areas.value === parseInt(Area)).label
+				this.optionsarea = Array.isArray(response?.data?.ocs?.data) ? response.data.ocs.data : []
+				if (Area !== '' && Area !== null && Area !== undefined) {
+					this.area = this.optionsarea.find(area => String(area.value) === String(Area)) || null
 				} else {
-					this.area = ''
+					this.area = null
 				}
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepción [01] [{error}]', { error: String(err), close: true }))
@@ -831,11 +811,11 @@ export default {
 		async getPositions(Puesto) {
 			try {
 				const response = await axios.get(generateUrl('/apps/employees/GetPositionsFix'))
-				this.optionspuesto = response?.data?.ocs?.data
-				if (Puesto && Puesto.length !== 0) {
-					this.puesto = this.optionspuesto.find(role => role.value === parseInt(Puesto)).label
+				this.optionspuesto = Array.isArray(response?.data?.ocs?.data) ? response.data.ocs.data : []
+				if (Puesto !== '' && Puesto !== null && Puesto !== undefined) {
+					this.puesto = this.optionspuesto.find(position => String(position.value) === String(Puesto)) || null
 				} else {
-					this.puesto = ''
+					this.puesto = null
 				}
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepción [01] [{error}]', { error: String(err), close: true }))
@@ -853,13 +833,14 @@ export default {
 					value: equipo.id_team,
 					label: equipo.name,
 					team_leader_id: equipo.team_leader_id,
-					leader_uid: this.employeeUidById(equipo.team_leader_id),
-					leader_name: this.employeeNameById(equipo.team_leader_id),
+					leader_uid: this.employeeUidById(equipo.team_leader_id)
+						|| this.teamLeaderUidFromValue(equipo.team_leader_id),
+					leader_name: this.teamLeaderNameFromValue(equipo.team_leader_id),
 				}))
-				if (Equipo && Equipo.length !== 0) {
-					this.Equipo = this.optionsteams.find(role => role.value === parseInt(Equipo))
+				if (Equipo !== '' && Equipo !== null && Equipo !== undefined) {
+					this.Equipo = this.optionsteams.find(role => String(role.value) === String(Equipo)) || null
 				} else {
-					this.Equipo = ''
+					this.Equipo = null
 				}
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepción [01] [{error}]', { error: String(err), close: true }))
@@ -881,16 +862,31 @@ export default {
 		},
 
 		teamLeaderUid(team) {
-			return String(team?.leader_uid || this.employeeUidById(team?.team_leader_id) || '')
+			return String(team?.leader_uid || this.teamLeaderUidFromValue(team?.team_leader_id) || '')
 		},
 
 		teamLeaderName(team) {
-			return String(team?.leader_name || this.employeeNameById(team?.team_leader_id) || this.teamLeaderUid(team))
+			return String(team?.leader_name || this.teamLeaderNameFromValue(team?.team_leader_id) || this.teamLeaderUid(team))
+		},
+
+		teamLeaderUidFromValue(value) {
+			const raw = String(value ?? '').trim()
+			if (!raw) return ''
+			if (!/^\d+$/.test(raw)) return raw
+			return this.employeeUidById(raw)
+		},
+
+		teamLeaderNameFromValue(value) {
+			const uid = this.teamLeaderUidFromValue(value)
+			if (!uid) return ''
+			const employee = (Array.isArray(this.Employee) ? this.Employee : [])
+				.find(item => String(item.id_user) === uid)
+			return String(employee?.displayname || uid)
 		},
 
 		async GetAllEquipo(equipo) {
 			try {
-				if (equipo !== '' || equipo !== null || equipo !== undefined) {
+				if (equipo !== '' && equipo !== null && equipo !== undefined) {
 					const response = await axios.get(generateUrl('/apps/employees/GetEmpleadosEquipo/' + equipo))
 					const data = response?.data?.ocs?.data
 					this.peopleEquipo = data
@@ -939,7 +935,20 @@ export default {
 			return value ?? ''
 		},
 
-		async CambiosEmpleado() {
+		normalizeEmployeeForeignKey(value) {
+			const raw = value?.id ?? value?.value ?? value
+			if (raw === '' || raw === null || raw === undefined) return null
+			if (/^\d+$/.test(String(raw))) return Number(raw)
+			const employee = (Array.isArray(this.Employee) ? this.Employee : [])
+				.find(item => String(item.id_user) === String(raw))
+			return employee ? Number(employee.id_employees) : null
+		},
+
+		async saveFromEmployeeToolbar() {
+			return this.CambiosEmpleado(false)
+		},
+
+		async CambiosEmpleado(closeEditing = true) {
 			try {
 				this.areaSend = this.area?.value
 				this.puestoSend = this.puesto?.value
@@ -952,8 +961,9 @@ export default {
 					this.puestoSend = this.optionspuesto.find(role => role.label === this.puesto)?.value || ''
 				}
 
-				this.socio = this.socio?.id || this.socio
-				this.gerente = this.gerente?.id || this.gerente
+				const partnerId = this.normalizeEmployeeForeignKey(this.socio)
+				const managerId = this.normalizeEmployeeForeignKey(this.gerente)
+				const teamId = this.Equipo?.value ?? this.Equipo ?? null
 
 				await axios.post(generateUrl('/apps/employees/CambiosEmpleado'), {
 					id_employees: this.data.id_employees,
@@ -961,13 +971,13 @@ export default {
 					hireDate: this.checknull(this.hire_date),
 					area: this.checknull(this.areaSend),
 					puesto: this.checknull(this.puestoSend),
-					socio: this.socio,
-					gerente: this.checknull(this.gerente),
+					socio: partnerId,
+					gerente: managerId,
 					fundCode: this.checknull(this.fund_code),
 					savingsFund: this.checknull(this.savings_fund),
 					accountNumber: this.checknull(this.number_account),
 					assignedTeam: '',
-					equipo: this.Equipo.value,
+					equipo: teamId === '' ? null : teamId,
 					salary: this.checknull(this.salary),
 					id_anniversary: this.checknull(this.Aniversario),
 					days_available: this.checknull(this.Vacaciones),
@@ -979,12 +989,17 @@ export default {
 					this.Teams_asignados = this.normalizeInventoryTeamsResponse(response, 'Team')
 					showSuccess(t('employees', 'Equipment assigned successfully'), { close: true })
 				}
-				this.GetAllEquipo(this.Equipo.value)
-				this.$bus.emit('getall')
-				this.$bus.emit('show', false)
-				showSuccess(t('employees', 'Datos actualizados'), { close: true })
+				await this.cambioEstado(this.state ? '1' : '0')
+				await this.GetAllEquipo(teamId)
+				if (closeEditing) {
+					this.$bus.emit('getall')
+					this.$bus.emit('show', false)
+					showSuccess(t('employees', 'Data updated'), { close: true })
+				}
+				return true
 			} catch (err) {
 				showError(t('employees', 'Se ha producido una excepción [03] [{error}]', { error: String(err), close: true }))
+				return false
 			}
 		},
 

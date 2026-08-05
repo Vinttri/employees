@@ -88,11 +88,9 @@ class DepartmentMapper extends QBMapper {
 		$qb->executeStatement();
 	}
 
-	public function updateAreas(string $id_department, string $id_parent, string $name): void {
+	public function updateAreas(int $id_department, ?int $id_parent, string $name): void {
 		$timestamp = date('Y-m-d');
 
-		if (empty($id_department) && $id_department != 0) { $id_department = null; }
-		if (empty($id_parent) && $id_parent != 0) { $id_parent = null; }
 		if (empty($name) && $name != 0) { $name = null; }
 
 		$query = $this->db->getQueryBuilder();

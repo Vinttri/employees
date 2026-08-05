@@ -169,19 +169,6 @@
 			</div>
 		</section>
 
-		<br>
-
-		<!-- Apply changes -->
-		<div class="div-center">
-			<NcButton
-				v-if="show"
-				:aria-label="t('employees', 'Apply changes')"
-				type="primary"
-				@click="CambiosPersonal">
-				{{ t('employees', 'Apply changes') }}
-			</NcButton>
-		</div>
-
 		<NcDialog :open.sync="showContactDialog"
 			is-form
 			:buttons="contactDialogButtons"
@@ -441,7 +428,11 @@ export default {
 			return value === null ? '' : value
 		},
 
-		async CambiosPersonal() {
+		async saveFromEmployeeToolbar() {
+			return this.CambiosPersonal(false)
+		},
+
+		async CambiosPersonal(closeEditing = true) {
 			try {
 				await axios.post(generateUrl('/apps/employees/CambiosPersonal'), {
 					id_employees: this.data.id_employees,
@@ -457,11 +448,15 @@ export default {
 					email_contact: this.checknull(this.email_contact),
 					gender: this.checknull(this.gender),
 				})
-				this.$bus.emit('getall')
-				this.$bus.emit('show', false)
-				showSuccess(t('employees', 'data updated'))
+				if (closeEditing) {
+					this.$bus.emit('getall')
+					this.$bus.emit('show', false)
+					showSuccess(t('employees', 'Data updated'))
+				}
+				return true
 			} catch (err) {
 				showError(t('employees', 'An exception has occurred [03] [{error}]', { error: String(err) }))
+				return false
 			}
 		},
 	},

@@ -11,11 +11,11 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class ProfessionalFeeMapper extends QBMapper {
 
-	private FeePaymentMapper $parcialidadesMapper;
+	private FeePaymentMapper $feePaymentMapper;
 
 	public function __construct(
 		IDBConnection $db,
-		FeePaymentMapper $parcialidadesMapper
+		FeePaymentMapper $feePaymentMapper
 	) {
 		parent::__construct(
 			$db,
@@ -25,7 +25,7 @@ class ProfessionalFeeMapper extends QBMapper {
 
 		$this->primaryKey = 'id_fee';
 
-		$this->parcialidadesMapper = $parcialidadesMapper;
+		$this->feePaymentMapper = $feePaymentMapper;
 	}
 
 	/**
@@ -102,7 +102,7 @@ class ProfessionalFeeMapper extends QBMapper {
 		}
 
 		$ids = array_map(static fn ($row) => (int)$row['id_fee'], $data);
-		$sums = $this->parcialidadesMapper->sumByHonorarios($ids);
+		$sums = $this->feePaymentMapper->sumByFees($ids);
 
 		foreach ($data as &$row) {
 			$row['monto_acumulado'] = $sums[(int)$row['id_fee']] ?? 0.0;
@@ -117,7 +117,7 @@ class ProfessionalFeeMapper extends QBMapper {
 	 */
 	public function deleteById(int $id): void {
 
-		$this->parcialidadesMapper->deleteByHonorario($id);
+		$this->feePaymentMapper->deleteByFee($id);
 
 		$qb = $this->db->getQueryBuilder();
 
@@ -139,7 +139,7 @@ class ProfessionalFeeMapper extends QBMapper {
 		$ProfessionalFee = $this->findByCliente($id_client);
 
 		foreach ($ProfessionalFee as $honorario) {
-			$this->parcialidadesMapper->deleteByHonorario(
+			$this->feePaymentMapper->deleteByFee(
 				(int)$honorario['id_fee']
 			);
 		}
@@ -184,7 +184,7 @@ class ProfessionalFeeMapper extends QBMapper {
 			2
 		);
 
-		$this->parcialidadesMapper->generarParcialidades(
+		$this->feePaymentMapper->generateInstallments(
 			$id,
 			$parcialidades,
 			$importeParcialidad,
@@ -267,7 +267,7 @@ class ProfessionalFeeMapper extends QBMapper {
 			);
 
 		if (
-			$this->parcialidadesMapper->tienePagosRegistrados(
+			$this->feePaymentMapper->hasRegisteredPayments(
 				$id_fee
 			)
 		) {
@@ -278,7 +278,7 @@ class ProfessionalFeeMapper extends QBMapper {
 		
 		$qb->executeStatement();
 
-		$this->parcialidadesMapper->deleteByHonorario(
+		$this->feePaymentMapper->deleteByFee(
 			$id_fee
 		);
 
@@ -288,7 +288,7 @@ class ProfessionalFeeMapper extends QBMapper {
 				2
 			);
 
-		$this->parcialidadesMapper->generarParcialidades(
+		$this->feePaymentMapper->generateInstallments(
 			$id_fee,
 			$parcialidades,
 			$importeParcialidad,

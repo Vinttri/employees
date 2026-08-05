@@ -318,14 +318,14 @@ export default {
 		},
 
 		async crearArea() {
-			const padreValor = (this.padre && this.padre.label) ? this.padre.label : ''
+			const parentId = this.padre?.value ?? this.padre ?? null
 			if (this.nombre_area.trim() === '') {
 				showError(t('employees', 'The area/department name cannot be empty.'))
 				return
 			}
 			try {
 				await axios.post(generateUrl('/apps/employees/crearArea'), {
-					padre: padreValor,
+					padre: parentId === '' || parentId === null ? null : Number(parentId),
 					name: this.nombre_area,
 				}).then(
 					() => {

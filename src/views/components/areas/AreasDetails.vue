@@ -79,18 +79,16 @@
 						</div>
 					</div>
 					<div class="area-hero__actions">
+						<NcButton type="primary" @click="showEdit()">
+							<template #icon>
+								<AccountEdit :size="20" />
+							</template>
+							{{ t('employees', 'Edit') }}
+						</NcButton>
 						<NcActions>
 							<template #icon>
 								<AccountCog :size="20" />
 							</template>
-							<NcActionButton
-								:close-after-click="true"
-								@click="showEdit()">
-								<template #icon>
-									<AccountEdit :size="20" />
-								</template>
-								{{ t('employees', 'Enable editing') }}
-							</NcActionButton>
 							<NcActionButton
 								:close-after-click="true"
 								@click="ChangeView()">
@@ -353,16 +351,12 @@ export default {
 		},
 
 		async guardarcambioarea() {
-			if (this.padre == null) {
-				this.padre = ''
-			} else if (this.padre.label) {
-				this.padre = this.padre.label
-			}
+			const parentId = this.padre?.value ?? this.padre ?? null
 
 			try {
 				await axios.post(generateUrl('/apps/employees/GuardarCambioArea'), {
 					id_department: this.data.id_department,
-					padre: this.padre,
+					padre: parentId === '' ? null : Number(parentId),
 					name: this.area,
 				})
 				showSuccess(this.t('employees', 'Área actualizada exitosamente'))

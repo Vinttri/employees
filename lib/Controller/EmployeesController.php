@@ -192,7 +192,7 @@ class EmployeesController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function GetEmpleadosArea(string $id_area): DataResponse {
+    public function GetEmpleadosArea(int $id_area): DataResponse {
         $this->requireHumanResourcesAccess();
         return new DataResponse([
             'area' => $this->EmployeeMapper->GetEmpleadosArea($id_area)
@@ -204,7 +204,7 @@ class EmployeesController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function GetEmpleadosPuesto(string $id_position): DataResponse {
+    public function GetEmpleadosPuesto(int $id_position): DataResponse {
         $this->requireHumanResourcesAccess();
         return new DataResponse([
             'puesto' => $this->EmployeeMapper->GetEmpleadosPuesto($id_position)
@@ -216,7 +216,7 @@ class EmployeesController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function GetEmpleadosEquipo(string $id_team): DataResponse {
+    public function GetEmpleadosEquipo(int $id_team): DataResponse {
         $this->requireHumanResourcesAccess();
         return new DataResponse([
             'equipo' => $this->EmployeeMapper->GetEmpleadosEquipo($id_team)

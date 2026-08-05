@@ -319,7 +319,7 @@ export default {
 
 	computed: {
 		isAdmin() {
-			return this.hasGroup('admin') || this.hasGroup('recursos_humanos')
+			return this.hasGroup('admin') || this.hasGroup('hr')
 		},
 
 		currentEmployee() {

@@ -59,4 +59,29 @@ class InventoryMovement extends Entity {
 		$this->addType('changes', 'string');
 		$this->addType('date', 'string');
 	}
+
+	/** Natural English aliases for the legacy column-order accessors. */
+	public function getMovementType(): ?string {
+		return $this->getTypeMovement();
+	}
+
+	public function setMovementType(string $movementType): void {
+		$this->setTypeMovement($movementType);
+	}
+
+	public function getPreviousEmployeeUid(): ?string {
+		return $this->getEmployeePreviousUid();
+	}
+
+	public function getPreviousEmployeeName(): ?string {
+		return $this->getEmployeePreviousName();
+	}
+
+	public function getNewEmployeeUid(): ?string {
+		return $this->getEmployeeNewUid();
+	}
+
+	public function getNewEmployeeName(): ?string {
+		return $this->getEmployeeNewName();
+	}
 }

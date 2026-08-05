@@ -12,21 +12,33 @@
 
 		<!-- Employee info -->
 		<div v-else class="container">
-			<div class="container-search-profile">
-				<div class="button-container-profile">
+			<div class="employee-edit-toolbar" :class="{ 'employee-edit-toolbar--active': show }">
+				<div v-if="show" class="employee-edit-toolbar__state">
+					<AccountEdit :size="20" />
+					<span>{{ t('employees', 'Editing') }}</span>
+				</div>
+				<div class="employee-edit-toolbar__actions">
+					<NcButton v-if="!show" type="primary" @click="startEditing">
+						<template #icon>
+							<AccountEdit :size="20" />
+						</template>
+						{{ t('employees', 'Edit') }}
+					</NcButton>
+					<template v-else>
+						<NcButton :disabled="saving" @click="cancelEditing">
+							{{ t('employees', 'Cancel') }}
+						</NcButton>
+						<NcButton type="primary" :disabled="saving" @click="saveChanges">
+							<template #icon>
+								<NcLoadingIcon v-if="saving" :size="20" />
+							</template>
+							{{ saving ? t('employees', 'Saving...') : t('employees', 'Save changes') }}
+						</NcButton>
+					</template>
 					<NcActions>
 						<template #icon>
 							<AccountCog :size="20" />
 						</template>
-
-						<NcActionButton :close-after-click="true" @click="showEdit">
-							<template #icon>
-								<AccountEdit :size="20" />
-							</template>
-							{{ show ? t('employees', 'Disable editing') : t('employees', 'Enable editing') }}
-						</NcActionButton>
-
-						<NcActionSeparator />
 
 						<NcActionButton :close-after-click="true" :disabled="true">
 							<template #icon>
@@ -67,12 +79,14 @@
 
 			<!-- Tabs -->
 			<div class="center">
-				<VueTabs active-tab-color="#fdb913c"
+				<VueTabs active-tab-color="var(--color-primary-element)"
 					active-text-color="white"
 					type="grow"
 					centered>
 					<VTab :title="t('employees', 'Employee')">
 						<EmployeeTab
+							:key="`employee-${editSessionKey}`"
+							ref="employeeTab"
 							:data="data"
 							:show="show"
 							:Employee="employeesProp"
@@ -81,6 +95,8 @@
 
 					<VTab :title="t('employees', 'Notes')">
 						<NotesTab
+							:key="`notes-${editSessionKey}`"
+							ref="notesTab"
 							:data="data"
 							:show="show"
 							:Employee="employeesProp"
@@ -88,7 +104,12 @@
 					</VTab>
 
 					<VTab :title="t('employees', 'Personal')">
-						<PersonalDetailsTab :data="data" :show="show" :Employee="employeesProp" />
+						<PersonalDetailsTab
+							:key="`personal-${editSessionKey}`"
+							ref="personalTab"
+							:data="data"
+							:show="show"
+							:Employee="employeesProp" />
 					</VTab>
 
 					<VTab :title="t('employees', 'Files')">
@@ -133,15 +154,15 @@ import AccountEdit from 'vue-material-design-icons/AccountEdit.vue'
 import AccountCog from 'vue-material-design-icons/AccountCog.vue'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import {
 	NcAvatar,
 	NcActions,
 	NcActionButton,
-	NcActionSeparator,
 	NcDialog,
 	NcButton,
+	NcLoadingIcon,
 } from '@nextcloud/vue'
 
 export default {
@@ -159,9 +180,9 @@ export default {
 		NcAvatar,
 		NcActions,
 		NcActionButton,
-		NcActionSeparator,
 		NcDialog,
 		NcButton,
+		NcLoadingIcon,
 		OrgChartNetwork,
 	},
 	inject: ['Settings'],
@@ -178,6 +199,8 @@ export default {
 	data() {
 		return {
 			show: false,
+			saving: false,
+			editSessionKey: 0,
 			automatic_save_note: this.Settings.automatic_save_note,
 			showDeactiveUserDialog: false,
 			SelectedEmpleado: null,
@@ -222,6 +245,12 @@ export default {
 			this.automatic_save_note = 'true'
 		}
 	},
+	watch: {
+		data() {
+			this.show = false
+			this.editSessionKey++
+		},
+	},
 	methods: {
 		t,
 
@@ -233,9 +262,36 @@ export default {
 			const timestamp = Date.now()
 			return generateUrl(`/avatar/${uid}/${size}`) + `?v=${timestamp}`
 		},
-		showEdit() {
-			this.show = !this.show
-			if (this.show) this.$bus.emit('getall')
+		startEditing() {
+			this.show = true
+		},
+		cancelEditing() {
+			this.show = false
+			this.editSessionKey++
+		},
+		async saveChanges() {
+			if (this.saving) return
+			this.saving = true
+			try {
+				const editors = [
+					this.$refs.employeeTab,
+					this.$refs.personalTab,
+					this.$refs.notesTab,
+				].filter(Boolean)
+				for (const editor of editors) {
+					const save = editor.saveFromEmployeeToolbar
+					if (typeof save !== 'function') continue
+					const saved = await save.call(editor)
+					if (saved === false) return
+				}
+				this.$bus.emit('getall')
+				this.show = false
+				showSuccess(this.t('employees', 'Data updated'))
+			} catch (error) {
+				showError(this.t('employees', 'Could not save changes: {error}', { error: String(error) }))
+			} finally {
+				this.saving = false
+			}
 		},
 		DeactiveUserDialog(IdEmpleado) {
 			this.showDeactiveUserDialog = true
@@ -305,7 +361,29 @@ export default {
 .contacts-list { max-height: calc(100vh - var(--header-height) - 48px); overflow: auto; }
 .contacts-list__header { min-height: 48px; }
 .margin-left-icon { margin-right: 20px; }
-.button-container-profile { margin-top: -30px; position: absolute; right: 30px; z-index: 9999; }
+.employee-edit-toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 30;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	min-height: 52px;
+	padding: 8px 12px;
+	border-bottom: 1px solid transparent;
+	background: var(--color-main-background);
+}
+.employee-edit-toolbar--active { border-color: var(--color-border); }
+.employee-edit-toolbar__state {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-right: auto;
+	color: var(--color-main-text);
+	font-weight: 600;
+}
+.employee-edit-toolbar__actions { display: flex; align-items: center; gap: 8px; }
 .well { margin: 0 auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
 .user-card { display: flex; align-items: center; padding: 0 10px 10px; }
 .info { display: flex; flex-direction: column; }

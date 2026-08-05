@@ -205,7 +205,7 @@ class AbsencesController extends BaseController {
         $user = $this->userSession->getUser();
         $uid = $user->getUID();
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin')
-                    || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                    || $this->groupManager->isInGroup($uid, 'hr');
 
         $empleados_data = [];
         $ids_vistos = [];
@@ -522,7 +522,7 @@ class AbsencesController extends BaseController {
 
             $uid = $user->getUID();
             $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                            $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                            $this->groupManager->isInGroup($uid, 'hr');
 
             if ($isPrivileged) {
                 $user =  $this->userManager->get($this->request->getParam('id_usuario'));
@@ -880,7 +880,7 @@ class AbsencesController extends BaseController {
         $user = $this->userSession->getUser();
 
         $id_employee = $this->EmployeeMapper->GetMyEmployeeInfo($user->getUID());
-        $equipo_empleado = $this->EmployeeMapper->GetEmpleadosEquipo($id_employee[0]['id_team']);
+        $equipo_empleado = $this->EmployeeMapper->GetEmpleadosEquipo((int)$id_employee[0]['id_team']);
 
         $response = [];
 
@@ -916,7 +916,7 @@ class AbsencesController extends BaseController {
 
         $user = $this->userSession->getUser();
         $isPrivileged = $this->groupManager->isInGroup($user->getUID(), 'admin')
-                    || $this->groupManager->isInGroup($user->getUID(), 'recursos_humanos');
+                    || $this->groupManager->isInGroup($user->getUID(), 'hr');
 
         $equipo_empleado = $this->EmployeeMapper->GetSubordinates($user->getUID());
 
@@ -964,14 +964,14 @@ class AbsencesController extends BaseController {
         $uid = $user->getUID();
 
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                        $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                        $this->groupManager->isInGroup($uid, 'hr');
 
         // Solo obtener equipo si no es privilegiado
         $ids_equipo = [];
         if (!$isPrivileged) {
             $id_employee = $this->EmployeeMapper->GetMyEmployeeInfo($uid);
             if (!empty($id_employee) && !empty($id_employee[0]['id_team'])) {
-                $equipo_empleado = $this->EmployeeMapper->GetEmpleadosEquipo($id_employee[0]['id_team']);
+                $equipo_empleado = $this->EmployeeMapper->GetEmpleadosEquipo((int)$id_employee[0]['id_team']);
                 $ids_equipo = array_map(fn($e) => (int) $e['id_employees'], $equipo_empleado);
             }
         }
@@ -1039,7 +1039,7 @@ class AbsencesController extends BaseController {
 
             $user = $this->userSession->getUser();
             $uid = $user->getUID();
-            $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+            $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') || $this->groupManager->isInGroup($uid, 'hr');
 
             $reg = $this->AbsenceMapper->GetAusenciasById((int) $ausencia['absence_id']);
             $empleadoInfo = !empty($reg) ? $this->EmployeeMapper->GetMyEmployeeInfoByIdEmpleado((string) $reg[0]['id_employee']) : [];
@@ -1068,7 +1068,7 @@ class AbsencesController extends BaseController {
         $uid = $user->getUID();
 
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin')
-                    || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                    || $this->groupManager->isInGroup($uid, 'hr');
 
         if ($id <= 0) {
             return new DataResponse(
@@ -1159,7 +1159,7 @@ class AbsencesController extends BaseController {
             $uid = $user->getUID();
 
             $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                            $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                            $this->groupManager->isInGroup($uid, 'hr');
 
             // Obtener el registro actual para validar días y devolver los que ya se descontaron
             $registro = $this->AbsenceHistoryMapper->GetById($id);
@@ -1294,7 +1294,7 @@ class AbsencesController extends BaseController {
         $uid = $user->getUID();
 
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                        $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                        $this->groupManager->isInGroup($uid, 'hr');
 
         if ($isPrivileged && $this->request->getParam('id_usuario')) {
             $target = $this->userManager->get($this->request->getParam('id_usuario'));
@@ -1329,7 +1329,7 @@ class AbsencesController extends BaseController {
         $uid = $user->getUID();
 
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                        $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                        $this->groupManager->isInGroup($uid, 'hr');
 
         $desde = $this->request->getParam('desde');
         $hasta = $this->request->getParam('hasta');
@@ -1373,7 +1373,7 @@ class AbsencesController extends BaseController {
         $uid = $user->getUID();
 
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') ||
-                        $this->groupManager->isInGroup($uid, 'recursos_humanos');
+                        $this->groupManager->isInGroup($uid, 'hr');
 
         if (!$isPrivileged) {
             return new DataResponse(['success' => false, 'message' => []], Http::STATUS_FORBIDDEN);
@@ -1744,7 +1744,7 @@ class AbsencesController extends BaseController {
 
         $isPrivileged =
             $this->groupManager->isInGroup($uid, 'admin') ||
-            $this->groupManager->isInGroup($uid, 'recursos_humanos');
+            $this->groupManager->isInGroup($uid, 'hr');
 
         $esGerente = !empty($empleadoInfo)
             && $empleadoInfo[0]['id_manager'] === $uid;
@@ -1850,7 +1850,7 @@ class AbsencesController extends BaseController {
 
             $user = $this->userSession->getUser();
             $uid = $user->getUID();
-            $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+            $isPrivileged = $this->groupManager->isInGroup($uid, 'admin') || $this->groupManager->isInGroup($uid, 'hr');
 
            $autorizado = match ($role) {
                 'gerente' => !empty($empleadoInfo) && $empleadoInfo[0]['id_manager'] === $uid,
@@ -2089,7 +2089,7 @@ class AbsencesController extends BaseController {
         $user = $this->userSession->getUser();
         $uid = $user->getUID();
         $isPrivileged = $this->groupManager->isInGroup($uid, 'admin')
-            || $this->groupManager->isInGroup($uid, 'recursos_humanos');
+            || $this->groupManager->isInGroup($uid, 'hr');
     
         if (!$isPrivileged) {
             return new DataResponse(['success' => false, 'message' => 'Sin permiso'], Http::STATUS_FORBIDDEN);

@@ -23,9 +23,9 @@ class PermissionGroupsController extends Controller {
 			'description' => 'Grupo base para usuarios que pueden interactuar con el módulo de Employee.',
 		],
 		[
-			'id' => 'recursos_humanos',
-			'label' => 'Recursos Humanos',
-			'description' => 'Grupo base para administración de recursos humanos.',
+			'id' => 'hr',
+			'label' => 'Human Resources',
+			'description' => 'Base group for human resources administration.',
 		],
 	];
 

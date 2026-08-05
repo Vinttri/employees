@@ -157,9 +157,9 @@ class AreasController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function GuardarCambioArea(int $id_department, string $padre, string $name): DataResponse {
+	public function GuardarCambioArea(int $id_department, ?int $padre, string $name): DataResponse {
         $this->requireHumanResourcesAccess();
-        $this->DepartmentMapper->updateAreas((string) $id_department, $padre, $name);
+		$this->DepartmentMapper->updateAreas($id_department, $padre, $name);
         return new DataResponse(Http::STATUS_OK);
     }
 
@@ -168,7 +168,7 @@ class AreasController extends BaseController {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function crearArea(string $name, string $padre): DataResponse {
+	public function crearArea(string $name, ?int $padre = null): DataResponse {
         $this->requireHumanResourcesAccess();
         $timestamp = date('Y-m-d');
         $area = new Department();
