@@ -30,6 +30,7 @@ class PermissionsService {
 		'inventario' => 'modulo_inventario',
 		'soporte' => 'modulo_soporte',
 		'reporte_tiempos' => 'modulo_reporte_tiempos',
+		'payroll' => 'modulo_payroll',
 	];
 
 	public function __construct(

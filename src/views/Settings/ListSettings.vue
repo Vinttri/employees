@@ -73,6 +73,20 @@
 				<div class="modules-grid">
 					<div class="settings-card">
 						<div class="module-card-header">
+							<strong>{{ t('employees', 'Payroll module') }}</strong>
+							<span>{{ t('employees', 'Salary plans, monthly calculations, taxes and payment exports.') }}</span>
+						</div>
+
+						<NcCheckboxRadioSwitch
+							:checked="modulo_payroll"
+							type="switch"
+							@update:checked="onChangemodulo_payroll">
+							{{ t('employees', 'Enable payroll module') }}
+						</NcCheckboxRadioSwitch>
+					</div>
+
+					<div class="settings-card">
+						<div class="module-card-header">
 							<strong>{{ t('employees','Purchases module') }}</strong>
 							<span>{{ t('employees', 'Purchase requests, approvals, suppliers and tracking.') }}</span>
 						</div>
@@ -411,6 +425,7 @@ export default {
 			selected_admin_reports_group: null,
 			reportes_admin_reports_group: '',
 			modulo_purchases: false,
+			modulo_payroll: true,
 			logoDocumentoUrl: '',
 			loadingLogoDocumento: false,
 		}
@@ -448,6 +463,7 @@ export default {
 				this.modulo_inventario = (response.data.modulo_inventario === 'true')
 				this.modulo_soporte = (response.data.modulo_soporte === 'true')
 				this.modulo_purchases = (response.data.modulo_purchases === 'true')
+				this.modulo_payroll = (response.data.modulo_payroll !== 'false')
 
 				const reportes = response.data.Reportes || {}
 
@@ -607,6 +623,9 @@ export default {
 		},
 		onChangemodulo_purchases(checked) {
 			return this.updateBooleanSetting('modulo_purchases', 'modulo_purchases', checked, true)
+		},
+		onChangemodulo_payroll(checked) {
+			return this.updateBooleanSetting('modulo_payroll', 'modulo_payroll', checked, true)
 		},
 
 		revokeLogoDocumentoUrl() {

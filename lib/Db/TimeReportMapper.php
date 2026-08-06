@@ -1919,6 +1919,29 @@ class TimeReportMapper extends QBMapper {
 		return (int)$this->db->lastInsertId($this->getTableName());
 	}
 
+	/** Create a reviewed manual/AI time entry with typed nullable relations. */
+	public function createImported(array $data): int {
+		$now = date('Y-m-d H:i:s');
+		$clientId = $data['id_client'] ?? null;
+		$activityId = $data['id_activity'] ?? null;
+		$qb = $this->db->getQueryBuilder();
+		$qb->insert($this->getTableName())->values([
+			'id_employee' => $qb->createNamedParameter((int)$data['id_employee'], IQueryBuilder::PARAM_INT),
+			'id_client' => $qb->createNamedParameter($clientId, $clientId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
+			'id_activity' => $qb->createNamedParameter($activityId, $activityId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
+			'description' => $qb->createNamedParameter($data['description'] ?? null, isset($data['description']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			// Canonical time-report storage is minutes; the import contract uses decimal hours.
+			'recorded_time' => $qb->createNamedParameter(bcmul((string)$data['recorded_time'], '60', 4)),
+			'date_recorded' => $qb->createNamedParameter((string)$data['date_recorded']),
+			'source' => $qb->createNamedParameter('ai_import'),
+			'source_id' => $qb->createNamedParameter((int)$data['source_id'], IQueryBuilder::PARAM_INT),
+			'type_work' => $qb->createNamedParameter($clientId === null ? TimeReport::TIPO_INTERNO : TimeReport::TIPO_CLIENTE),
+			'created_at' => $qb->createNamedParameter($now),
+			'updated_at' => $qb->createNamedParameter($now),
+		])->executeStatement();
+		return (int)$this->db->lastInsertId($this->getTableName());
+	}
+
 	public function updateIntegrated(string $origin, int $originId, array $data): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())

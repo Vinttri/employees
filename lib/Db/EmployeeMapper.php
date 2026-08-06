@@ -104,11 +104,11 @@ class EmployeeMapper extends QBMapper {
 	}
 
 	public function createBaseRecord(string $uid, ?string $contactEmail = null): int {
-		$timestamp = date('Y-m-d');
+		$timestamp = date('Y-m-d H:i:s');
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert($this->getTableName())->values([
 			'id_user' => $qb->createNamedParameter($uid),
-			'email_contact' => $qb->createNamedParameter($contactEmail),
+			'email_contact' => $qb->createNamedParameter($contactEmail, $contactEmail === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR),
 			'status' => $qb->createNamedParameter('1'),
 			'created_at' => $qb->createNamedParameter($timestamp),
 			'updated_at' => $qb->createNamedParameter($timestamp),
@@ -141,6 +141,27 @@ class EmployeeMapper extends QBMapper {
 			->set('updated_at', $qb->createNamedParameter(date('Y-m-d')))
 			->where($qb->expr()->eq('id_employees', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)));
 		$qb->executeStatement();
+	}
+
+	/** Update only fields supported by the reviewed AI import contract. */
+	public function applyImportedProfile(int $employeeId, array $data): void {
+		$departmentId = $data['id_department'] ?? null;
+		$positionId = $data['id_position'] ?? null;
+		$teamId = $data['id_team'] ?? null;
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('number_employee', $qb->createNamedParameter($data['number_employee'] ?? null, isset($data['number_employee']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('hire_date', $qb->createNamedParameter($data['hire_date'] ?? null, isset($data['hire_date']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('email_contact', $qb->createNamedParameter($data['email_contact'] ?? null, isset($data['email_contact']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('id_department', $qb->createNamedParameter($departmentId, $departmentId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT))
+			->set('id_position', $qb->createNamedParameter($positionId, $positionId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT))
+			->set('id_team', $qb->createNamedParameter($teamId, $teamId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT))
+			->set('id_manager', $qb->createNamedParameter($data['id_manager'] ?? null, isset($data['id_manager']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('salary', $qb->createNamedParameter($data['salary'] ?? null, isset($data['salary']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('status', $qb->createNamedParameter('1', IQueryBuilder::PARAM_STR))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
+			->where($qb->expr()->eq('id_employees', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
 	}
 
     public function GetUserLists(): array {

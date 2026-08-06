@@ -66,6 +66,16 @@ class AbsenceTypeMapper extends QBMapper {
 		return $absence_types;
 	}
 
+	public function findIdByName(string $name): ?int {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('absence_type_id')->from($this->getTableName())
+			->where($qb->expr()->eq('name', $qb->createNamedParameter(trim($name))))
+			->setMaxResults(1)->executeQuery();
+		$id = $result->fetchOne();
+		$result->closeCursor();
+		return $id === false ? null : (int)$id;
+	}
+
 	/**
 	 * Crea un nuevo type de ausencia.
 	 */

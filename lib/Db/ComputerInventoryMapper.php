@@ -172,13 +172,15 @@ class ComputerInventoryMapper extends QBMapper {
 
 	public function create(array $data): int {
 		$now = date('Y-m-d H:i:s');
+		$employeeId = $data['id_employee'] ?? null;
+		$modelId = $data['id_model'] ?? null;
 
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->insert($this->getTableName())
 			->values([
-				'id_employee' => $qb->createNamedParameter($data['id_employee'] ?? null, IQueryBuilder::PARAM_INT),
-				'id_model' => $qb->createNamedParameter($data['id_model'] ?? null, IQueryBuilder::PARAM_INT),
+				'id_employee' => $qb->createNamedParameter($employeeId, $employeeId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
+				'id_model' => $qb->createNamedParameter($modelId, $modelId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
 				'device_name' => $qb->createNamedParameter($data['device_name'] ?? null),
 				'system_name' => $qb->createNamedParameter($data['system_name'] ?? null),
 				'serial_number' => $qb->createNamedParameter($data['serial_number'] ?? null),

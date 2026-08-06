@@ -16,6 +16,16 @@ class ActivityMapper extends QBMapper {
         parent::__construct($db, 'employee_activities', Activity::class);
     }
 
+	public function findIdByName(string $name): ?int {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('id_activity')->from($this->getTableName())
+			->where($qb->expr()->eq('name', $qb->createNamedParameter(trim($name))))
+			->setMaxResults(1)->executeQuery();
+		$id = $result->fetchOne();
+		$result->closeCursor();
+		return $id === false ? null : (int)$id;
+	}
+
 	    public function findById(int $id): array {
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')

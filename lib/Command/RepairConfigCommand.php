@@ -30,6 +30,7 @@ final class RepairConfigCommand extends Command {
 		'modulo_inventario' => 'false',
 		'modulo_soporte' => 'false',
 		'modulo_purchases' => 'false',
+		'modulo_payroll' => 'true',
 	];
 
 	/** Configuraciones almacenadas en oc_appconfig. */

@@ -61,6 +61,7 @@ final class RepairEmployeesTables implements IRepairStep {
             'modulo_inventario',
             'modulo_soporte',
             'modulo_purchases',
+            'modulo_payroll',
         ]);
 
         $output->info('RepairEmployeesTables: terminado.');

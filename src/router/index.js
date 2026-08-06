@@ -20,6 +20,8 @@ import QuickReport from '../views/components/reports/QuickReport.vue'
 import ReportCompliance from '../views/components/reports/ReportCompliance.vue'
 import Inventory from '../views/components/Inventory/Inventory.vue'
 import MyRequestsPurchases from '../views/components/Purchases/MyRequests.vue'
+import Payroll from '../views/components/Payroll/Payroll.vue'
+import AiImport from '../views/components/AiImport/AiImport.vue'
 
 Vue.use(Router)
 
@@ -134,6 +136,16 @@ export default new Router({
 			path: '/purchases',
 			name: 'purchases',
 			component: MyRequestsPurchases,
+		},
+		{
+			path: '/payroll',
+			name: 'Payroll',
+			component: Payroll,
+		},
+		{
+			path: '/ai-import',
+			name: 'AiImport',
+			component: AiImport,
 		},
 	],
 })

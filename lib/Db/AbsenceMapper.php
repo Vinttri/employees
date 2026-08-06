@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Employees\Db;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class AbsenceMapper extends QBMapper {
@@ -37,6 +38,17 @@ class AbsenceMapper extends QBMapper {
 		$result->closeCursor();
 
 		return $Absence;
+	}
+
+	/** @return array<string, mixed>|null */
+	public function findPrimaryForEmployee(int $employeeId): ?array {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('id_employee', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)))
+			->orderBy('id_anniversary', 'DESC')->setMaxResults(1)->executeQuery();
+		$row = LegacyRowCompat::row($result->fetch());
+		$result->closeCursor();
+		return $row ?: null;
 	}
 
 	public function CheckExistAreas($absence_id): array {

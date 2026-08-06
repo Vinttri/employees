@@ -22,6 +22,7 @@ class ConfigRepairer {
             'modulo_inventario',
             'modulo_soporte',
             'modulo_purchases',
+            'modulo_payroll',
         ];
 
         $table = 'employee_settings';
@@ -42,7 +43,9 @@ class ConfigRepairer {
                     $ib->insert($table)
                        ->values([
                            'name' => $ib->createNamedParameter($k),
-                           'data'   => $ib->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
+                           'data'   => $k === 'modulo_payroll'
+                               ? $ib->createNamedParameter('true')
+                               : $ib->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
                        ])
                        ->executeStatement();
                 }

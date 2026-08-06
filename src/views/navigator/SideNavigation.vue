@@ -25,6 +25,11 @@
 						<ViewDashboard :size="20" />
 					</template>
 				</NcAppNavigationItem>
+				<NcAppNavigationItem v-if="canSeeAiImport" :name="t('employees', 'AI import')" :to="{ name: 'AiImport' }">
+					<template #icon>
+						<AutoFix :size="20" />
+					</template>
+				</NcAppNavigationItem>
 			</NcAppNavigationList>
 
 			<!-- Human Resources -->
@@ -56,6 +61,21 @@
 					<NcAppNavigationItem :name="t('employees', 'Teams')" :to="{ name: 'Teams' }">
 						<template #icon>
 							<AccountGroup :size="20" />
+						</template>
+					</NcAppNavigationItem>
+				</NcAppNavigationList>
+			</div>
+
+			<!-- Payroll -->
+			<div v-if="payrollEnabled">
+				<NcAppNavigationCaption v-if="navigationMode === 'normal'"
+					:heading-id="t('employees', 'Compensation')"
+					is-heading
+					:name="t('employees', 'Compensation')" />
+				<NcAppNavigationList :aria-labelledby="t('employees', 'Compensation')">
+					<NcAppNavigationItem :name="t('employees', 'Payroll')" :to="{ name: 'Payroll' }">
+						<template #icon>
+							<CashMultiple :size="20" />
 						</template>
 					</NcAppNavigationItem>
 				</NcAppNavigationList>
@@ -225,6 +245,8 @@ import Laptop from 'vue-material-design-icons/Laptop.vue'
 import CartOutline from 'vue-material-design-icons/CartOutline.vue'
 import Cash from 'vue-material-design-icons/Cash.vue'
 import CalendarMonth from 'vue-material-design-icons/CalendarMonth.vue'
+import CashMultiple from 'vue-material-design-icons/CashMultiple.vue'
+import AutoFix from 'vue-material-design-icons/AutoFix.vue'
 
 import {
 	NcAppNavigation,
@@ -261,6 +283,8 @@ export default {
 		CartOutline,
 		Cash,
 		CalendarMonth,
+		CashMultiple,
+		AutoFix,
 	},
 
 	mixins: [permissionsMixin],
@@ -334,6 +358,17 @@ export default {
 
 		canSeePurchases() {
 			return this.canSee('purchases')
+		},
+
+		payrollEnabled() {
+			return this.isModuleEnabled('modulo_payroll')
+		},
+
+		canSeeAiImport() {
+			return this.canSeeAny([
+				'employees.admin', 'reporte_tiempos.admin', 'absences.admin',
+				'payroll.import', 'Client.admin', 'purchases.admin', 'inventario.admin',
+			])
 		},
 	},
 

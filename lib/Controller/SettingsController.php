@@ -62,6 +62,7 @@ class SettingsController extends Controller {
 		'modulo_inventario',
 		'modulo_soporte',
 		'modulo_purchases',
+		'modulo_payroll',
 	];
 	private $userSession;
 	private $SettingsMapper;
@@ -208,6 +209,7 @@ class SettingsController extends Controller {
             'modulo_inventario' => $configMap['modulo_inventario'] ?? 'false',
             'modulo_soporte' => $configMap['modulo_soporte'] ?? 'false',
             'modulo_purchases' => $configMap['modulo_purchases'] ?? 'false',
+            'modulo_payroll' => $configMap['modulo_payroll'] ?? 'true',
         );
 
         return $data;

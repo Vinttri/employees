@@ -95,6 +95,37 @@ class ClientMapper extends QBMapper {
 		return $data;
 	}
 
+	public function findIdByName(string $name): ?int {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('id')->from($this->getTableName())
+			->where($qb->expr()->eq('name', $qb->createNamedParameter(trim($name))))
+			->setMaxResults(1)->executeQuery();
+		$id = $result->fetchOne();
+		$result->closeCursor();
+		return $id === false ? null : (int)$id;
+	}
+
+	public function createClient(array $data): int {
+		$projectLeader = $data['project_leader'] ?? null;
+		$clientParent = $data['client_parent'] ?? null;
+		$qb = $this->db->getQueryBuilder();
+		$qb->insert($this->getTableName())->values([
+			'name' => $qb->createNamedParameter(trim((string)$data['name'])),
+			'details' => $qb->createNamedParameter($data['details'] ?? null, isset($data['details']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'project_leader' => $qb->createNamedParameter($projectLeader, $projectLeader === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
+			'collaborators' => $qb->createNamedParameter('[]'),
+			'legal_name' => $qb->createNamedParameter($data['legal_name'] ?? null, isset($data['legal_name']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'name_contact' => $qb->createNamedParameter($data['name_contact'] ?? null, isset($data['name_contact']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'phone' => $qb->createNamedParameter($data['phone'] ?? null, isset($data['phone']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'email' => $qb->createNamedParameter($data['email'] ?? null, isset($data['email']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'location' => $qb->createNamedParameter($data['location'] ?? null, isset($data['location']) ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL),
+			'special' => $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL),
+			'client_parent' => $qb->createNamedParameter($clientParent, $clientParent === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
+			'status' => $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
+		])->executeStatement();
+		return (int)$this->db->lastInsertId($this->getTableName());
+	}
+
 	public function deleteById(int $id): void {
 		$qb = $this->db->getQueryBuilder();
 

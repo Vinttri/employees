@@ -7,6 +7,8 @@ namespace OCA\Employees\AppInfo;
 use OCA\Employees\Command\SeedOfficialHolidays;
 use OCA\Employees\Command\SeedDemoDataCommand;
 use OCA\Employees\Listener\FileMovementListener;
+use OCA\Employees\Listener\AiImportTaskFailedListener;
+use OCA\Employees\Listener\AiImportTaskSuccessfulListener;
 use OCP\IDBConnection;
 use OCA\Employees\Cron\TimeReportsReminder;
 use OCA\Employees\Cron\VacationBonusReminder;
@@ -34,6 +36,8 @@ use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Files\IRootFolder;
 use OCP\IUserManager;
+use OCP\TaskProcessing\Events\TaskFailedEvent;
+use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'employees';
@@ -57,6 +61,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(NodeRenamedEvent::class, FileMovementListener::class);
 		$context->registerEventListener(NodeCopiedEvent::class, FileMovementListener::class);
 		$context->registerEventListener(NodeDeletedEvent::class, FileMovementListener::class);
+		$context->registerEventListener(TaskSuccessfulEvent::class, AiImportTaskSuccessfulListener::class);
+		$context->registerEventListener(TaskFailedEvent::class, AiImportTaskFailedListener::class);
 
 		$context->registerService(AnniversarySyncService::class, function($c) {
 			return new AnniversarySyncService(

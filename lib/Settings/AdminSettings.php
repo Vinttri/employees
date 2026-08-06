@@ -48,6 +48,7 @@ class AdminSettings implements ISettings {
             'modulo_inventario',
             'modulo_soporte',
             'modulo_purchases',
+            'modulo_payroll',
         ];
         $missing = array_diff($requiredKeys, array_keys($params));
 
