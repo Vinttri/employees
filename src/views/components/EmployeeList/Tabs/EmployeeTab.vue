@@ -225,7 +225,7 @@
 												<span v-if="option.status"
 													class="equipo-status"
 													:class="`equipo-status--${String(option.status).toLowerCase()}`">
-													{{ option.status }}
+													{{ inventoryStatusLabel(option.status) }}
 												</span>
 											</div>
 
@@ -267,7 +267,7 @@
 												<span v-if="equipo.status"
 													class="equipo-status"
 													:class="`equipo-status--${String(equipo.status).toLowerCase()}`">
-													{{ equipo.status }}
+													{{ inventoryStatusLabel(equipo.status) }}
 												</span>
 											</div>
 
@@ -497,6 +497,7 @@ import 'vue-nav-tabs/themes/vue-tabs.css'
 import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
 import permissionsMixin from '../../../../mixins/permissions.js'
+import { inventoryStatusLabel } from '../../../../utils/inventoryStatusLabel.js'
 
 // ICONOS
 import Badgeaccountoutline from 'vue-material-design-icons/BadgeAccountOutline.vue'
@@ -706,6 +707,7 @@ export default {
 
 	methods: {
 		t,
+		inventoryStatusLabel,
 
 		setViewMode(viewMode) {
 			this.viewMode = viewMode

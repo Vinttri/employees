@@ -153,6 +153,8 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
 
+import { localizeAbsenceText } from '../../../../utils/absenceTypeLabel.js'
+
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 import FileDocumentOutline from 'vue-material-design-icons/FileDocumentOutline.vue'
@@ -336,8 +338,8 @@ export default {
 				const response = await axios.get(generateUrl('/apps/employees/getType'))
 				this.TipoAusencias = response.data.map(item => ({
 					id: item.absence_type_id,
-					label: item.name,
-					description: item.description,
+					label: localizeAbsenceText(item.name),
+					description: localizeAbsenceText(item.description),
 					request_file: item.request_file,
 					request_bonus_vacation: item.request_bonus_vacation,
 				}))

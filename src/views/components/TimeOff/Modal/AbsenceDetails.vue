@@ -18,7 +18,7 @@
 			<div class="detalle-ausencia__grid">
 				<div class="info-item">
 					<span class="info-item__label">{{ t('employees', 'Absence type') }}</span>
-					<strong class="info-item__value">{{ ausencia.type_name }}</strong>
+					<strong class="info-item__value">{{ localizeAbsenceText(ausencia.type_name) }}</strong>
 				</div>
 
 				<div class="info-item">
@@ -136,6 +136,8 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
+
+import { localizeAbsenceText } from '../../../../utils/absenceTypeLabel.js'
 
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
@@ -317,6 +319,7 @@ export default {
 
 	methods: {
 		t,
+		localizeAbsenceText,
 
 		async fetchDetalle() {
 			this.loading = true

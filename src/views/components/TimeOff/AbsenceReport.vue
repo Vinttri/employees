@@ -331,7 +331,7 @@
 							</td>
 							<td>
 								<span class="badge-type" :style="colorTipo(item.absence_types)">
-									{{ item.absence_types }}
+									{{ localizeAbsenceText(item.absence_types) }}
 								</span>
 							</td>
 							<td>
@@ -404,7 +404,7 @@
 							{{ t('employees', 'Todos') }}
 						</option>
 						<option v-for="type in opcionesTipos" :key="type" :value="type">
-							{{ type }}
+							{{ localizeAbsenceText(type) }}
 						</option>
 					</select>
 				</div>
@@ -494,6 +494,8 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
+
+import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -672,6 +674,7 @@ export default {
 
 	methods: {
 		t,
+		localizeAbsenceText,
 
 		abrirInformePrima() {
 			if (!this.empleadoResumen) return

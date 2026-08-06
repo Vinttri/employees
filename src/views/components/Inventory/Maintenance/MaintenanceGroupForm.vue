@@ -33,7 +33,7 @@
 							</tr>
 						</thead><tbody>
 							<tr v-for="item in equipment" :key="item.id">
-								<td><input type="checkbox" :checked="selectedIds.includes(Number(item.id))" @change="toggleOne(item.id, $event.target.checked)"></td><td>{{ item.identifier || item.name || '—' }}</td><td>{{ [item.brand, item.model].filter(Boolean).join(' ') || '—' }}</td><td>{{ item.serialNumber || '—' }}</td><td>{{ item.employee?.name || '—' }}</td><td>{{ item.department?.name || '—' }}</td><td>{{ item.status || '—' }}</td>
+								<td><input type="checkbox" :checked="selectedIds.includes(Number(item.id))" @change="toggleOne(item.id, $event.target.checked)"></td><td>{{ item.identifier || item.name || '—' }}</td><td>{{ [item.brand, item.model].filter(Boolean).join(' ') || '—' }}</td><td>{{ item.serialNumber || '—' }}</td><td>{{ item.employee?.name || '—' }}</td><td>{{ item.department?.name || '—' }}</td><td>{{ inventoryStatusLabel(item.status) || '—' }}</td>
 							</tr>
 						</tbody>
 					</table><NcEmptyContent v-if="!equipment.length" :name="t('employees', 'No eligible devices found')" />
@@ -96,6 +96,7 @@ import { translate as t } from '@nextcloud/l10n'
 import { NcButton, NcEmptyContent, NcLoadingIcon, NcModal, NcNoteCard } from '@nextcloud/vue'
 import maintenanceService from '../../../../services/maintenanceService.js'
 import { addOneCalendarDay, formatDateRange, formatOptionalTimeRange, toggleSelectedEquipment } from '../../../../utils/maintenanceFormatters.js'
+import { inventoryStatusLabel } from '../../../../utils/inventoryStatusLabel.js'
 import MaintenanceConflictDialog from './MaintenanceConflictDialog.vue'
 export default {
 	name: 'MaintenanceGroupForm',
@@ -111,6 +112,7 @@ export default {
 	beforeDestroy() { clearTimeout(this.equipmentTimer) },
 	methods: {
 		t,
+		inventoryStatusLabel,
 		formatDateRange,
 		formatOptionalTimeRange,
 		departmentId(item) {

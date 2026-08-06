@@ -1151,7 +1151,7 @@ export default {
 					labels: datos.map(x => x.date),
 					datasets: [
 						{
-							label: 'Horas por día',
+							label: t('employees', 'Hours per day'),
 							data: datos.map(x => Number(x.total.toFixed(2))),
 							tension: 0.3,
 							fill: false,

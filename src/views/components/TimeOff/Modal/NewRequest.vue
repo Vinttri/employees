@@ -154,6 +154,8 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
 
+import { localizeAbsenceText } from '../../../../utils/absenceTypeLabel.js'
+
 // icons
 import Airplane from 'vue-material-design-icons/Airplane.vue'
 import FileDocumentOutline from 'vue-material-design-icons/FileDocumentOutline.vue'
@@ -468,8 +470,8 @@ export default {
 										|| !(item.request_bonus_vacation === 1 && this.diasSolicitados > this.TotalDias)))
 								.map(item => ({
 									id: item.absence_type_id,
-									label: item.name,
-									description: item.description,
+									label: localizeAbsenceText(item.name),
+									description: localizeAbsenceText(item.description),
 									request_file: item.request_file,
 									request_bonus_vacation: item.request_bonus_vacation,
 									private: item.private,

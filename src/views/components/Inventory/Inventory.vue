@@ -283,7 +283,7 @@
 									<span
 										class="status-pill"
 										:class="statusClass(equipo.status)">
-										{{ displayValue(equipo.status) }}
+										{{ inventoryStatusLabel(equipo.status) || displayValue(equipo.status) }}
 									</span>
 								</td>
 								<td>
@@ -642,11 +642,11 @@
 							</div>
 							<div v-if="entry.status_previous">
 								<dt>{{ t('employees', 'Previous status') }}</dt>
-								<dd>{{ entry.status_previous }}</dd>
+								<dd>{{ inventoryStatusLabel(entry.status_previous) }}</dd>
 							</div>
 							<div v-if="entry.status_new">
 								<dt>{{ t('employees', 'New status') }}</dt>
-								<dd>{{ entry.status_new }}</dd>
+								<dd>{{ inventoryStatusLabel(entry.status_new) }}</dd>
 							</div>
 						</dl>
 						<p v-if="entry.description" class="history-description">
@@ -812,6 +812,7 @@ import CalendarMonth from 'vue-material-design-icons/CalendarMonth.vue'
 
 import inventoryService from '../../../services/inventoryService.js'
 import { parseInventoryDeviceId } from '../../../utils/inventoryRoute.js'
+import { inventoryStatusLabel } from '../../../utils/inventoryStatusLabel.js'
 import { formatSupportDuration, isValidSupportDate } from '../../../utils/supportDuration.js'
 import SupportDurationFields from '../../../components/Inventory/SupportDurationFields.vue'
 import permissionsMixin from '../../../mixins/permissions.js'
@@ -1155,6 +1156,7 @@ export default {
 
 	methods: {
 		t,
+		inventoryStatusLabel,
 
 		async handleRouteDevice(value) {
 			if (value === undefined || value === null || value === '') return

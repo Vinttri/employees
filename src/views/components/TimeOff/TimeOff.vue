@@ -573,6 +573,8 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { getLanguage, translate as t } from '@nextcloud/l10n'
 
+import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
+
 import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 import AccountGroup from 'vue-material-design-icons/AccountGroup.vue'
 import CalendarQuestionOutline from 'vue-material-design-icons/CalendarQuestionOutline.vue'
@@ -1456,11 +1458,11 @@ export default {
 		},
 
 		notificationAbsenceType(item) {
-			return item.type_name
+			const type = item.type_name
 		|| item.absence_types
 		|| item.nombre_tipo
 		|| item.Tipo
-		|| t('employees', 'Absence request')
+			return localizeAbsenceText(type) || t('employees', 'Absence request')
 		},
 
 		notificationRequestedDays(item) {

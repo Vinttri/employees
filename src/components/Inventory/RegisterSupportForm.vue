@@ -70,7 +70,7 @@
 							<dt>{{ t('employees', 'Model') }}</dt><dd>{{ modelName }}</dd>
 						</div>
 						<div v-if="selectedDevice.status">
-							<dt>{{ t('employees', 'Status') }}</dt><dd>{{ selectedDevice.status }}</dd>
+							<dt>{{ t('employees', 'Status') }}</dt><dd>{{ inventoryStatusLabel(selectedDevice.status) }}</dd>
 						</div>
 						<div><dt>{{ t('employees', 'Responsible') }}</dt><dd>{{ responsibleName }}</dd></div>
 					</dl>
@@ -130,6 +130,7 @@ import Laptop from 'vue-material-design-icons/Laptop.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import Wrench from 'vue-material-design-icons/Wrench.vue'
 import inventoryService from '../../services/inventoryService.js'
+import { inventoryStatusLabel } from '../../utils/inventoryStatusLabel.js'
 import { formatSupportDuration, isValidSupportDate } from '../../utils/supportDuration.js'
 import SupportDurationFields from './SupportDurationFields.vue'
 
@@ -160,6 +161,7 @@ export default {
 	beforeDestroy() { this.cancelSearch() },
 	methods: {
 		t,
+		inventoryStatusLabel,
 		focusInitialField() { this.$refs.searchField?.$el?.querySelector('input')?.focus() },
 		scheduleSearch() { if (this.searchTimer) clearTimeout(this.searchTimer); const query = this.search.trim(); if (query.length < 2) { this.cancelSearch(); this.searchCompleted = false; this.results = []; return } const sequence = ++this.searchSequence; this.searchTimer = setTimeout(() => this.searchDevices(query, sequence), 400) },
 		async searchDevices(query, sequence) { if (sequence !== this.searchSequence || query !== this.search.trim()) return; this.searching = true; this.searchCompleted = false; try { const response = await inventoryService.getTeams({ search: query, limit: 8, offset: 0 }); if (sequence !== this.searchSequence) return; this.results = this.normalizeDevices(response?.data).slice(0, 8); this.searchCompleted = true } catch (error) { if (sequence !== this.searchSequence) return; this.results = []; this.searchCompleted = true; showError(t('employees', 'Devices could not be loaded.')) } finally { if (sequence === this.searchSequence) this.searching = false } },
