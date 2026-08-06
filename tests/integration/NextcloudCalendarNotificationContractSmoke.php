@@ -22,10 +22,14 @@ foreach (['absence_requested', 'absence_approved', 'absence_rejected'] as $subje
 	}
 }
 
-foreach (['implements ICalendar', "'STATUS' => ['CONFIRMED'", "'TRANSP' => ['TRANSPARENT'", 'findApprovedForUser'] as $contract) {
+foreach (['implements ICalendar', "createComponent('VEVENT')", "->STATUS = 'CONFIRMED'", "->TRANSP = 'TRANSPARENT'", 'findApprovedForUser', '$events[] = $vEvent;', "->{'X-FILENAME'} = $filename"] as $contract) {
 	if (!str_contains($calendar, $contract)) {
 		throw new RuntimeException("Missing Calendar integration contract: {$contract}");
 	}
+}
+
+if (str_contains($calendar, "'objects' => [$object]")) {
+	throw new RuntimeException('ICalendar::search() must return VEvent Nodes for DAV AppCalendar.');
 }
 
 echo "NEXTCLOUD_CALENDAR_NOTIFICATION_OK calendar=1 bell=3\n";

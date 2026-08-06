@@ -8,6 +8,7 @@ use OCA\Employees\Db\AbsenceHistoryMapper;
 use OCP\Calendar\ICalendar;
 use OCP\Constants;
 use OCP\IL10N;
+use Sabre\VObject\Component\VCalendar;
 
 class EmployeeAbsenceCalendar implements ICalendar {
 	private const CALENDAR_URI = 'employees-time-off';
@@ -53,33 +54,62 @@ class EmployeeAbsenceCalendar implements ICalendar {
 		foreach ($rows as $row) {
 			$typeName = trim((string)($row['type_name'] ?? $this->l10n->t('Time off')));
 			$summary = $this->l10n->t('Time off: %s', [$typeName]);
-			if ($pattern !== '' && stripos($summary . ' ' . ($row['notes'] ?? ''), $pattern) === false) {
+			$id = (int)$row['absence_history_id'];
+			$uid = "employees-absence-{$id}@nextcloud";
+			$filename = "employees-absence-{$id}.ics";
+			$description = (string)($row['notes'] ?? '');
+
+			if (($options['uid'] ?? $uid) !== $uid || ($options['uri'] ?? $filename) !== $filename) {
+				continue;
+			}
+			if (($options['types'] ?? []) !== [] && !in_array('VEVENT', $options['types'], true)) {
+				continue;
+			}
+
+			$searchable = [
+				'SUMMARY' => $summary,
+				'DESCRIPTION' => $description,
+				'UID' => $uid,
+				'X-FILENAME' => $filename,
+			];
+			$properties = $searchProperties === [] ? array_keys($searchable) : $searchProperties;
+			if ($pattern !== '' && !$this->matches($pattern, $properties, $searchable)) {
 				continue;
 			}
 
 			$start = new \DateTimeImmutable((string)$row['date_from']);
 			$endExclusive = (new \DateTimeImmutable((string)$row['date_until']))->modify('+1 day');
-			$id = (int)$row['absence_history_id'];
-			$object = [
-				'UID' => ["employees-absence-{$id}@nextcloud", []],
-				'SUMMARY' => [$summary, []],
-				'DESCRIPTION' => [(string)($row['notes'] ?? ''), []],
-				'DTSTART' => [$start->format('Ymd'), ['VALUE' => 'DATE']],
-				'DTEND' => [$endExclusive->format('Ymd'), ['VALUE' => 'DATE']],
-				'STATUS' => ['CONFIRMED', []],
-				'TRANSP' => ['TRANSPARENT', []],
-			];
+			$vCalendar = new VCalendar();
+			$vEvent = $vCalendar->createComponent('VEVENT');
+			$vEvent->UID = $uid;
+			$vEvent->{'X-FILENAME'} = $filename;
+			$vEvent->SUMMARY = $summary;
+			$vEvent->DESCRIPTION = $description;
+			$vEvent->add('DTSTART', $start);
+			$vEvent->DTSTART['VALUE'] = 'DATE';
+			$vEvent->add('DTEND', $endExclusive);
+			$vEvent->DTEND['VALUE'] = 'DATE';
+			$vEvent->STATUS = 'CONFIRMED';
+			$vEvent->TRANSP = 'TRANSPARENT';
 
-			$events[] = [
-				'id' => $id,
-				'type' => 'VEVENT',
-				'calendar-key' => $this->getKey(),
-				'objects' => [$object],
-			];
+			// DAV AppCalendar groups the returned VEvent Nodes into a VCALENDAR.
+			// Returning nested search-result arrays makes Sabre reject the child.
+			$events[] = $vEvent;
 		}
 
 		$offset = max(0, (int)($offset ?? 0));
 		return array_slice($events, $offset, $limit ?? null);
+	}
+
+	/** @param string[] $properties @param array<string, string> $searchable */
+	private function matches(string $pattern, array $properties, array $searchable): bool {
+		foreach ($properties as $property) {
+			$value = $searchable[strtoupper((string)$property)] ?? null;
+			if ($value !== null && stripos($value, $pattern) !== false) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function getPermissions(): int {
