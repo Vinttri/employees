@@ -364,18 +364,30 @@ class DirectorySyncService {
 			// public Teams API for display names and memberships.
 			$collectiveIds = [];
 			$qb = $this->db->getQueryBuilder();
-			$result = $qb->select('circle_unique_id')
-				->from('collectives')
-				->where($qb->expr()->eq('trash_timestamp', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+			$result = $qb->select('c.circle_unique_id', 'circle.name')
+				->from('collectives', 'c')
+				->innerJoin('c', 'circles_circle', 'circle', $qb->expr()->eq('circle.unique_id', 'c.circle_unique_id'))
+				->where($qb->expr()->eq('c.trash_timestamp', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
 				->executeQuery();
 			foreach ($result->fetchAll() as $row) {
 				$id = trim((string)($row['circle_unique_id'] ?? ''));
-				if ($id !== '') { $collectiveIds[$id] = true; }
+				$name = trim((string)($row['name'] ?? ''));
+				if ($id !== '' && $name !== '') {
+					$collectiveIds[$id] = $name;
+					$teams[$id] = $name;
+				}
 			}
 			$result->closeCursor();
 
 			foreach ($users as $uid => $_user) {
-				foreach ($this->teamManager->getTeamsForUser($uid) as $team) {
+				try {
+					$userTeams = $this->teamManager->getTeamsForUser($uid);
+				} catch (\Throwable) {
+					// A missing Circles federated-user record must not prevent the
+					// Collectives catalogue itself from being synchronized.
+					continue;
+				}
+				foreach ($userTeams as $team) {
 					$id = trim($team->getId());
 					$name = trim($team->getDisplayName());
 					if ($id === '' || $name === '') { continue; }
