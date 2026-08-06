@@ -355,6 +355,7 @@ return [
 		['name' => 'payroll#createPlan', 'url' => '/payroll/plans', 'verb' => 'POST'],
 		['name' => 'payroll#updatePlan', 'url' => '/payroll/plans/{planId}', 'verb' => 'PUT'],
 		['name' => 'payroll#saveEmployeeSetup', 'url' => '/payroll/employees/{employeeId}/setup', 'verb' => 'PUT'],
+		['name' => 'payroll#setEmployeeInclusion', 'url' => '/payroll/employees/{employeeId}/inclusion', 'verb' => 'PUT'],
 		['name' => 'payroll#createProfile', 'url' => '/payroll/profiles', 'verb' => 'POST'],
 		['name' => 'payroll#updateProfile', 'url' => '/payroll/profiles/{profileId}', 'verb' => 'PUT'],
 		['name' => 'payroll#createRule', 'url' => '/payroll/profiles/{profileId}/rules', 'verb' => 'POST'],

@@ -153,12 +153,15 @@
 								<th class="col-center">
 									{{ t('employees', 'Private') }}
 								</th>
+								<th class="col-center">
+									{{ t('employees', 'Payroll payment') }}
+								</th>
 								<th class="col-actions" />
 							</tr>
 						</thead>
 						<tbody>
 							<tr v-if="TipoAusencias.length === 0">
-								<td colspan="6" class="empty-row">
+								<td colspan="7" class="empty-row">
 									{{ t('employees', 'No absence types defined yet.') }}
 								</td>
 							</tr>
@@ -183,6 +186,9 @@
 									<span :class="item.private > 0 ? 'pill pill--yes' : 'pill pill--no'">
 										{{ item.private > 0 ? t('employees', 'Yes') : t('employees', 'No') }}
 									</span>
+								</td>
+								<td class="col-center">
+									{{ item.payroll_percentage === null || item.payroll_percentage === undefined ? t('employees', 'Ignored') : `${Number(item.payroll_percentage)}%` }}
 								</td>
 								<td class="col-actions">
 									<NcActions>
@@ -480,6 +486,17 @@
 							</p>
 						</div>
 					</div>
+					<NcTextField
+						class="span-2"
+						type="number"
+						min="0"
+						max="100"
+						step="0.01"
+						:label="t('employees', 'Paid percentage in payroll')"
+						:value.sync="payrollPercentage" />
+					<p class="span-2">
+						{{ t('employees', 'Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.') }}
+					</p>
 				</div>
 				<div class="modal-actions">
 					<NcButton @click="closeModalTipo">
@@ -637,6 +654,7 @@ export default {
 			request_bonus_vacation: false,
 			billable: false,
 			isPrivate: false,
+			payrollPercentage: null,
 
 			// ── Holidays ──
 			Festivos: [],
@@ -790,6 +808,7 @@ export default {
 			this.request_bonus_vacation = false
 			this.billable = false
 			this.isPrivate = false
+			this.payrollPercentage = null
 			this.modalAddTipo = true
 		},
 
@@ -801,6 +820,7 @@ export default {
 			this.request_bonus_vacation = item.request_bonus_vacation === 1
 			this.billable = item.billable === 1
 			this.isPrivate = item.private > 0
+			this.payrollPercentage = item.payroll_percentage === null || item.payroll_percentage === undefined ? null : Number(item.payroll_percentage)
 			this.modalAddTipo = true
 		},
 
@@ -813,6 +833,7 @@ export default {
 			this.request_bonus_vacation = false
 			this.billable = false
 			this.isPrivate = false
+			this.payrollPercentage = null
 		},
 
 		async getType() {
@@ -838,6 +859,7 @@ export default {
 						request_bonus_vacation: this.request_bonus_vacation ? 1 : 0,
 						billable: this.billable ? 1 : 0,
 						private: this.isPrivate ? 1 : 0,
+						payroll_percentage: this.payrollPercentage === '' || this.payrollPercentage === null ? null : Number(this.payrollPercentage),
 					})
 				} else {
 					await axios.post(generateUrl('/apps/employees/AgregarNewTipo'), {
@@ -847,6 +869,7 @@ export default {
 						request_bonus_vacation: this.request_bonus_vacation ? 1 : 0,
 						billable: this.billable ? 1 : 0,
 						private: this.isPrivate ? 1 : 0,
+						payroll_percentage: this.payrollPercentage === '' || this.payrollPercentage === null ? null : Number(this.payrollPercentage),
 					})
 				}
 				showSuccess(t('employees', 'Absence type saved'))

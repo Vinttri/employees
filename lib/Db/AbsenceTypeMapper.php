@@ -79,7 +79,7 @@ class AbsenceTypeMapper extends QBMapper {
 	/**
 	 * Crea un nuevo type de ausencia.
 	 */
-	public function insertTipoAusencia(string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private): AbsenceType {
+	public function insertTipoAusencia(string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private, ?float $payrollPercentage = null): AbsenceType {
 		$entidad = new AbsenceType();
 		$entidad->setnombre($name);
 		$entidad->setdescripcion($description);
@@ -87,11 +87,12 @@ class AbsenceTypeMapper extends QBMapper {
 		$entidad->setRequestBonusVacation((bool) $request_bonus_vacation);
 		$entidad->setcargable((bool) $billable);
 		$entidad->setprivado((bool) $private);
+		$entidad->setPayrollPercentage($payrollPercentage);
 
 		return $this->insert($entidad);
 	}
 
-	public function updateTipoAusencias(int $absence_type_id, string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private): void {
+	public function updateTipoAusencias(int $absence_type_id, string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private, ?float $payrollPercentage = null): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update($this->getTableName())
 			->set('name', $query->createNamedParameter($name))
@@ -100,6 +101,7 @@ class AbsenceTypeMapper extends QBMapper {
 			->set('request_bonus_vacation', $query->createNamedParameter((bool)$request_bonus_vacation, IQueryBuilder::PARAM_BOOL))
 			->set('billable', $query->createNamedParameter((bool)$billable, IQueryBuilder::PARAM_BOOL))
 			->set('private', $query->createNamedParameter((bool)$private, IQueryBuilder::PARAM_BOOL))
+			->set('payroll_percentage', $query->createNamedParameter($payrollPercentage, $payrollPercentage === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR))
 			->where($query->expr()->eq('absence_type_id', $query->createNamedParameter($absence_type_id, IQueryBuilder::PARAM_INT)));
 
 		$query->executeStatement();

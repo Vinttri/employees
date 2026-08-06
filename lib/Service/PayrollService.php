@@ -135,6 +135,14 @@ final class PayrollService {
 	}
 
 	/** @return array<string, mixed> */
+	public function setEmployeePayrollEnabled(int $employeeId, bool $enabled, string $actorUid): array {
+		$this->repository->findEmployee($employeeId);
+		$this->repository->setEmployeePayrollEnabled($employeeId, $enabled);
+		$this->repository->audit($actorUid, $enabled ? 'employee_payroll_included' : 'employee_payroll_excluded', 'employee', $employeeId);
+		return $this->repository->findEmployee($employeeId);
+	}
+
+	/** @return array<string, mixed> */
 	private function planData(array $payload): array {
 		$mode = trim((string)($payload['payment_mode'] ?? 'monthly'));
 		if (!in_array($mode, PayrollCalculator::PAYMENT_MODES, true)) {
@@ -368,6 +376,15 @@ final class PayrollService {
 		$errors = [];
 		foreach ($this->repository->listActiveEmployees() as $employee) {
 			$employeeId = (int)$employee['id_employees'];
+			if (!$this->bool($employee['payroll_enabled'] ?? false)) {
+				continue;
+			}
+			// Synced Nextcloud service, guest and smoke accounts can have an
+			// employee directory entry without belonging to payroll. A dated
+			// compensation plan is the explicit inclusion boundary.
+			if ($this->repository->findPlanForEmployee($employeeId, (string)$period['date_until']) === null) {
+				continue;
+			}
 			try {
 				$results[] = $this->calculateEmployee($period, $employeeId, $actorUid);
 			} catch (\Throwable $e) {
@@ -394,7 +411,7 @@ final class PayrollService {
 		if ((string)$period['status'] !== 'calculated') {
 			throw new RuntimeException('Only a calculated period can be approved.');
 		}
-		$activeEmployees = $this->repository->countActiveEmployees();
+		$activeEmployees = $this->repository->countEmployeesWithPlan((string)$period['date_until']);
 		$payslips = $this->repository->countPayslips($periodId);
 		if ($activeEmployees === 0 || $payslips !== $activeEmployees) {
 			throw new RuntimeException("Payroll is incomplete: {$payslips} of {$activeEmployees} active employees were calculated.");
@@ -535,6 +552,7 @@ final class PayrollService {
 				'source_type' => 'time_reports',
 			];
 		}
+		$inputs = array_merge($inputs, $this->absenceInputs($period, $plan, $employeeId));
 		$rules = $this->repository->findRulesForPlan((int)$plan['id'], $employeeId, (string)$period['date_until']);
 		$calculation = $this->calculator->calculate($plan, $rules, $inputs);
 		$snapshot = [
@@ -552,6 +570,64 @@ final class PayrollService {
 			);
 			return ['id' => $id, 'employee_id' => $employeeId] + array_diff_key($calculation, ['lines' => true]);
 		});
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	private function absenceInputs(array $period, array $plan, int $employeeId): array {
+		$from = (string)$period['date_from'];
+		$until = (string)$period['date_until'];
+		$holidays = $this->repository->listHolidayDates($from, $until);
+		$periodDays = $this->workingDays($from, $until, $holidays);
+		if ($periodDays === 0) {
+			return [];
+		}
+		$standardHours = bccomp((string)($plan['standard_month_hours'] ?? '0'), '0', 4) > 0
+			? (string)$plan['standard_month_hours'] : bcmul((string)$periodDays, '8', 4);
+		$dailyHours = bcdiv($standardHours, (string)$periodDays, 4);
+		$baseSalary = (string)($plan['base_salary'] ?? '0');
+		$mode = (string)$plan['payment_mode'];
+		$inputs = [];
+		foreach ($this->repository->listApprovedPayrollAbsences($employeeId, $from, $until) as $absence) {
+			$days = $this->workingDays(
+				max($from, substr((string)$absence['date_from'], 0, 10)),
+				min($until, substr((string)$absence['date_until'], 0, 10)),
+				$holidays,
+			);
+			if ($days === 0) {
+				continue;
+			}
+			$percentage = max(0.0, min(100.0, (float)$absence['payroll_percentage']));
+			$code = 'ABSENCE_' . (int)$absence['absence_history_id'];
+			$name = 'Absence: ' . (string)$absence['name'];
+			if ($mode === 'hourly') {
+				$paidHours = bcmul(bcmul((string)$days, $dailyHours, 4), (string)($percentage / 100), 4);
+				if (bccomp($paidHours, '0', 4) > 0) {
+					$inputs[] = ['id' => null, 'input_type' => 'hours', 'quantity' => $paidHours, 'rate' => '0', 'amount' => '0', 'code' => $code . '_HOURS', 'name' => $name, 'source_type' => 'approved_absence'];
+				}
+				$inputs[] = ['id' => null, 'input_type' => 'adjustment_earning', 'quantity' => (string)$days, 'rate' => (string)$percentage, 'amount' => '0', 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
+				continue;
+			}
+			if (in_array($mode, ['monthly', 'monthly_plus_hours', 'fixed_period'], true)) {
+				$unpaidRatio = (100 - $percentage) / 100;
+				$deduction = bcmul(bcdiv(bcmul($baseSalary, (string)$days, 6), (string)$periodDays, 6), (string)$unpaidRatio, 2);
+				$inputs[] = ['id' => null, 'input_type' => bccomp($deduction, '0', 2) > 0 ? 'adjustment_deduction' : 'adjustment_earning', 'quantity' => (string)$days, 'rate' => (string)$percentage, 'amount' => $deduction, 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
+			}
+		}
+		return $inputs;
+	}
+
+	/** @param array<int, string> $holidays */
+	private function workingDays(string $from, string $until, array $holidays): int {
+		$start = new DateTimeImmutable($from);
+		$end = new DateTimeImmutable($until);
+		$count = 0;
+		for ($date = $start; $date <= $end; $date = $date->modify('+1 day')) {
+			$key = $date->format('Y-m-d');
+			if ((int)$date->format('N') <= 5 && !in_array($key, $holidays, true)) {
+				$count++;
+			}
+		}
+		return $count;
 	}
 
 	/** @param array<int, array<string, mixed>> $payslips */

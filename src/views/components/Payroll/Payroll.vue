@@ -77,15 +77,20 @@
 					</div>
 					<div class="table-scroll">
 						<table>
-							<thead><tr><th>{{ t('employees', 'Employee') }}</th><th>{{ t('employees', 'Payment mode') }}</th><th>{{ t('employees', 'Salary / rate') }}</th><th>{{ t('employees', 'Tax profile') }}</th><th>{{ t('employees', 'IBAN') }}</th><th>{{ t('employees', 'Readiness') }}</th><th /></tr></thead>
+							<thead><tr><th>{{ t('employees', 'Employee') }}</th><th>{{ t('employees', 'In payroll') }}</th><th>{{ t('employees', 'Payment mode') }}</th><th>{{ t('employees', 'Salary / rate') }}</th><th>{{ t('employees', 'Tax profile') }}</th><th>{{ t('employees', 'IBAN') }}</th><th>{{ t('employees', 'Readiness') }}</th><th /></tr></thead>
 							<tbody>
 								<tr v-for="employee in employees" :key="employee.id_employees">
 									<td><strong>{{ employee.display_name || employee.id_user }}</strong><small>{{ employee.id_user }}</small></td>
+									<td>
+										<NcButton :disabled="busy" @click="toggleEmployeePayroll(employee)">
+											{{ payrollEnabled(employee) ? t('employees', 'Exclude from payroll') : t('employees', 'Include in payroll') }}
+										</NcButton>
+									</td>
 									<td>{{ employeePlan(employee)?.payment_mode ? modeLabel(employeePlan(employee).payment_mode) : '—' }}</td>
 									<td>{{ employeePlan(employee) ? planSummary(employeePlan(employee)) : '—' }}</td>
 									<td>{{ employeeProfile(employee) || '—' }}</td>
 									<td>{{ maskedIban(employee.number_account) }}</td>
-									<td><span class="status-pill" :class="{ warning: !employeeReady(employee) }">{{ employeeReady(employee) ? t('employees', 'Ready') : t('employees', 'Needs setup') }}</span></td>
+									<td><span class="status-pill" :class="{ warning: payrollEnabled(employee) && !employeeReady(employee) }">{{ !payrollEnabled(employee) ? t('employees', 'Excluded') : (employeeReady(employee) ? t('employees', 'Ready') : t('employees', 'Needs setup')) }}</span></td>
 									<td>
 										<NcButton @click="openEmployeeSetup(employee)">
 											{{ t('employees', 'Configure') }}
@@ -336,10 +341,11 @@ export default {
 		exportUrl() { return this.selectedPeriod ? payrollService.exportUrl(this.selectedPeriod) : '#' },
 		sepaUrl() { return this.selectedPeriod ? payrollService.sepaUrl(this.selectedPeriod) : '#' },
 		paymentExportUrl() { return this.selectedPeriod ? payrollService.paymentExportUrl(this.selectedPeriod) : '#' },
+		payrollEmployees() { return this.employees.filter(employee => this.payrollEnabled(employee)) },
 		workflowSteps() {
 			const status = this.period?.status || 'draft'
 			return [
-				{ title: t('employees', 'Employee setup'), description: t('employees', 'Salary, rates, taxes and IBAN'), complete: this.employees.length > 0 && this.employees.every(this.employeeReady), current: false },
+				{ title: t('employees', 'Employee setup'), description: t('employees', 'Salary, rates, taxes and IBAN'), complete: this.payrollEmployees.length > 0 && this.payrollEmployees.every(this.employeeReady), current: false },
 				{ title: t('employees', 'Hours and adjustments'), description: t('employees', 'Automatic reports or manual values'), complete: status !== 'draft', current: status === 'draft' },
 				{ title: t('employees', 'Review and approve'), description: t('employees', 'Gross, deductions and net pay'), complete: ['approved', 'paid'].includes(status), current: status === 'calculated' },
 				{ title: t('employees', 'Bank and documents'), description: t('employees', 'CSV, SEPA and payslips'), complete: this.period?.package_status === 'ready', current: ['approved', 'paid'].includes(status) },
@@ -378,6 +384,7 @@ export default {
 	methods: {
 		t,
 		isTrue(value) { return value === true || value === 1 || value === '1' || value === 'true' },
+		payrollEnabled(employee) { return this.isTrue(employee?.payroll_enabled) },
 		fieldLabel(value) { return ({ base_salary: t('employees', 'Base salary'), hourly_rate: t('employees', 'Hourly rate'), overtime_rate: t('employees', 'Overtime rate'), standard_month_hours: t('employees', 'Standard month hours'), cost_rate: t('employees', 'Cost rate'), monthly: t('employees', 'Monthly'), hourly: t('employees', 'Hourly'), monthly_plus_hours: t('employees', 'Monthly plus hours'), fixed_period: t('employees', 'Fixed period'), commission: t('employees', 'Commission'), piecework: t('employees', 'Piecework'), hours: t('employees', 'Hours'), overtime_hours: t('employees', 'Overtime hours'), units: t('employees', 'Units'), bonus: t('employees', 'Bonus'), reimbursement: t('employees', 'Reimbursement'), one_off: t('employees', 'One-off payment'), earning: t('employees', 'Earning'), deduction: t('employees', 'Deduction'), tax: t('employees', 'Tax'), adjustment_earning: t('employees', 'Earning adjustment'), adjustment_deduction: t('employees', 'Deduction adjustment'), fixed: t('employees', 'Fixed amount'), percent_gross: t('employees', 'Percent of gross'), percent_base: t('employees', 'Percent of base'), per_hour: t('employees', 'Per hour'), per_unit: t('employees', 'Per unit'), bank_transfer: t('employees', 'Bank transfer'), cash: t('employees', 'Cash'), card: t('employees', 'Card'), other: t('employees', 'Other'), manual: t('employees', 'Manual'), ai_import: t('employees', 'AI import'), time_reports: t('employees', 'Time reports') })[value] || String(value || '').replaceAll('_', ' ').replace(/^./, c => c.toUpperCase()) },
 		modeLabel(value) { return this.fieldLabel(value) },
 		statusLabel(value) { return ({ draft: t('employees', 'Draft'), calculated: t('employees', 'Calculated'), approved: t('employees', 'Approved'), paid: t('employees', 'Paid'), partially_paid: t('employees', 'Partially paid') })[value] || value || t('employees', 'Draft') },
@@ -397,6 +404,7 @@ export default {
 		openPlan(plan) { this.openDialog('planEdit'); this.form = { ...plan, plan_id: Number(plan.id), employee_id: Number(plan.employee_id), active: plan.active === true || plan.active === 1 || plan.active === '1' } },
 		openEmployeeSetup(employee) { const plan = this.employeePlan(employee); const assignment = plan ? this.profileAssignments.filter(item => Number(item.plan_id) === Number(plan.id)).sort((a, b) => String(b.effective_from).localeCompare(String(a.effective_from)))[0] : null; this.openDialog('setup'); this.form = { ...this.form, ...(plan || {}), plan_id: plan ? Number(plan.id) : null, employee_id: Number(employee.id_employees), employee_name: employee.display_name || employee.id_user, name: plan?.name || t('employees', 'Main compensation'), number_account: employee.number_account || '', profile_id: assignment ? Number(assignment.profile_id) : 0, effective_from: plan?.locked ? iso(new Date()) : (plan?.effective_from || this.form.effective_from), active: true } },
 		openBankSettings() { this.openDialog('bankSettings'); this.form = { ...this.overview.bank_settings } },
+		async toggleEmployeePayroll(employee) { await this.run(() => payrollService.setEmployeeInclusion(employee.id_employees, !this.payrollEnabled(employee)), this.payrollEnabled(employee) ? t('employees', 'Employee excluded from payroll.') : t('employees', 'Employee included in payroll.')) },
 		openInput(input) { this.openDialog('inputEdit'); this.form = { ...input, input_id: Number(input.id), employee_id: Number(input.employee_id) } },
 		openProfile(profile) { this.openDialog('profileEdit'); this.form = { ...profile, profile_id: Number(profile.id), active: profile.active === true || profile.active === 1 || profile.active === '1' } },
 		openRule(rule, profile) { this.openDialog('ruleEdit'); this.form = { ...rule, rule_id: Number(rule.id), profile_id: Number(profile.id), active: rule.active === true || rule.active === 1 || rule.active === '1', taxable: rule.taxable === true || rule.taxable === 1 || rule.taxable === '1' } },
@@ -409,11 +417,14 @@ export default {
 			this.busy = true; this.error = ''
 			try {
 				const result = await payrollService.calculate(this.selectedPeriod)
+				const calculationError = result.errors?.length
+					? t('employees', 'Payroll calculation failed for {count} employees. Fix their plans or inputs and calculate again.', { count: result.errors.length })
+					: ''
+				await this.load(this.selectedPeriod)
 				if (result.errors?.length) {
-					this.error = t('employees', 'Payroll calculation failed for {count} employees. Fix their plans or inputs and calculate again.', { count: result.errors.length })
+					this.error = calculationError
 					showError(this.error)
 				} else { showSuccess(t('employees', 'Payroll calculated.')) }
-				await this.load(this.selectedPeriod)
 			} catch (error) { this.handleError(error) } finally { this.busy = false }
 		},
 		async approve() { this.busy = true; try { const result = await payrollService.approve(this.selectedPeriod); if (result.package?.errors?.length) showError(t('employees', 'Payroll was approved, but some files need attention.')); else showSuccess(t('employees', 'Payroll approved and files generated.')); await this.load(this.selectedPeriod) } catch (error) { this.handleError(error) } finally { this.busy = false } },

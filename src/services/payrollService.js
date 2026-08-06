@@ -13,6 +13,7 @@ export default {
 	async createPlan(payload) { return data(await axios.post(url('/plans'), payload)) },
 	async updatePlan(planId, payload) { return data(await axios.put(url(`/plans/${planId}`), payload)) },
 	async saveEmployeeSetup(employeeId, payload) { return data(await axios.put(url(`/employees/${employeeId}/setup`), payload)) },
+	async setEmployeeInclusion(employeeId, enabled) { return data(await axios.put(url(`/employees/${employeeId}/inclusion`), { enabled })) },
 	async createProfile(payload) { return data(await axios.post(url('/profiles'), payload)) },
 	async updateProfile(profileId, payload) { return data(await axios.put(url(`/profiles/${profileId}`), payload)) },
 	async createRule(profileId, payload) { return data(await axios.post(url(`/profiles/${profileId}/rules`), payload)) },

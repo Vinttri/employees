@@ -71,7 +71,7 @@ final class PayrollRepository {
 	/** @return array<int, array<string, mixed>> */
 	public function listActiveEmployees(): array {
 		$qb = $this->db->getQueryBuilder();
-		$result = $qb->select('e.id_employees', 'e.id_user', 'e.number_employee', 'e.email_contact', 'e.salary', 'e.number_account')
+		$result = $qb->select('e.id_employees', 'e.id_user', 'e.number_employee', 'e.email_contact', 'e.salary', 'e.number_account', 'e.payroll_enabled')
 			->selectAlias('u.displayname', 'display_name')
 			->from('employees', 'e')
 			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
@@ -80,6 +80,42 @@ final class PayrollRepository {
 		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $rows;
+	}
+
+	public function setEmployeePayrollEnabled(int $employeeId, bool $enabled): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update('employees')->set('payroll_enabled', $qb->createNamedParameter($enabled, IQueryBuilder::PARAM_BOOL))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
+			->where($qb->expr()->eq('id_employees', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)))->executeStatement();
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	public function listApprovedPayrollAbsences(int $employeeId, string $from, string $until): array {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('h.absence_history_id', 'h.date_from', 'h.date_until', 't.name', 't.payroll_percentage')
+			->from('absence_history', 'h')
+			->innerJoin('h', 'absences', 'a', $qb->expr()->eq('a.absence_id', 'h.absence_id'))
+			->innerJoin('h', 'absence_types', 't', $qb->expr()->eq('t.absence_type_id', 'h.absence_type_id'))
+			->where($qb->expr()->eq('a.id_employee', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('h.is_manager', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('h.is_partner', $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->isNotNull('t.payroll_percentage'))
+			->andWhere($qb->expr()->lte('h.date_from', $qb->createNamedParameter($until)))
+			->andWhere($qb->expr()->gte('h.date_until', $qb->createNamedParameter($from)))
+			->orderBy('h.date_from', 'ASC')->executeQuery();
+		$rows = LegacyRowCompat::rows($result->fetchAll());
+		$result->closeCursor();
+		return $rows;
+	}
+
+	/** @return array<int, string> */
+	public function listHolidayDates(string $from, string $until): array {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('date')->from('holidays')->where($qb->expr()->gte('date', $qb->createNamedParameter($from)))
+			->andWhere($qb->expr()->lte('date', $qb->createNamedParameter($until)))->executeQuery();
+		$dates = array_map(static fn(array $row): string => substr((string)$row['date'], 0, 10), LegacyRowCompat::rows($result->fetchAll()));
+		$result->closeCursor();
+		return $dates;
 	}
 
 	/** @return array<string, mixed> */
@@ -788,6 +824,17 @@ final class PayrollRepository {
 		$total = (int)$result->fetchOne();
 		$result->closeCursor();
 		return $total;
+	}
+
+	public function countEmployeesWithPlan(string $date): int {
+		$count = 0;
+		foreach ($this->listActiveEmployees() as $employee) {
+			if (in_array($employee['payroll_enabled'] ?? false, [true, 1, '1', 'true'], true)
+				&& $this->findPlanForEmployee((int)$employee['id_employees'], $date) !== null) {
+				$count++;
+			}
+		}
+		return $count;
 	}
 
 	public function countPayslips(int $periodId): int {

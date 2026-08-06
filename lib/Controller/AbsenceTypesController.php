@@ -156,7 +156,10 @@ class AbsenceTypesController extends Controller {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function AgregarNewTipo(string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private = 0): DataResponse {
+    public function AgregarNewTipo(string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private = 0, ?float $payroll_percentage = null): DataResponse {
+        if ($payroll_percentage !== null && ($payroll_percentage < 0 || $payroll_percentage > 100)) {
+            return new DataResponse(['success' => false, 'message' => 'Payroll percentage must be between 0 and 100'], Http::STATUS_BAD_REQUEST);
+        }
         if ($private > 0 && !$this->isPrivileged()) {
             return new DataResponse(['success' => false, 'message' => 'Sin permiso para crear tipos privados'], Http::STATUS_FORBIDDEN);
         }
@@ -168,6 +171,7 @@ class AbsenceTypesController extends Controller {
             $request_bonus_vacation,
             $billable,
             $private,
+			$payroll_percentage,
         );
 
         return new DataResponse(['success' => true], Http::STATUS_OK);
@@ -205,13 +209,16 @@ class AbsenceTypesController extends Controller {
      */
     #[UseSession]
     #[NoAdminRequired]
-    public function ModificarTipo(int $id, string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private = 0): DataResponse {
+    public function ModificarTipo(int $id, string $name, string $description, int $request_file, int $request_bonus_vacation, int $billable, int $private = 0, ?float $payroll_percentage = null): DataResponse {
+        if ($payroll_percentage !== null && ($payroll_percentage < 0 || $payroll_percentage > 100)) {
+            return new DataResponse('Payroll percentage must be between 0 and 100', Http::STATUS_BAD_REQUEST);
+        }
         if ($private > 0 && !$this->isPrivileged()) {
             return new DataResponse('Sin permiso para marcar como private', Http::STATUS_FORBIDDEN);
         }
 
         try {
-            $this->AbsenceTypeMapper->updateTipoAusencias($id, $name, $description, $request_file, $request_bonus_vacation, $billable, $private);
+            $this->AbsenceTypeMapper->updateTipoAusencias($id, $name, $description, $request_file, $request_bonus_vacation, $billable, $private, $payroll_percentage);
             return new DataResponse('ok', Http::STATUS_OK);
         } catch (\Exception $e) {
             return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);

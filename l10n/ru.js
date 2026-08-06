@@ -2632,7 +2632,17 @@ OC.L10N.register(
     "Rules can be fixed amounts, percentages or per-hour values.": "Правила могут быть фиксированной суммой, процентом или ставкой за час.",
     "Profiles may be combined and are effective-dated.": "Профили можно комбинировать и задавать даты их действия.",
     "Use a personal rate or disable a rule for a period.": "Задайте индивидуальную ставку или отключите правило на период.",
-    "Record a bank transfer, cash payment or another payout.": "Зарегистрируйте банковский перевод, выплату наличными или другой способ выплаты."
+    "Record a bank transfer, cash payment or another payout.": "Зарегистрируйте банковский перевод, выплату наличными или другой способ выплаты.",
+    "In payroll": "В расчёте зарплаты",
+    "Include in payroll": "Включить в зарплату",
+    "Exclude from payroll": "Исключить из зарплаты",
+    "Excluded": "Исключён",
+    "Employee included in payroll.": "Сотрудник включён в расчёт зарплаты.",
+    "Employee excluded from payroll.": "Сотрудник исключён из расчёта зарплаты.",
+    "Payroll payment": "Оплата при отсутствии",
+    "Paid percentage in payroll": "Процент оплаты в зарплате",
+    "Ignored": "Не учитывать",
+    "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.": "Оставьте поле пустым, чтобы не учитывать отсутствие в зарплате; укажите 100 для полной оплаты, 0 для неоплачиваемого отсутствия или промежуточный процент."
 },
     "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);"
 );

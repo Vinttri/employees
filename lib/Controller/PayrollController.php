@@ -72,6 +72,18 @@ final class PayrollController extends Controller {
 	}
 
 	/** @NoAdminRequired */
+	public function setEmployeeInclusion(int $employeeId): DataResponse {
+		return $this->respond(function () use ($employeeId): array {
+			$this->permissions->requireCanSee('payroll.manage');
+			return $this->service->setEmployeePayrollEnabled(
+				$employeeId,
+				filter_var($this->request->getParam('enabled', false), FILTER_VALIDATE_BOOL),
+				$this->uid(),
+			);
+		});
+	}
+
+	/** @NoAdminRequired */
 	public function createProfile(): DataResponse {
 		return $this->respond(function (): array {
 			$this->permissions->requireCanSee('payroll.manage');

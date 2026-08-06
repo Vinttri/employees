@@ -2631,7 +2631,17 @@
     "Rules can be fixed amounts, percentages or per-hour values.": "Rules can be fixed amounts, percentages or per-hour values.",
     "Profiles may be combined and are effective-dated.": "Profiles may be combined and are effective-dated.",
     "Use a personal rate or disable a rule for a period.": "Use a personal rate or disable a rule for a period.",
-    "Record a bank transfer, cash payment or another payout.": "Record a bank transfer, cash payment or another payout."
+    "Record a bank transfer, cash payment or another payout.": "Record a bank transfer, cash payment or another payout.",
+    "In payroll": "In payroll",
+    "Include in payroll": "Include in payroll",
+    "Exclude from payroll": "Exclude from payroll",
+    "Excluded": "Excluded",
+    "Employee included in payroll.": "Employee included in payroll.",
+    "Employee excluded from payroll.": "Employee excluded from payroll.",
+    "Payroll payment": "Payroll payment",
+    "Paid percentage in payroll": "Paid percentage in payroll",
+    "Ignored": "Ignored",
+    "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.": "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage."
   },
   "pluralForm": "nplurals=2; plural=(n != 1);"
 }
