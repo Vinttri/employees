@@ -600,6 +600,7 @@ OC.L10N.register(
     "An exception occurred [02] [{error}]": "An exception occurred [02] [{error}]",
     "Are you sure you want to delete?": "Are you sure you want to delete?",
     "Are you sure you want to disable the account of {name}?": "Are you sure you want to disable the account of {name}?",
+    "Are you sure you want to disable the employee record for {name}?": "Are you sure you want to disable the employee record for {name}?",
     "Deactivated employees": "Deactivated employees",
     "Disable account": "Disable account",
     "Example form": "Example form",

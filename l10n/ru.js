@@ -600,6 +600,7 @@ OC.L10N.register(
     "An exception occurred [02] [{error}]": "Произошла ошибка [02] [{error}]",
     "Are you sure you want to delete?": "Вы уверены, что хотите удалить?",
     "Are you sure you want to disable the account of {name}?": "Вы уверены, что хотите отключить учётную запись {name}?",
+    "Are you sure you want to disable the employee record for {name}?": "Вы уверены, что хотите исключить {name} из сотрудников? Учётная запись Nextcloud останется активной.",
     "Deactivated employees": "Деактивированные сотрудники",
     "Disable account": "Отключить учётную запись",
     "Example form": "Пример формы",

@@ -126,7 +126,7 @@
 											<template #icon>
 												<AccountOff :size="20" />
 											</template>
-											{{ t('employees', 'Disable account') }}
+											{{ t('employees', 'Disable employee') }}
 										</NcActionButton>
 									</NcActions>
 								</td>
@@ -429,7 +429,7 @@
 		<!-- Dialog: deactivate -->
 		<NcDialog :open.sync="showDeactiveUserDialog"
 			:name="t('employees', 'Confirmation')"
-			:message="t('employees', 'Are you sure you want to disable the account of {name}?', { name: selected.name || '' })"
+			:message="t('employees', 'Are you sure you want to disable the employee record for {name}?', { name: selected.name || '' })"
 			:buttons="buttons" />
 
 		<!-- Dialog: delete -->
