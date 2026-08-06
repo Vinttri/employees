@@ -18,7 +18,7 @@
 /* Keep routed page headings clear of the navigation control when the sidebar
  * is fully hidden. In normal and compact modes the control stays inside the
  * navigation rail itself (see SideNavigation.vue). */
-#content .employees-side-navigation--hidden + .app-content {
+.app-employees > .employees-side-navigation--hidden + .app-content {
 	padding-inline-start: 56px;
 	box-sizing: border-box;
 }

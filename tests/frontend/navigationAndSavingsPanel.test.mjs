@@ -28,4 +28,4 @@ assert.match(navigation, /\.side-toggle-button--floating\s*\{[^}]*right:\s*12px/
 assert.match(navigation, /\.employees-side-navigation--compact \.side-toggle-button--floating\s*\{[^}]*right:\s*16px/s)
 assert.match(navigation, /\.employees-side-navigation--hidden \.side-toggle-button--floating\s*\{[^}]*right:\s*-52px/s)
 assert.match(navigation, /\.side-navigation-content\s*\{[^}]*padding-top:\s*54px/s)
-assert.match(sharedStyles, /\.employees-side-navigation--hidden \+ \.app-content\s*\{[^}]*padding-inline-start:\s*56px/s)
+assert.match(sharedStyles, /\.app-employees > \.employees-side-navigation--hidden \+ \.app-content\s*\{[^}]*padding-inline-start:\s*56px/s)
