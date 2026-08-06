@@ -47,4 +47,8 @@ docker-compose.override.yml
 .aider*
 AIDER.md
 
-/js/
+# Production bundles are part of the deployable Nextcloud app. Keep every
+# JavaScript entry and async chunk in Git while excluding source maps.
+/js/*
+!/js/*.js
+!/js/*.LICENSE.txt
