@@ -271,7 +271,7 @@ export default {
 			const date = new Date(String(value).replace(' ', 'T'))
 			if (Number.isNaN(date.getTime())) return String(value)
 
-			return new Intl.DateTimeFormat('es-MX', {
+			return new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
 				dateStyle: 'medium',
 				timeStyle: 'short',
 			}).format(date)

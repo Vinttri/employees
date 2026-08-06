@@ -85,7 +85,7 @@ export default {
 		t, // expone t al template
 
 		formatMoney(value) {
-			return Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
+			return Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
 		},
 
 		statusLabel(item) {
@@ -117,7 +117,7 @@ export default {
 			const d = new Date(val)
 			if (!isNaN(d.getTime())) {
 				// Muestra date y hora locales (MX)
-				return new Intl.DateTimeFormat('es-MX', {
+				return new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
 					year: 'numeric',
 					month: '2-digit',
 					day: '2-digit',

@@ -500,9 +500,9 @@ export default {
 		resumenFmt() {
 			const kpis = this.resumen?.kpis || {}
 
-			const num2 = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 })
-			const int = new Intl.NumberFormat('es-MX')
-			const money = new Intl.NumberFormat('es-MX', {
+			const num2 = new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 2 })
+			const int = new Intl.NumberFormat(document.documentElement.lang || 'en')
+			const money = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 			})
@@ -848,24 +848,24 @@ export default {
 		},
 
 		formatNumber(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 2,
 			}).format(Number(value) || 0)
 		},
 
 		formatInteger(value) {
-			return new Intl.NumberFormat('es-MX').format(Number(value) || 0)
+			return new Intl.NumberFormat(document.documentElement.lang || 'en').format(Number(value) || 0)
 		},
 
 		formatMoney(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 			}).format(Number(value) || 0)
 		},
 
 		formatPercent(value) {
-			return `${new Intl.NumberFormat('es-MX', {
+			return `${new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 1,
 			}).format(Number(value) || 0)}%`
 		},
@@ -922,7 +922,7 @@ export default {
 							callbacks: {
 								label(context) {
 									const item = datos[context.dataIndex]
-									const costo = new Intl.NumberFormat('es-MX', {
+									const costo = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										style: 'currency',
 										currency: 'MXN',
 									}).format(item.costo || 0)
@@ -1004,7 +1004,7 @@ export default {
 									return [
 										t('employees', 'Hours: {hours}', { hours: item.horas.toFixed(2) }),
 										t('employees', 'Estimated cost: {cost}', {
-											cost: new Intl.NumberFormat('es-MX', {
+											cost: new Intl.NumberFormat(document.documentElement.lang || 'en', {
 												style: 'currency',
 												currency: 'MXN',
 											}).format(item.costo || 0),
@@ -1098,7 +1098,7 @@ export default {
 									return [
 										t('employees', '{label}: {hours} hours', { label: context.label, hours: context.raw }),
 										t('employees', 'Estimated cost: {cost}', {
-											cost: new Intl.NumberFormat('es-MX', {
+											cost: new Intl.NumberFormat(document.documentElement.lang || 'en', {
 												style: 'currency',
 												currency: 'MXN',
 											}).format(item.costo || 0),

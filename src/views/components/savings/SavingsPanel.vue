@@ -302,7 +302,7 @@ export default {
 		t,
 
 		formatMoney(value) {
-			return Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
+			return Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: 'MXN' }).format(Number(value) || 0)
 		},
 
 		async gethistorial() {

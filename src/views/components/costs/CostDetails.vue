@@ -131,10 +131,10 @@ export default {
 	methods: {
 		t,
 		number(value) {
-			return new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(Number(value || 0))
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 2 }).format(Number(value || 0))
 		},
 		money(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 			}).format(Number(value || 0))

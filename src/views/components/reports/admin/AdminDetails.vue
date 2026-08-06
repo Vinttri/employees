@@ -489,9 +489,9 @@ export default {
 		},
 
 		kpisFmt() {
-			const num2 = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 })
-			const int = new Intl.NumberFormat('es-MX')
-			const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' })
+			const num2 = new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 2 })
+			const int = new Intl.NumberFormat(document.documentElement.lang || 'en')
+			const money = new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: 'MXN' })
 
 			return {
 				horas_reportadas: num2.format(this.kpis.horas_reportadas || 0),
@@ -530,9 +530,9 @@ export default {
 		},
 
 		decisionFmt() {
-			const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' })
-			const num2 = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 })
-			const percent = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 1 })
+			const money = new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: 'MXN' })
+			const num2 = new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 2 })
+			const percent = new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 1 })
 			const topCliente = this.rankingClientes[0] || null
 			const top3Costo = this.rankingClientes
 				.slice(0, 3)
@@ -826,24 +826,24 @@ export default {
 		},
 
 		formatNumber(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 2,
 			}).format(Number(value) || 0)
 		},
 
 		formatInteger(value) {
-			return new Intl.NumberFormat('es-MX').format(Number(value) || 0)
+			return new Intl.NumberFormat(document.documentElement.lang || 'en').format(Number(value) || 0)
 		},
 
 		formatMoney(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 			}).format(Number(value) || 0)
 		},
 
 		formatPercent(value) {
-			return `${new Intl.NumberFormat('es-MX', {
+			return `${new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 1,
 			}).format(Number(value) || 0)}%`
 		},
@@ -913,16 +913,16 @@ export default {
 								label(context) {
 									const item = datos[context.dataIndex]
 
-									const horas = new Intl.NumberFormat('es-MX', {
+									const horas = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										maximumFractionDigits: 2,
 									}).format(item.total || 0)
 
-									const costo = new Intl.NumberFormat('es-MX', {
+									const costo = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										style: 'currency',
 										currency: 'MXN',
 									}).format(item.costo || 0)
 
-									const porcentaje = new Intl.NumberFormat('es-MX', {
+									const porcentaje = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										maximumFractionDigits: 2,
 									}).format(item.porcentaje || 0)
 
@@ -1015,11 +1015,11 @@ export default {
 							callbacks: {
 								label(context) {
 									const item = datos[context.dataIndex]
-									const costo = new Intl.NumberFormat('es-MX', {
+									const costo = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										style: 'currency',
 										currency: 'MXN',
 									}).format(item.costo || 0)
-									const porcentaje = new Intl.NumberFormat('es-MX', {
+									const porcentaje = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 										maximumFractionDigits: 1,
 									}).format(item.porcentaje || 0)
 

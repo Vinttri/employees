@@ -1649,13 +1649,13 @@ export default {
 		},
 		hours(value) {
 			return t('employees', '{value} hours', {
-				value: new Intl.NumberFormat('es-MX', {
+				value: new Intl.NumberFormat(document.documentElement.lang || 'en', {
 					maximumFractionDigits: 2,
 				}).format(this.nonNegativeNumber(value)),
 			})
 		},
 		numberValue(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 2,
 			}).format(this.nonNegativeNumber(value))
 		},
@@ -1671,7 +1671,7 @@ export default {
 				: t('employees', 'Not available')
 		},
 		money(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 				maximumFractionDigits: 2,

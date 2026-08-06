@@ -281,9 +281,9 @@ export default {
 		resumenFmt() {
 			const kpis = this.resumenGeneral?.kpis || {}
 
-			const num2 = new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 })
-			const int = new Intl.NumberFormat('es-MX')
-			const money = new Intl.NumberFormat('es-MX', {
+			const num2 = new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 2 })
+			const int = new Intl.NumberFormat(document.documentElement.lang || 'en')
+			const money = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: 'MXN',
 			})

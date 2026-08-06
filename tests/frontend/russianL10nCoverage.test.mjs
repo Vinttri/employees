@@ -86,7 +86,7 @@ assert.deepEqual(
 )
 
 assert.equal(
-	/Intl\.(?:DateTimeFormat|NumberFormat)\(undefined|toLocale(?:Date|Time|String)\(['"]es/.test(combinedSource),
+	/Intl\.(?:DateTimeFormat|NumberFormat)\((?:undefined|['"]es)|toLocale(?:Date|Time|String)\(['"]es/.test(combinedSource),
 	false,
 	'Date and number formatting must follow the active Nextcloud language',
 )

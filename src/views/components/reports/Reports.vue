@@ -194,6 +194,7 @@ import {
 	NcSelect,
 } from '@nextcloud/vue'
 import { translate as t } from '@nextcloud/l10n'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 
 export default {
 	name: 'Reports',
@@ -348,7 +349,7 @@ export default {
 		},
 
 		quincenaPeriodoTexto() {
-			const formatter = new Intl.DateTimeFormat('es-MX', {
+			const formatter = new Intl.DateTimeFormat(nextcloudLocale(), {
 				day: '2-digit',
 				month: 'short',
 			})
@@ -687,7 +688,7 @@ export default {
 			const d = new Date(val)
 			if (!isNaN(d.getTime())) {
 				// Muestra date y hora locales (MX)
-				return new Intl.DateTimeFormat('es-MX', {
+				return new Intl.DateTimeFormat(nextcloudLocale(), {
 					year: 'numeric',
 					month: '2-digit',
 					day: '2-digit',
@@ -777,7 +778,7 @@ export default {
 		},
 
 		formatHours(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2,
 			}).format(Number(value) || 0)

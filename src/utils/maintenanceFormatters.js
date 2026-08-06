@@ -27,7 +27,8 @@ export function maintenanceTypeLabel(type, t) {
 export function formatCalendarDate(value, locale) {
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return '—'
 	const [year, month, day] = value.split('-').map(Number)
-	return new Intl.DateTimeFormat(locale || undefined).format(new Date(year, month - 1, day))
+	const activeLocale = locale || (typeof document !== 'undefined' ? document.documentElement.lang : undefined)
+	return new Intl.DateTimeFormat(activeLocale).format(new Date(year, month - 1, day))
 }
 
 export function formatDateRange(start, end, locale) {

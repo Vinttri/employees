@@ -296,9 +296,9 @@ export default {
 	methods: {
 		t,
 		valueOrDefault(value) { return value === null || value === undefined || String(value).trim() === '' ? t('employees', 'Not specified') : value },
-		money(value) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: this.solicitud.currency || 'MXN' }).format(Number(value || 0)) },
-		formatDate(value) { if (!value) return t('employees', 'Not specified'); const date = new Date(`${String(value).slice(0, 10)}T00:00:00`); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium' }).format(date) },
-		formatDateTime(value) { if (!value) return t('employees', 'Not specified'); const date = new Date(String(value).replace(' ', 'T')); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(date) },
+		money(value) { return new Intl.NumberFormat(document.documentElement.lang || 'en', { style: 'currency', currency: this.solicitud.currency || 'MXN' }).format(Number(value || 0)) },
+		formatDate(value) { if (!value) return t('employees', 'Not specified'); const date = new Date(`${String(value).slice(0, 10)}T00:00:00`); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(document.documentElement.lang || 'en', { dateStyle: 'medium' }).format(date) },
+		formatDateTime(value) { if (!value) return t('employees', 'Not specified'); const date = new Date(String(value).replace(' ', 'T')); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(document.documentElement.lang || 'en', { dateStyle: 'medium', timeStyle: 'short' }).format(date) },
 		statusLabel(state) { return ({ borrador: t('employees', 'Draft'), pendiente_autorizacion: t('employees', 'Pending approval'), autorizada: t('employees', 'Approved'), rechazada: t('employees', 'Rejected'), cancelada: t('employees', 'Cancelled') })[state] || this.valueOrDefault(state) },
 		itemKey(item, index) { return String(item.id_detail || index) },
 		isItemExpanded(item, index) { return Boolean(this.expandedItems[this.itemKey(item, index)]) },

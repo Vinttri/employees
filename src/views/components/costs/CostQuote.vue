@@ -552,21 +552,21 @@ import InformationOutline from 'vue-material-design-icons/InformationOutline.vue
 
 import HelpHint from '../Helpers/HelpHint.vue'
 
-const numberFormatter = new Intl.NumberFormat('es-MX', {
+const numberFormatter = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 	maximumFractionDigits: 2,
 })
 
-const integerFormatter = new Intl.NumberFormat('es-MX', {
+const integerFormatter = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 	maximumFractionDigits: 0,
 })
 
-const moneyFormatter = new Intl.NumberFormat('es-MX', {
+const moneyFormatter = new Intl.NumberFormat(document.documentElement.lang || 'en', {
 	style: 'currency',
 	currency: 'MXN',
 	maximumFractionDigits: 2,
 })
 
-const dateFormatter = new Intl.DateTimeFormat('es-MX', {
+const dateFormatter = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
 	day: '2-digit',
 	month: 'short',
 	year: 'numeric',

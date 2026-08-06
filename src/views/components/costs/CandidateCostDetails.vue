@@ -373,7 +373,7 @@ export default {
 				&& Number.isFinite(Number(value))
 		},
 		number(value) {
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				maximumFractionDigits: 2,
 			}).format(Number(value))
 		},
@@ -384,12 +384,12 @@ export default {
 		},
 		integerValue(value) {
 			return this.hasNumber(value)
-				? new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(Number(value))
+				? new Intl.NumberFormat(document.documentElement.lang || 'en', { maximumFractionDigits: 0 }).format(Number(value))
 				: t('employees', 'Not available')
 		},
 		percentValue(value) {
 			return this.hasNumber(value)
-				? new Intl.NumberFormat('es-MX', {
+				? new Intl.NumberFormat(document.documentElement.lang || 'en', {
 					style: 'percent',
 					maximumFractionDigits: 2,
 				}).format(Number(value) / 100)
@@ -397,7 +397,7 @@ export default {
 		},
 		moneyValue(value) {
 			return this.hasNumber(value)
-				? new Intl.NumberFormat('es-MX', {
+				? new Intl.NumberFormat(document.documentElement.lang || 'en', {
 					style: 'currency',
 					currency: 'MXN',
 					maximumFractionDigits: 2,
@@ -411,7 +411,7 @@ export default {
 			const date = new Date(`${String(value).slice(0, 10)}T00:00:00`)
 			return Number.isNaN(date.getTime())
 				? t('employees', 'Not available')
-				: new Intl.DateTimeFormat('es-MX', {
+				: new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
 					year: 'numeric',
 					month: 'short',
 					day: 'numeric',

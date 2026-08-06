@@ -1362,7 +1362,7 @@ export default {
 		formatMoney(value, currency = 'MXN') {
 			const number = Number(value || 0)
 
-			return new Intl.NumberFormat('es-MX', {
+			return new Intl.NumberFormat(document.documentElement.lang || 'en', {
 				style: 'currency',
 				currency: currency || 'MXN',
 			}).format(number)
@@ -1380,7 +1380,7 @@ export default {
 				return String(value)
 			}
 
-			return new Intl.DateTimeFormat('es-MX', {
+			return new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
 				dateStyle: 'medium',
 				timeStyle: 'short',
 			}).format(date)

@@ -13,6 +13,7 @@ assert.equal(toApiDate(new Date(2026, 7, 20, 23, 30)), '2026-08-20')
 assert.equal(addOneCalendarDay('2026-08-21'), '2026-08-22')
 assert.equal(addOneCalendarDay('2026-12-31'), '2027-01-01')
 assert.equal(formatDateRange('2026-08-17', '2026-08-21', 'es-MX').includes('–'), true)
+assert.ok(formatterSource.includes('document.documentElement.lang'))
 assert.equal(formatOptionalTimeRange('09:00:00', '17:00:00'), '09:00 – 17:00')
 
 const admin = maintenanceCapabilities({ is_admin: true }, { modulo_inventario: 'true' })

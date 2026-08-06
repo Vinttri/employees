@@ -58,7 +58,7 @@ export default {
 			const date = new Date(String(value).replace(' ', 'T'))
 			return Number.isNaN(date.getTime())
 				? value
-				: new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
+				: new Intl.DateTimeFormat(document.documentElement.lang || 'en', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 		},
 	},
 }
