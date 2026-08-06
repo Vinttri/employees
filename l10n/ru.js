@@ -2617,7 +2617,22 @@ OC.L10N.register(
     "Time reports are used automatically unless manual hours are entered for the month.": "Отчёты времени используются автоматически, если за месяц не введены часы вручную.",
     "Advanced payroll settings": "Расширенные настройки зарплаты",
     "Personal tax adjustments": "Индивидуальные налоговые корректировки",
-    "Change or disable one tax rule for a specific employee and effective period.": "Измените или отключите отдельное налоговое правило для сотрудника и периода его действия."
+    "Change or disable one tax rule for a specific employee and effective period.": "Измените или отключите отдельное налоговое правило для сотрудника и периода его действия.",
+    "Create payroll period": "Создать расчётный период",
+    "Create salary plan": "Создать план оплаты",
+    "Add monthly input": "Добавить данные за месяц",
+    "Create tax profile": "Создать налоговый профиль",
+    "Add profile rule": "Добавить правило профиля",
+    "Assign profile to plan": "Назначить профиль плану",
+    "Individual rule override": "Индивидуальная настройка правила",
+    "Define a calculation window and currency.": "Укажите расчётный период и валюту.",
+    "Set how one employee is paid from an effective date.": "Укажите схему оплаты сотрудника и дату начала её действия.",
+    "Enter hours, bonuses, taxes, deductions or a one-off payment.": "Введите часы, премии, налоги, удержания или разовую выплату.",
+    "Create a reusable collection of manual tax or deduction rules.": "Создайте повторно используемый набор правил налогов и удержаний.",
+    "Rules can be fixed amounts, percentages or per-hour values.": "Правила могут быть фиксированной суммой, процентом или ставкой за час.",
+    "Profiles may be combined and are effective-dated.": "Профили можно комбинировать и задавать даты их действия.",
+    "Use a personal rate or disable a rule for a period.": "Задайте индивидуальную ставку или отключите правило на период.",
+    "Record a bank transfer, cash payment or another payout.": "Зарегистрируйте банковский перевод, выплату наличными или другой способ выплаты."
 },
     "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);"
 );

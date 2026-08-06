@@ -9,6 +9,7 @@ const service = read('src/services/payrollService.js')
 const routes = read('appinfo/routes.php')
 const backend = read('lib/Service/PayrollPackageService.php')
 const migration = read('lib/Migration/Version2053Date20260806150000.php')
+const russianTranslations = JSON.parse(read('l10n/ru.json')).translations
 
 for (const contract of [
 	'Salary calculations by month',
@@ -28,6 +29,18 @@ assert.match(backend, /sep=;/)
 assert.match(backend, /Employees_storage.*Payroll.*Calculations/s)
 assert.match(backend, /Official documents\/Payroll/)
 assert.match(migration, /document_file_id.*bigint/s)
+
+for (const key of [
+	'Create payroll period',
+	'Create salary plan',
+	'Add monthly input',
+	'Create tax profile',
+	'Define a calculation window and currency.',
+	'Enter hours, bonuses, taxes, deductions or a one-off payment.',
+]) {
+	assert.ok(russianTranslations[key], `Missing Russian payroll translation: ${key}`)
+	assert.notEqual(russianTranslations[key], key, `Untranslated Russian payroll label: ${key}`)
+}
 
 assert.doesNotMatch(view, /#[0-9a-fA-F]{3,8}\b/)
 for (const token of ['--color-primary-element', '--color-main-background', '--color-border']) {

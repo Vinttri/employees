@@ -2616,7 +2616,22 @@
     "Time reports are used automatically unless manual hours are entered for the month.": "Time reports are used automatically unless manual hours are entered for the month.",
     "Advanced payroll settings": "Advanced payroll settings",
     "Personal tax adjustments": "Personal tax adjustments",
-    "Change or disable one tax rule for a specific employee and effective period.": "Change or disable one tax rule for a specific employee and effective period."
+    "Change or disable one tax rule for a specific employee and effective period.": "Change or disable one tax rule for a specific employee and effective period.",
+    "Create payroll period": "Create payroll period",
+    "Create salary plan": "Create salary plan",
+    "Add monthly input": "Add monthly input",
+    "Create tax profile": "Create tax profile",
+    "Add profile rule": "Add profile rule",
+    "Assign profile to plan": "Assign profile to plan",
+    "Individual rule override": "Individual rule override",
+    "Define a calculation window and currency.": "Define a calculation window and currency.",
+    "Set how one employee is paid from an effective date.": "Set how one employee is paid from an effective date.",
+    "Enter hours, bonuses, taxes, deductions or a one-off payment.": "Enter hours, bonuses, taxes, deductions or a one-off payment.",
+    "Create a reusable collection of manual tax or deduction rules.": "Create a reusable collection of manual tax or deduction rules.",
+    "Rules can be fixed amounts, percentages or per-hour values.": "Rules can be fixed amounts, percentages or per-hour values.",
+    "Profiles may be combined and are effective-dated.": "Profiles may be combined and are effective-dated.",
+    "Use a personal rate or disable a rule for a period.": "Use a personal rate or disable a rule for a period.",
+    "Record a bank transfer, cash payment or another payout.": "Record a bank transfer, cash payment or another payout."
   },
   "pluralForm": "nplurals=2; plural=(n != 1);"
 }
