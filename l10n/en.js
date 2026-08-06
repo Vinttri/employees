@@ -2643,7 +2643,11 @@ OC.L10N.register(
     "Payroll payment": "Payroll payment",
     "Paid percentage in payroll": "Paid percentage in payroll",
     "Ignored": "Ignored",
-    "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.": "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage."
+    "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.": "Leave empty to ignore this absence in payroll; use 100 for fully paid leave, 0 for unpaid leave, or a partial percentage.",
+    "Why: {purpose} Example: {example}.": "Why: {purpose} Example: {example}.",
+    "Example: {example}.": "Example: {example}.",
+    "Help for {field}": "Help for {field}",
+    "this field": "this field"
 },
     "nplurals=2; plural=(n != 1);"
 );

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue, { nextTick } from 'vue'
 import App from './views/App.vue'
 import './styles/employees.scss'
 
@@ -9,6 +9,7 @@ import mitt from 'mitt'
 import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import axios from '@nextcloud/axios'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
+import { startContextualFieldHelp } from './utils/contextualFieldHelp.js'
 
 // eslint-disable-next-line no-unused-vars
 /* global __webpack_public_path__: writable */
@@ -136,7 +137,7 @@ const mountApplication = async () => {
 
 	const View = Vue.extend(App)
 
-	new View({
+	const view = new View({
 		router,
 		propsData: {
 			parameters: Settings,
@@ -146,6 +147,8 @@ const mountApplication = async () => {
 			permissionsContext,
 		},
 	}).$mount('#content')
+
+	nextTick(() => startContextualFieldHelp(view.$el))
 }
 
 mountApplication()
