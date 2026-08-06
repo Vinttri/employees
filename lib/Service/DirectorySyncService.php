@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\Employees\Service;
 
-use OCA\DAV\CardDAV\ContactsManager as DavContactsManager;
+use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Employees\Db\Absence;
 use OCA\Employees\Db\AbsenceMapper;
 use OCA\Employees\Db\DepartmentMapper;
@@ -16,17 +16,16 @@ use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\TeamMapper;
 use OCA\Employees\Db\UserSavings;
 use OCA\Employees\Db\UserSavingsMapper;
-use OCP\Contacts\IManager as ContactsManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Teams\ITeamManager;
 use Psr\Log\LoggerInterface;
+use Sabre\VObject\Reader;
 
 /** Insert-only synchronization from the Nextcloud directory into Employees. */
 class DirectorySyncService {
@@ -34,7 +33,6 @@ class DirectorySyncService {
 	private const SOURCE_NEXTCLOUD = 'nextcloud';
 	private const SOURCE_CONTACTS = 'contacts';
 	private const SOURCE_TEAMS = 'teams';
-	private bool $contactsProviderReady = false;
 
 	public function __construct(
 		private IUserManager $userManager,
@@ -50,9 +48,7 @@ class DirectorySyncService {
 		private EmployeeOrgChartMapper $orgChartMapper,
 		private DirectorySyncMapper $syncMapper,
 		private SettingsMapper $settingsMapper,
-		private ContactsManager $contactsManager,
-		private DavContactsManager $davContactsManager,
-		private IURLGenerator $urlGenerator,
+		private CardDavBackend $cardDavBackend,
 		private ITeamManager $teamManager,
 		private LoggerInterface $logger,
 	) {
@@ -280,15 +276,6 @@ class DirectorySyncService {
 
 	/** @param array<string, IUser> $users @param array<string, mixed> $summary @return array<string, array<string, mixed>> */
 	private function loadContacts(string $dataManagerUid, array $users, array &$summary): array {
-		if (!$this->contactsProviderReady) {
-			$this->davContactsManager->setupContactsProvider($this->contactsManager, $dataManagerUid, $this->urlGenerator);
-			$this->contactsProviderReady = true;
-		}
-		if (!$this->contactsManager->isEnabled()) {
-			$summary['warnings'][] = 'Nextcloud Contacts is not available to the configured data manager.';
-			return [];
-		}
-
 		$usersByEmail = [];
 		$usersByName = [];
 		foreach ($users as $uid => $user) {
@@ -298,11 +285,23 @@ class DirectorySyncService {
 			if ($name !== '') { $usersByName[$name][] = $uid; }
 		}
 
-		$rawContacts = $this->contactsManager->search(
-			'',
-			['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'],
-			['limit' => 1000, 'enumeration' => true, 'fullmatch' => true],
-		);
+		$rawContacts = [];
+		$addressBooks = $this->cardDavBackend->getAddressBooksForUser('principals/users/' . $dataManagerUid);
+		foreach ($addressBooks as $addressBook) {
+			$rows = $this->cardDavBackend->search(
+				(int)$addressBook['id'],
+				'',
+				['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'],
+				['limit' => 1000, 'enumeration' => true, 'fullmatch' => true],
+			);
+			foreach ($rows as $row) {
+				try {
+					$rawContacts[] = $this->vCardRowToArray($row);
+				} catch (\Throwable $e) {
+					$summary['warnings'][] = 'A Contacts card could not be read: ' . $e->getMessage();
+				}
+			}
+		}
 		$contacts = [];
 		$ambiguousUsers = [];
 		foreach ($rawContacts as $raw) {
@@ -347,6 +346,34 @@ class DirectorySyncService {
 		}
 
 		return $contacts;
+	}
+
+	/** @param array<string, mixed> $row @return array<string, mixed> */
+	private function vCardRowToArray(array $row): array {
+		$cardData = $row['carddata'] ?? '';
+		if (is_resource($cardData)) {
+			$cardData = stream_get_contents($cardData);
+		}
+		$vCard = Reader::read((string)$cardData);
+		$result = [];
+		foreach (['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'] as $propertyName) {
+			$values = [];
+			foreach ($vCard->select($propertyName) as $property) {
+				if ($propertyName === 'ORG' && method_exists($property, 'getParts')) {
+					$values[] = array_values(array_filter(array_map(
+						static fn(mixed $part): string => trim((string)$part),
+						$property->getParts(),
+					), static fn(string $part): bool => $part !== ''));
+				} else {
+					$values[] = trim((string)$property);
+				}
+			}
+			if ($values !== []) {
+				$result[$propertyName] = count($values) === 1 ? $values[0] : $values;
+			}
+		}
+
+		return $result;
 	}
 
 	/** @param array<string, IUser> $users @param array<string, mixed> $summary @return array{0:array<string,string>,1:array<string,list<string>>} */
