@@ -604,13 +604,13 @@ final class PayrollService {
 				if (bccomp($paidHours, '0', 4) > 0) {
 					$inputs[] = ['id' => null, 'input_type' => 'hours', 'quantity' => $paidHours, 'rate' => '0', 'amount' => '0', 'code' => $code . '_HOURS', 'name' => $name, 'source_type' => 'approved_absence'];
 				}
-				$inputs[] = ['id' => null, 'input_type' => 'adjustment_earning', 'quantity' => (string)$days, 'rate' => (string)$percentage, 'amount' => '0', 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
+				$inputs[] = ['id' => null, 'input_type' => 'adjustment_earning', 'quantity' => (string)$days, 'rate' => '0', 'amount' => '0', 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
 				continue;
 			}
 			if (in_array($mode, ['monthly', 'monthly_plus_hours', 'fixed_period'], true)) {
 				$unpaidRatio = (100 - $percentage) / 100;
 				$deduction = bcmul(bcdiv(bcmul($baseSalary, (string)$days, 6), (string)$periodDays, 6), (string)$unpaidRatio, 2);
-				$inputs[] = ['id' => null, 'input_type' => bccomp($deduction, '0', 2) > 0 ? 'adjustment_deduction' : 'adjustment_earning', 'quantity' => (string)$days, 'rate' => (string)$percentage, 'amount' => $deduction, 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
+				$inputs[] = ['id' => null, 'input_type' => bccomp($deduction, '0', 2) > 0 ? 'adjustment_deduction' : 'adjustment_earning', 'quantity' => (string)$days, 'rate' => bccomp($deduction, '0', 2) > 0 ? (string)$percentage : '0', 'amount' => $deduction, 'code' => $code, 'name' => $name, 'source_type' => 'approved_absence', 'taxable' => false];
 			}
 		}
 		return $inputs;
