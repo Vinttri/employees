@@ -15,6 +15,7 @@ use OCP\IUserManager;
 use OCP\IGroupManager;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\DepartmentMapper;
+use OCA\Employees\Db\DirectorySyncMapper;
 use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\Employee;
 use OCA\Employees\Db\Department;
@@ -38,6 +39,7 @@ class AreasController extends BaseController {
     protected $SettingsMapper;
     protected $l10n;
     protected PermissionsService $permisosService;
+    private DirectorySyncMapper $directorySyncMapper;
 
     public function __construct(
         IRequest $request,
@@ -48,7 +50,8 @@ class AreasController extends BaseController {
         SettingsMapper $SettingsMapper,
         IL10N $l10n,
         IGroupManager $groupManager,
-        PermissionsService $permisosService
+        PermissionsService $permisosService,
+        DirectorySyncMapper $directorySyncMapper,
     ) {
         parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
@@ -59,6 +62,7 @@ class AreasController extends BaseController {
         $this->SettingsMapper = $SettingsMapper;
         $this->l10n = $l10n;
         $this->permisosService = $permisosService;
+        $this->directorySyncMapper = $directorySyncMapper;
     }
 
     /**
@@ -146,6 +150,7 @@ class AreasController extends BaseController {
         $this->requireHumanResourcesAccess();
         try {
             $this->DepartmentMapper->EliminarArea((string) $id_department);
+            $this->directorySyncMapper->suppressByLocalId('department', $id_department);
             return new DataResponse(Http::STATUS_OK);
         } catch (\Exception $e) {
             return new DataResponse("Error al eliminar el área: " . $e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);

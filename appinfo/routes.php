@@ -48,6 +48,8 @@ return [
 		['name' => 'employees#createEmployeesFromNextcloud', 'url' => '/directory/users/import', 'verb' => 'POST'],
 		['name' => 'employees#previewContactsOrganization', 'url' => '/directory/contacts/preview', 'verb' => 'GET'],
 		['name' => 'employees#importContactsOrganization', 'url' => '/directory/contacts/import', 'verb' => 'POST'],
+		['name' => 'employees#syncDirectory', 'url' => '/directory/sync', 'verb' => 'POST'],
+		['name' => 'employees#directorySyncStatus', 'url' => '/directory/status', 'verb' => 'GET'],
 		['name' => 'employees#ActivarUsuario', 'url' => '/ActivarUsuario', 'verb' => 'POST'],
 		['name' => 'employees#EliminarEmpleado', 'url' => '/EliminarEmpleado', 'verb' => 'POST'],
 		['name' => 'employees#DesactivarEmpleado', 'url' => '/DesactivarEmpleado', 'verb' => 'POST'],

@@ -79,6 +79,20 @@ class PositionMapper extends QBMapper {
         return $users;
     }
 
+	/** @return array<string, mixed>|null */
+	public function getById(int $id): ?array {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('id_positions', 'name', 'level')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id_positions', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->setMaxResults(1)
+			->executeQuery();
+		$row = LegacyRowCompat::row($result->fetch());
+		$result->closeCursor();
+
+		return is_array($row) ? $row : null;
+	}
+
     public function deleteByIdEmpleado(int $id_departments): void {
         $qb = $this->db->getQueryBuilder();
 

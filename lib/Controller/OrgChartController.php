@@ -12,6 +12,7 @@ use OCP\IGroupManager;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\EmployeeOrgChartMapper;
+use OCA\Employees\Db\DirectorySyncMapper;
 use OCA\Employees\Db\EmployeeOrgChartPositionMapper;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -27,6 +28,7 @@ class OrgChartController extends BaseController {
     protected $organigramaMapper;
     protected $organigramaposMapper;
     protected PermissionsService $permisosService;
+    private DirectorySyncMapper $directorySyncMapper;
 
     public function __construct(
         IRequest $request,
@@ -36,7 +38,8 @@ class OrgChartController extends BaseController {
         SettingsMapper $SettingsMapper,
         EmployeeOrgChartMapper $organigramaMapper,
         EmployeeOrgChartPositionMapper $organigramaposMapper,
-        PermissionsService $permisosService
+        PermissionsService $permisosService,
+        DirectorySyncMapper $directorySyncMapper,
     ) {
         parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
@@ -44,6 +47,7 @@ class OrgChartController extends BaseController {
         $this->organigramaMapper = $organigramaMapper;
         $this->organigramaposMapper = $organigramaposMapper;
         $this->permisosService = $permisosService;
+        $this->directorySyncMapper = $directorySyncMapper;
     }
 
     /**
@@ -94,6 +98,7 @@ class OrgChartController extends BaseController {
 
         try {
             $this->organigramaMapper->EliminarRelacion($id_employee, $id_dependent);
+            $this->directorySyncMapper->suppressRelation($id_employee, $id_dependent);
             return new DataResponse(Http::STATUS_OK);
         } catch (\Exception $e) {
             return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);

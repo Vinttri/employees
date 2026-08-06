@@ -15,6 +15,7 @@ use OCP\IUserManager;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCA\Employees\Db\EmployeeMapper;
+use OCA\Employees\Db\DirectorySyncMapper;
 use OCA\Employees\Db\DepartmentMapper;
 use OCA\Employees\Db\PositionMapper;
 use OCA\Employees\Db\SettingsMapper;
@@ -35,7 +36,6 @@ use OCA\Employees\Db\TeamMapper;
 use OCP\IAvatarManager;
 
 use OCP\IDBConnection;
-use OCP\Contacts\IManager as ContactsManager;
 
 use OCP\Files\IRootFolder;
 
@@ -46,6 +46,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCA\Employees\Service\PermissionsService;
 use OCA\Employees\Service\AnniversarySyncService;
 use OCA\Employees\Service\InventoryMovementService;
+use OCA\Employees\Service\DirectorySyncService;
 
 
 /**
@@ -53,9 +54,6 @@ use OCA\Employees\Service\InventoryMovementService;
  */
 class EmployeesController extends BaseController {
 	private const STORAGE_FOLDER = 'Employees_storage';
-	private const DIRECTORY_TEAM_GROUPS = [
-		'it', 'sales', 'support', 'finance', 'hr', 'legal', 'management',
-	];
 
     protected $userSession;
     protected $userManager;
@@ -76,7 +74,8 @@ class EmployeesController extends BaseController {
     private AnniversarySyncService $aniversarioSyncService;
     private InventoryMovementService $inventarioMovimientoService;
     private IDBConnection $db;
-    private ContactsManager $contactsManager;
+    private DirectorySyncService $directorySyncService;
+    private DirectorySyncMapper $directorySyncMapper;
 
     protected IRootFolder $rootFolder;
 
@@ -103,7 +102,8 @@ class EmployeesController extends BaseController {
         AnniversarySyncService $aniversarioSyncService,
         InventoryMovementService $inventarioMovimientoService,
         IDBConnection $db,
-        ContactsManager $contactsManager,
+        DirectorySyncService $directorySyncService,
+        DirectorySyncMapper $directorySyncMapper,
     ) {
 		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
@@ -130,7 +130,8 @@ class EmployeesController extends BaseController {
         $this->inventarioMovimientoService = $inventarioMovimientoService;
         $this->EmployeeOrgChartMapper = $EmployeeOrgChartMapper;
         $this->db = $db;
-        $this->contactsManager = $contactsManager;
+        $this->directorySyncService = $directorySyncService;
+        $this->directorySyncMapper = $directorySyncMapper;
     }
 
     /**
@@ -322,7 +323,7 @@ class EmployeesController extends BaseController {
         return new DataResponse([
             'status' => 'ok',
             'data' => [
-                'contacts' => $this->getContactsOrganizationPreview(),
+                'contacts' => $this->directorySyncService->previewContacts(),
                 'source' => 'nextcloud-contacts',
                 'read_only' => true,
             ],
@@ -333,110 +334,46 @@ class EmployeesController extends BaseController {
     #[NoAdminRequired]
     public function importContactsOrganization(array $uids = []): DataResponse {
         $this->requireHumanResourcesAccess();
-        $requested = array_fill_keys(array_map('strval', $uids), true);
-        if ($requested === []) {
+        $uids = array_values(array_unique(array_filter(array_map('strval', $uids))));
+        if ($uids === []) {
             return new DataResponse([
                 'status' => 'error',
                 'message' => 'Select at least one Contacts entry.',
             ], Http::STATUS_BAD_REQUEST);
         }
 
-        $contacts = $this->getContactsOrganizationPreview();
-        $contactsByUid = [];
-        $uidsByDisplayName = [];
-        foreach ($contacts as $contact) {
-            $contactsByUid[$contact['uid']] = $contact;
-            $uidsByDisplayName[mb_strtolower($contact['display_name'], 'UTF-8')] = $contact['uid'];
-        }
-
-        $results = [];
-        $departmentNames = [];
-        $positionNames = [];
-        $teamNames = [];
-        foreach (array_keys($requested) as $uid) {
-            $contact = $contactsByUid[$uid] ?? null;
-            if ($contact === null || !($contact['importable'] ?? false)) {
-                $results[] = ['uid' => $uid, 'status' => 'error', 'message' => 'Contact is not importable.'];
-                continue;
-            }
-
-            try {
-                $this->provisionEmployeeRecord($uid, $contact['email']);
-                $departmentId = $contact['department'] !== ''
-                    ? $this->DepartmentMapper->findOrCreateByName($contact['department'])
-                    : null;
-                $positionId = $contact['position'] !== ''
-                    ? $this->PositionMapper->findOrCreateByName($contact['position'])
-                    : null;
-                $teamId = $contact['team'] !== ''
-                    ? $this->TeamMapper->findOrCreateByName($contact['team'])
-                    : null;
-                $managerUid = $uidsByDisplayName[mb_strtolower($contact['manager_name'], 'UTF-8')] ?? null;
-                $employee = $this->EmployeeMapper->findByUserId($uid);
-                if ($employee === null) {
-                    throw new \RuntimeException('Employee record was not found after provisioning.');
-                }
-
-                $this->EmployeeMapper->updateDirectoryProfile(
-                    (int)$employee['id_employees'],
-                    $contact['email'] !== '' ? $contact['email'] : null,
-                    $departmentId,
-                    $positionId,
-                    $teamId,
-                    $managerUid,
-                );
-
-                if ($contact['department'] !== '') { $departmentNames[$contact['department']] = true; }
-                if ($contact['position'] !== '') { $positionNames[$contact['position']] = true; }
-                if ($contact['team'] !== '') { $teamNames[$contact['team']] = true; }
-                $results[] = ['uid' => $uid, 'status' => 'imported'];
-            } catch (\Throwable $e) {
-                $results[] = ['uid' => $uid, 'status' => 'error', 'message' => $e->getMessage()];
-            }
-        }
-
-        // Resolve reporting lines only after every selected employee has been
-        // provisioned. This makes the result independent of Contacts sort order.
-        foreach ($results as $result) {
-            if (($result['status'] ?? '') !== 'imported') {
-                continue;
-            }
-
-            $uid = (string)$result['uid'];
-            $contact = $contactsByUid[$uid] ?? null;
-            if ($contact === null || $contact['manager_name'] === '') {
-                continue;
-            }
-
-            $managerUid = $uidsByDisplayName[mb_strtolower($contact['manager_name'], 'UTF-8')] ?? null;
-            $employee = $this->EmployeeMapper->findByUserId($uid);
-            $manager = $managerUid !== null ? $this->EmployeeMapper->findByUserId($managerUid) : null;
-            if ($employee === null || $manager === null) {
-                continue;
-            }
-
-            if (!$this->EmployeeOrgChartMapper->ExisteRelacion(
-                (int)$manager['id_employees'],
-                (int)$employee['id_employees'],
-            )) {
-                $this->EmployeeOrgChartMapper->CrearRelacion(
-                    (int)$manager['id_employees'],
-                    (int)$employee['id_employees'],
-                );
-            }
-        }
+        $result = $this->directorySyncService->sync($uids);
+        $created = (int)($result['created']['employees'] ?? 0);
+        $adopted = (int)($result['adopted']['employees'] ?? 0);
+        $failed = ($result['status'] ?? 'error') === 'ok' ? 0 : 1;
 
         return new DataResponse([
             'status' => 'ok',
             'data' => [
-                'results' => $results,
-                'imported' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'imported')),
-                'failed' => count(array_filter($results, static fn(array $row): bool => ($row['status'] ?? '') === 'error')),
-                'departments' => count($departmentNames),
-                'positions' => count($positionNames),
-                'teams' => count($teamNames),
+                'imported' => $created + $adopted,
+                'failed' => $failed,
+                'departments' => (int)($result['created']['departments'] ?? 0),
+                'positions' => (int)($result['created']['positions'] ?? 0),
+                'teams' => (int)($result['created']['teams'] ?? 0),
+                'sync' => $result,
             ],
         ], Http::STATUS_OK);
+    }
+
+    #[UseSession]
+    #[NoAdminRequired]
+    public function syncDirectory(): DataResponse {
+        $this->requireHumanResourcesAccess();
+        $result = $this->directorySyncService->sync();
+        $status = ($result['status'] ?? 'error') === 'ok' ? Http::STATUS_OK : Http::STATUS_INTERNAL_SERVER_ERROR;
+        return new DataResponse(['status' => $result['status'], 'data' => $result], $status);
+    }
+
+    #[UseSession]
+    #[NoAdminRequired]
+    public function directorySyncStatus(): DataResponse {
+        $this->requireHumanResourcesAccess();
+        return new DataResponse(['status' => 'ok', 'data' => $this->directorySyncService->getStatus()], Http::STATUS_OK);
     }
 
     /**
@@ -447,7 +384,7 @@ class EmployeesController extends BaseController {
 	public function DesactivarEmpleado(int $id_employees): DataResponse {
         $this->requireHumanResourcesAccess();
 		try{
-			$this->inventarioMovimientoService->ejecutarDesasignacionEmpleado(
+            $this->inventarioMovimientoService->ejecutarDesasignacionEmpleado(
 				$id_employees,
 				fn() => $this->EmployeeMapper->DesactivarByIdEmpleado($id_employees),
 			);
@@ -496,6 +433,8 @@ class EmployeesController extends BaseController {
                     $this->EmployeeMapper->deleteByIdEmpleado($id_employees);
                 }
             );
+            $this->directorySyncMapper->suppressByLocalId('employee', $id_employees);
+            $this->directorySyncMapper->suppressRelationsForEmployee($id_employees);
 
             // La relación de inventario y el empleado ya quedaron confirmados antes de modificar el grupo externo.
             if ($user !== null && $group !== null && $group->inGroup($user)) {
@@ -930,78 +869,6 @@ class EmployeesController extends BaseController {
             'status' => 'created',
             'warnings' => $warnings,
         ];
-    }
-
-    /** @return array<int, array<string, mixed>> */
-    private function getContactsOrganizationPreview(): array {
-        if (!$this->contactsManager->isEnabled()) {
-            throw new \RuntimeException('Nextcloud Contacts integration is not available for this user.');
-        }
-
-        $rawContacts = $this->contactsManager->search(
-            '',
-            ['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'],
-            ['limit' => 500, 'enumeration' => true, 'fullmatch' => true],
-        );
-        $contacts = [];
-        foreach ($rawContacts as $rawContact) {
-            $uid = $this->contactScalar($rawContact['UID'] ?? '');
-            if ($uid === '') {
-                continue;
-            }
-
-            $user = $this->userManager->get($uid);
-            $enabled = $user !== null && (!method_exists($user, 'isEnabled') || $user->isEnabled());
-            $team = '';
-            if ($user !== null) {
-                $userGroups = $this->groupManager->getUserGroupIds($user);
-                foreach (self::DIRECTORY_TEAM_GROUPS as $groupId) {
-                    if (in_array($groupId, $userGroups, true)) {
-                        $team = $this->directoryTeamLabel($groupId);
-                        break;
-                    }
-                }
-            }
-
-            $contacts[] = [
-                'uid' => $uid,
-                'display_name' => $this->contactScalar($rawContact['FN'] ?? $uid),
-                'email' => $this->contactScalar($rawContact['EMAIL'] ?? ''),
-                'department' => $this->contactScalar($rawContact['ORG'] ?? ''),
-                'position' => $this->contactScalar($rawContact['TITLE'] ?? ($rawContact['ROLE'] ?? '')),
-                'team' => $team,
-                'manager_name' => $this->contactScalar($rawContact['X-MANAGERSNAME'] ?? ''),
-                'existing_employee' => $this->EmployeeMapper->findByUserId($uid) !== null,
-                'importable' => $enabled,
-                'reason' => $enabled ? '' : 'No enabled Nextcloud user matches this contact.',
-            ];
-        }
-
-        usort($contacts, static fn(array $left, array $right): int => strcasecmp(
-            (string)$left['display_name'],
-            (string)$right['display_name'],
-        ));
-
-        return $contacts;
-    }
-
-    private function contactScalar(mixed $value): string {
-        if (is_array($value)) {
-            $value = reset($value);
-            if (is_array($value)) {
-                $value = $value['value'] ?? '';
-            }
-        }
-
-        return trim(is_scalar($value) ? (string)$value : '');
-    }
-
-    private function directoryTeamLabel(string $groupId): string {
-        if ($groupId === 'it') {
-            return 'IT';
-        }
-
-        return ucwords(str_replace(['-', '_'], ' ', $groupId));
     }
 
     private function requireHumanResourcesAccess(): void {

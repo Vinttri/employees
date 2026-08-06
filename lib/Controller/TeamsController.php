@@ -14,6 +14,7 @@ use OCP\IUserSession;
 use OCP\IUserManager;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\TeamMapper;
+use OCA\Employees\Db\DirectorySyncMapper;
 use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\Employee;
 use OCA\Employees\Db\Team;
@@ -48,6 +49,7 @@ class TeamsController extends BaseController {
     private IClientService $clientService;
     private ISubAdmin $subAdmin;
     protected PermissionsService $permisosService;
+    private DirectorySyncMapper $directorySyncMapper;
 
     private IURLGenerator $urlGenerator;
 
@@ -65,6 +67,7 @@ class TeamsController extends BaseController {
         IClientService $clientService,
         ISubAdmin $subAdmin,
         PermissionsService $permisosService,
+        DirectorySyncMapper $directorySyncMapper,
     ) {
 		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
 
@@ -80,6 +83,7 @@ class TeamsController extends BaseController {
         $this->clientService = $clientService;
         $this->subAdmin = $subAdmin;
         $this->permisosService = $permisosService;
+        $this->directorySyncMapper = $directorySyncMapper;
     }
 
     /**
@@ -208,6 +212,8 @@ class TeamsController extends BaseController {
                     'message' => 'Equipo no encontrado.',
                 ], Http::STATUS_NOT_FOUND);
             }
+
+            $this->directorySyncMapper->suppressByLocalId('team', $id_team);
 
             $nombreGrupo = $row['name'] ?? $row['name'] ?? null;
 

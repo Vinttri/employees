@@ -2354,7 +2354,19 @@ OC.L10N.register(
     "Personal day (demo)": "Личный день (демо)",
     "Stock": "На складе",
     "No records": "Нет записей",
-    "{percentage}% of total": "{percentage}% от общего значения"
+    "{percentage}% of total": "{percentage}% от общего значения",
+    "Nextcloud directory synchronization": "Синхронизация каталога Nextcloud",
+    "New users, Contacts organization data and Teams/Collectives are added automatically. Local edits are never overwritten, and deleted synchronized records stay deleted.": "Новые пользователи, оргструктура из Контактов и команды/Коллективы добавляются автоматически. Локальные изменения никогда не перезаписываются, а удалённые синхронизированные записи остаются удалёнными.",
+    "Synchronizing…": "Синхронизация…",
+    "Synchronize now": "Синхронизировать сейчас",
+    "Automatic synchronization: every 15 minutes": "Автоматическая синхронизация: каждые 15 минут",
+    "Last synchronization: {date}": "Последняя синхронизация: {date}",
+    "Created: {count}; requires completion: {incomplete}": "Создано: {count}; требует дозаполнения: {incomplete}",
+    "Could not load directory synchronization status: {error}": "Не удалось загрузить статус синхронизации каталога: {error}",
+    "Directory synchronization completed. Created: {count}; requires completion: {incomplete}.": "Синхронизация каталога завершена. Создано: {count}; требует дозаполнения: {incomplete}.",
+    "Directory synchronization failed: {error}": "Ошибка синхронизации каталога: {error}",
+    "New Nextcloud users are synchronized automatically; this list is also available for an immediate manual import.": "Новые пользователи Nextcloud синхронизируются автоматически; этот список также позволяет запустить импорт сразу вручную.",
+    "Synchronization reads Nextcloud and Contacts without changing them. Existing Employees data and manual edits are preserved.": "Синхронизация читает Nextcloud и Контакты, не изменяя их. Существующие данные приложения и ручные изменения сохраняются."
 },
     "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);"
 );

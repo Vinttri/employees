@@ -30,18 +30,26 @@ class DepartmentMapper extends QBMapper {
 	}
 
 	public function findOrCreateByName(string $name): int {
+		return $this->findOrCreateByNameAndParent($name, null);
+	}
+
+	public function findOrCreateByNameAndParent(string $name, ?int $parentId): int {
 		$name = trim($name);
 		if ($name === '') {
 			throw new \InvalidArgumentException('Department name cannot be empty.');
 		}
 
-		$find = function () use ($name): ?int {
+		$find = function () use ($name, $parentId): ?int {
 			$qb = $this->db->getQueryBuilder();
-			$result = $qb->select('id_department')
+			$qb->select('id_department')
 				->from($this->getTableName())
-				->where($qb->expr()->eq('name', $qb->createNamedParameter($name)))
-				->setMaxResults(1)
-				->executeQuery();
+				->where($qb->expr()->eq('name', $qb->createNamedParameter($name)));
+			if ($parentId === null) {
+				$qb->andWhere($qb->expr()->isNull('id_parent'));
+			} else {
+				$qb->andWhere($qb->expr()->eq('id_parent', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+			}
+			$result = $qb->setMaxResults(1)->executeQuery();
 			$id = $result->fetchOne();
 			$result->closeCursor();
 
@@ -55,7 +63,7 @@ class DepartmentMapper extends QBMapper {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb->insert($this->getTableName())->values([
-			'id_parent' => $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL),
+			'id_parent' => $qb->createNamedParameter($parentId, $parentId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
 			'name' => $qb->createNamedParameter($name),
 			'created_at' => $qb->createNamedParameter(date('Y-m-d')),
 			'updated_at' => $qb->createNamedParameter(date('Y-m-d')),

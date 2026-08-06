@@ -2354,7 +2354,19 @@ OC.L10N.register(
     "Personal day (demo)": "Personal day (demo)",
     "Stock": "Stock",
     "No records": "No records",
-    "{percentage}% of total": "{percentage}% of total"
+    "{percentage}% of total": "{percentage}% of total",
+    "Nextcloud directory synchronization": "Nextcloud directory synchronization",
+    "New users, Contacts organization data and Teams/Collectives are added automatically. Local edits are never overwritten, and deleted synchronized records stay deleted.": "New users, Contacts organization data and Teams/Collectives are added automatically. Local edits are never overwritten, and deleted synchronized records stay deleted.",
+    "Synchronizing…": "Synchronizing…",
+    "Synchronize now": "Synchronize now",
+    "Automatic synchronization: every 15 minutes": "Automatic synchronization: every 15 minutes",
+    "Last synchronization: {date}": "Last synchronization: {date}",
+    "Created: {count}; requires completion: {incomplete}": "Created: {count}; requires completion: {incomplete}",
+    "Could not load directory synchronization status: {error}": "Could not load directory synchronization status: {error}",
+    "Directory synchronization completed. Created: {count}; requires completion: {incomplete}.": "Directory synchronization completed. Created: {count}; requires completion: {incomplete}.",
+    "Directory synchronization failed: {error}": "Directory synchronization failed: {error}",
+    "New Nextcloud users are synchronized automatically; this list is also available for an immediate manual import.": "New Nextcloud users are synchronized automatically; this list is also available for an immediate manual import.",
+    "Synchronization reads Nextcloud and Contacts without changing them. Existing Employees data and manual edits are preserved.": "Synchronization reads Nextcloud and Contacts without changing them. Existing Employees data and manual edits are preserved."
 },
     "nplurals=2; plural=(n != 1);"
 );

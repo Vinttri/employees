@@ -15,6 +15,7 @@ use OCA\Employees\Service\AnniversarySyncService;
 use OCA\Employees\Service\DemoDataSeeder;
 use OCA\Employees\Db\VacationHistoryMapper;
 use OCA\Employees\BackgroundJob\RecalculateVariableHolidaysJob;
+use OCA\Employees\BackgroundJob\DirectorySyncJob;
 use OCA\Employees\Dashboard\ReportsWidget;
 use OCA\Employees\Dashboard\TeamSupportWidget;
 use OCA\Employees\Notification\PurchasesNotifier;
@@ -103,6 +104,10 @@ class Application extends App implements IBootstrap {
 
 			if (!$jobList->has(VacationBonusReminder::class, null)) {
 				$jobList->add(VacationBonusReminder::class);
+			}
+
+			if (!$jobList->has(DirectorySyncJob::class, null)) {
+				$jobList->add(DirectorySyncJob::class);
 			}
 		});
 	}

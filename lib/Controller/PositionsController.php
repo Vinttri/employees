@@ -14,6 +14,7 @@ use OCP\IUserSession;
 use OCP\IUserManager;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\PositionMapper;
+use OCA\Employees\Db\DirectorySyncMapper;
 use OCA\Employees\Db\SettingsMapper;
 use OCA\Employees\Db\Employee;
 use OCA\Employees\Db\Position;
@@ -39,6 +40,7 @@ class PositionsController extends BaseController {
     protected $SettingsMapper;
     protected $l10n;
     protected PermissionsService $permisosService;
+    private DirectorySyncMapper $directorySyncMapper;
 
     public function __construct(
         IRequest $request,
@@ -49,7 +51,8 @@ class PositionsController extends BaseController {
         SettingsMapper $SettingsMapper,
         IL10N $l10n,
 		IGroupManager $groupManager,
-        PermissionsService $permisosService
+        PermissionsService $permisosService,
+        DirectorySyncMapper $directorySyncMapper,
         
     ) {
 		parent::__construct(Application::APP_ID, $request, $userSession, $groupManager, $EmployeeMapper, $SettingsMapper);
@@ -61,6 +64,7 @@ class PositionsController extends BaseController {
         $this->SettingsMapper = $SettingsMapper;
         $this->l10n = $l10n;
         $this->permisosService = $permisosService;
+        $this->directorySyncMapper = $directorySyncMapper;
     }
 
     /**
@@ -146,6 +150,7 @@ class PositionsController extends BaseController {
         $this->requireHumanResourcesAccess();
         try {
             $this->PositionMapper->EliminarPuesto((string) $id_position);
+            $this->directorySyncMapper->suppressByLocalId('position', $id_position);
             return new DataResponse(Http::STATUS_OK);
         } catch (\Exception $e) {
             return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);

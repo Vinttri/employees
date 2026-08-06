@@ -40,6 +40,32 @@
 				</div>
 			</div>
 
+			<section class="directory-sync-card">
+				<div class="directory-sync-card__content">
+					<div>
+						<h3>{{ t('employees', 'Nextcloud directory synchronization') }}</h3>
+						<p>{{ t('employees', 'New users, Contacts organization data and Teams/Collectives are added automatically. Local edits are never overwritten, and deleted synchronized records stay deleted.') }}</p>
+					</div>
+					<NcButton type="primary"
+						:disabled="syncingDirectory"
+						@click="syncDirectoryNow">
+						{{ syncingDirectory ? t('employees', 'Synchronizing…') : t('employees', 'Synchronize now') }}
+					</NcButton>
+				</div>
+				<div v-if="directorySyncStatus" class="directory-sync-card__status">
+					<span>{{ t('employees', 'Automatic synchronization: every 15 minutes') }}</span>
+					<span v-if="directorySyncStatus.last_run">
+						{{ t('employees', 'Last synchronization: {date}', { date: formatSyncDate(directorySyncStatus.last_run) }) }}
+					</span>
+					<span v-if="directorySyncStatus.last_result">
+						{{ t('employees', 'Created: {count}; requires completion: {incomplete}', {
+							count: syncCreatedCount(directorySyncStatus.last_result),
+							incomplete: (directorySyncStatus.last_result.incomplete || []).length,
+						}) }}
+					</span>
+				</div>
+			</section>
+
 			<VueTabs>
 				<!-- Active employees -->
 				<VTab :title="t('employees', 'Active employees')">
@@ -196,7 +222,7 @@
 					<div class="tab-toolbar">
 						<div>
 							<h3>{{ t('employees', 'Users without employee record') }}</h3>
-							<p>{{ t('employees', 'Create employee records from existing Nextcloud users, then optionally fill organization data from Contacts.') }}</p>
+							<p>{{ t('employees', 'New Nextcloud users are synchronized automatically; this list is also available for an immediate manual import.') }}</p>
 						</div>
 
 						<NcTextField class="tab-search"
@@ -205,7 +231,7 @@
 					</div>
 
 					<NcNoteCard type="info" class="directory-help">
-						{{ t('employees', 'Creating an employee does not create a new Nextcloud account. Select an existing user below. Contacts are read only and are used only after your confirmation.') }}
+						{{ t('employees', 'Synchronization reads Nextcloud and Contacts without changing them. Existing Employees data and manual edits are preserved.') }}
 					</NcNoteCard>
 
 					<div class="directory-actions">
@@ -517,6 +543,8 @@ export default {
 			contactsPreview: [],
 			selectedContacts: [],
 			loadingContacts: false,
+			directorySyncStatus: null,
+			syncingDirectory: false,
 		}
 	},
 
@@ -551,10 +579,44 @@ export default {
 
 	async mounted() {
 		this.getall()
+		this.loadDirectorySyncStatus()
 	},
 
 	methods: {
 		t,
+		async loadDirectorySyncStatus() {
+			try {
+				const response = await axios.get(generateUrl('/apps/employees/directory/status'))
+				const payload = this.getPayload(response)
+				this.directorySyncStatus = payload.data || payload
+			} catch (error) {
+				showError(t('employees', 'Could not load directory synchronization status: {error}', { error: String(error) }))
+			}
+		},
+		async syncDirectoryNow() {
+			this.syncingDirectory = true
+			try {
+				const response = await axios.post(generateUrl('/apps/employees/directory/sync'))
+				const payload = this.getPayload(response)
+				const result = payload.data || payload
+				showSuccess(t('employees', 'Directory synchronization completed. Created: {count}; requires completion: {incomplete}.', {
+					count: this.syncCreatedCount(result),
+					incomplete: (result.incomplete || []).length,
+				}))
+				await Promise.all([this.getall(), this.loadDirectorySyncStatus()])
+			} catch (error) {
+				showError(t('employees', 'Directory synchronization failed: {error}', { error: String(error) }))
+			} finally {
+				this.syncingDirectory = false
+			}
+		},
+		syncCreatedCount(result) {
+			return Object.values(result?.created || {}).reduce((sum, value) => sum + Number(value || 0), 0)
+		},
+		formatSyncDate(value) {
+			const date = new Date(value)
+			return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+		},
 		// Fetch all lists
 		async getall() {
 			try {
@@ -1249,6 +1311,41 @@ export default {
 }
 .directory-help {
 	margin: 12px 0;
+}
+
+.directory-sync-card {
+	margin: 0 0 20px;
+	padding: 18px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background: var(--color-main-background);
+}
+
+.directory-sync-card__content,
+.directory-sync-card__status {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.directory-sync-card__content h3 {
+	margin: 0 0 4px;
+}
+
+.directory-sync-card__content p {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+.directory-sync-card__status {
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid var(--color-border);
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
 }
 
 .directory-actions,
