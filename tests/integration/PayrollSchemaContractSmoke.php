@@ -46,6 +46,15 @@ $types = [
 	'payroll_periods.date_until' => 'date',
 	'payroll_payments.payment_date' => 'date',
 	'payroll_periods.created_at' => 'timestamp without time zone',
+	'payroll_periods.package_status' => 'character varying',
+	'payroll_periods.package_path' => 'character varying',
+	'payroll_periods.package_generated_at' => 'timestamp without time zone',
+	'payroll_periods.package_error' => 'text',
+	'payroll_payslips.document_status' => 'character varying',
+	'payroll_payslips.document_file_id' => 'bigint',
+	'payroll_payslips.document_path' => 'character varying',
+	'payroll_payslips.document_generated_at' => 'timestamp without time zone',
+	'payroll_payslips.document_error' => 'text',
 	'payroll_payments.created_at' => 'timestamp without time zone',
 	'employee_ai_imports.expires_at' => 'timestamp without time zone',
 	'payroll_rule_profiles.active' => 'boolean',
@@ -94,6 +103,18 @@ foreach ([
 }
 if (str_contains($migration, "addColumn('id', 'string'")) {
 	$failures[] = 'payroll migration contains a string primary key';
+}
+
+$publicationMigration = (string)file_get_contents($root . '/lib/Migration/Version2053Date20260806150000.php');
+foreach ([
+	"addColumn('package_status', 'string'",
+	"addColumn('package_generated_at', 'datetime'",
+	"addColumn('document_file_id', 'bigint'",
+	"addColumn('document_generated_at', 'datetime'",
+] as $needle) {
+	if (!str_contains($publicationMigration, $needle)) {
+		$failures[] = "publication migration contract missing: {$needle}";
+	}
 }
 
 if ($failures !== []) {

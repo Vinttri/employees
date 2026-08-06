@@ -20,6 +20,7 @@ final class PayrollService {
 	public function __construct(
 		private PayrollRepository $repository,
 		private PayrollCalculator $calculator,
+		private PayrollPackageService $packageService,
 	) {
 	}
 
@@ -50,6 +51,7 @@ final class PayrollService {
 			'payslips' => $payslips,
 			'payments' => $payments,
 			'totals' => $this->totals($payslips),
+			'bank_settings' => $manageAll ? $this->packageService->bankSettings() : [],
 		];
 	}
 
@@ -95,6 +97,41 @@ final class PayrollService {
 		$this->repository->updatePlan($planId, $data);
 		$this->repository->audit($actorUid, 'plan_updated', 'plan', $planId);
 		return $this->repository->findPlan($planId);
+	}
+
+	/** @return array<string, mixed> */
+	public function saveEmployeeSetup(int $employeeId, array $payload, string $actorUid): array {
+		$employee = $this->repository->findEmployee($employeeId);
+		$data = $this->planData($payload);
+		$planId = isset($payload['plan_id']) && (int)$payload['plan_id'] > 0 ? (int)$payload['plan_id'] : null;
+		if ($planId !== null) {
+			$plan = $this->repository->findPlan($planId);
+			if ((int)$plan['employee_id'] !== $employeeId) {
+				throw new InvalidArgumentException('Salary plan does not belong to this employee.');
+			}
+			if ($this->repository->isPlanLocked($planId) && (string)$data['effective_from'] <= (string)$plan['effective_from']) {
+				throw new InvalidArgumentException('Choose an effective date after the locked salary plan start date.');
+			}
+		}
+
+		$iban = $this->packageService->employeeIban($payload['number_account'] ?? $employee['number_account'] ?? null);
+		$resultPlanId = $this->repository->transactional(function () use ($employeeId, $planId, $data, $actorUid, $iban, $payload): int {
+			if ($planId !== null && !$this->repository->isPlanLocked($planId)) {
+				$this->repository->updatePlan($planId, $data);
+				$resultPlanId = $planId;
+			} else {
+				$resultPlanId = $this->repository->createPlan(['employee_id' => $employeeId] + $data, $actorUid);
+			}
+			$this->repository->updateEmployeePayrollFields($employeeId, (string)$data['base_salary'], $iban);
+			$profileId = isset($payload['profile_id']) ? (int)$payload['profile_id'] : 0;
+			if ($profileId > 0) {
+				$this->repository->findProfile($profileId);
+				$this->repository->upsertPrimaryPlanProfile($resultPlanId, $profileId, (string)$data['effective_from'], $data['effective_until']);
+			}
+			return $resultPlanId;
+		});
+		$this->repository->audit($actorUid, 'employee_payroll_setup_saved', 'plan', $resultPlanId, ['employee_id' => $employeeId]);
+		return ['plan' => $this->repository->findPlan($resultPlanId), 'employee' => $this->repository->findEmployee($employeeId)];
 	}
 
 	/** @return array<string, mixed> */
@@ -362,13 +399,19 @@ final class PayrollService {
 		if ($activeEmployees === 0 || $payslips !== $activeEmployees) {
 			throw new RuntimeException("Payroll is incomplete: {$payslips} of {$activeEmployees} active employees were calculated.");
 		}
-		return $this->repository->transactional(function () use ($periodId, $actorUid): array {
+		$period = $this->repository->transactional(function () use ($periodId, $actorUid): array {
 			$this->repository->approvePayslipsForPeriod($periodId);
 			$this->repository->updatePeriodStatus($periodId, 'approved', $actorUid);
 			$this->repository->updatePeriodPaidIfComplete($periodId);
 			$this->repository->audit($actorUid, 'period_approved', 'period', $periodId);
 			return $this->repository->findPeriod($periodId);
 		});
+		try {
+			$period['package'] = $this->packageService->publish($periodId, $actorUid);
+		} catch (\Throwable $e) {
+			$period['package'] = ['status' => 'error', 'errors' => [$e->getMessage()]];
+		}
+		return $period;
 	}
 
 	/** @return array<string, mixed> */
@@ -412,26 +455,37 @@ final class PayrollService {
 	}
 
 	public function exportPeriodCsv(int $periodId, string $actorUid): string {
-		$period = $this->repository->findPeriod($periodId);
-		if (!in_array((string)$period['status'], ['approved', 'paid'], true)) {
-			throw new RuntimeException('Only approved payroll can be exported.');
+		return $this->packageService->csv($periodId, $actorUid);
+	}
+
+	public function exportSepa(int $periodId, string $actorUid): string {
+		return $this->packageService->sepa($periodId, $actorUid);
+	}
+
+	/** @return array<string, string> */
+	public function bankSettings(): array {
+		return $this->packageService->bankSettings();
+	}
+
+	/** @return array<string, string> */
+	public function saveBankSettings(array $payload): array {
+		return $this->packageService->saveBankSettings($payload);
+	}
+
+	/** @return array<string, mixed> */
+	public function publishPeriod(int $periodId, string $actorUid): array {
+		return $this->packageService->publish($periodId, $actorUid);
+	}
+
+	public function payslipPdf(int $payslipId, string $uid, bool $manageAll): string {
+		if (!$manageAll) {
+			$payslip = $this->repository->findPayslipById($payslipId);
+			$employee = $this->repository->findEmployee((int)$payslip['employee_id']);
+			if ((string)$employee['id_user'] !== $uid) {
+				throw new RuntimeException('You can download only your own payslip.');
+			}
 		}
-		$stream = fopen('php://temp', 'w+');
-		if ($stream === false) {
-			throw new RuntimeException('Could not create payroll export.');
-		}
-		fputcsv($stream, ['employee_uid', 'employee_name', 'account', 'currency', 'gross', 'deductions', 'net', 'paid', 'status']);
-		foreach ($this->repository->listPayslips($periodId) as $row) {
-			fputcsv($stream, [
-				$row['id_user'], $row['display_name'] ?: $row['id_user'], $row['number_account'], $row['currency'],
-				$row['gross_amount'], $row['deduction_amount'], $row['net_amount'], $row['paid_amount'], $row['status'],
-			]);
-		}
-		rewind($stream);
-		$csv = stream_get_contents($stream);
-		fclose($stream);
-		$this->repository->audit($actorUid, 'period_exported', 'period', $periodId, ['format' => 'csv']);
-		return "\xEF\xBB\xBF" . ($csv === false ? '' : $csv);
+		return $this->packageService->payslipPdf($payslipId);
 	}
 
 	public function exportPaymentsCsv(int $periodId, string $actorUid): string {

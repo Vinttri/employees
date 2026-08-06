@@ -56,6 +56,18 @@ final class PayrollRepository {
 		$qb->executeStatement();
 	}
 
+	public function updatePeriodPackage(int $id, string $status, ?string $path, ?string $error): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update('payroll_periods')
+			->set('package_status', $qb->createNamedParameter($status))
+			->set('package_path', $qb->createNamedParameter($path, $path === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR))
+			->set('package_error', $qb->createNamedParameter($error, $error === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR))
+			->set('package_generated_at', $qb->createNamedParameter($status === 'ready' ? date('Y-m-d H:i:s') : null, $status === 'ready' ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
+	}
+
 	/** @return array<int, array<string, mixed>> */
 	public function listActiveEmployees(): array {
 		$qb = $this->db->getQueryBuilder();
@@ -97,6 +109,16 @@ final class PayrollRepository {
 		return $row ?: null;
 	}
 
+	public function updateEmployeePayrollFields(int $employeeId, string $salary, string $account): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update('employees')
+			->set('salary', $qb->createNamedParameter($salary))
+			->set('number_account', $qb->createNamedParameter($account))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
+			->where($qb->expr()->eq('id_employees', $qb->createNamedParameter($employeeId, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
+	}
+
 	/** @return array<int, array<string, mixed>> */
 	public function listPlans(?int $employeeId = null): array {
 		$qb = $this->db->getQueryBuilder();
@@ -111,6 +133,10 @@ final class PayrollRepository {
 		$result = $qb->executeQuery();
 		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
+		foreach ($rows as &$row) {
+			$row['locked'] = $this->isPlanLocked((int)$row['id']);
+		}
+		unset($row);
 		return $rows;
 	}
 
@@ -309,6 +335,22 @@ final class PayrollRepository {
 			'effective_until' => $qb->createNamedParameter($until, $until === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR),
 			'sort_order' => $qb->createNamedParameter($sortOrder, IQueryBuilder::PARAM_INT),
 		])->executeStatement();
+	}
+
+	public function upsertPrimaryPlanProfile(int $planId, int $profileId, string $from, ?string $until): int {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('id')->from('payroll_plan_profiles')
+			->where($qb->expr()->eq('plan_id', $qb->createNamedParameter($planId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('effective_from', $qb->createNamedParameter($from)))
+			->orderBy('sort_order', 'ASC')->setMaxResults(1)->executeQuery();
+		$id = $result->fetchOne();
+		$result->closeCursor();
+		if ($id !== false) {
+			$this->updateProfileAssignment((int)$id, $planId, $profileId, $from, $until, 100);
+			return (int)$id;
+		}
+		$this->assignProfile($planId, $profileId, $from, $until, 100);
+		return (int)$this->db->lastInsertId('payroll_plan_profiles');
 	}
 
 	/** @return array<int, array<string, mixed>> */
@@ -610,7 +652,7 @@ final class PayrollRepository {
 	/** @return array<int, array<string, mixed>> */
 	public function listPayslips(int $periodId, ?int $employeeId = null): array {
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('s.*', 'e.id_user', 'e.number_account')->selectAlias('u.displayname', 'display_name')
+		$qb->select('s.*', 'e.id_user', 'e.number_employee', 'e.number_account')->selectAlias('u.displayname', 'display_name')
 			->from('payroll_payslips', 's')
 			->innerJoin('s', 'employees', 'e', $qb->expr()->eq('e.id_employees', 's.employee_id'))
 			->leftJoin('e', 'users', 'u', $qb->expr()->eq('u.uid', 'e.id_user'))
@@ -638,6 +680,19 @@ final class PayrollRepository {
 		$rows = LegacyRowCompat::rows($result->fetchAll());
 		$result->closeCursor();
 		return $rows;
+	}
+
+	public function updatePayslipDocument(int $id, string $status, ?int $fileId, ?string $path, ?string $error): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update('payroll_payslips')
+			->set('document_status', $qb->createNamedParameter($status))
+			->set('document_file_id', $qb->createNamedParameter($fileId, $fileId === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT))
+			->set('document_path', $qb->createNamedParameter($path, $path === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR))
+			->set('document_error', $qb->createNamedParameter($error, $error === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR))
+			->set('document_generated_at', $qb->createNamedParameter($status === 'ready' ? date('Y-m-d H:i:s') : null, $status === 'ready' ? IQueryBuilder::PARAM_STR : IQueryBuilder::PARAM_NULL))
+			->set('updated_at', $qb->createNamedParameter(date('Y-m-d H:i:s')))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
 	}
 
 	public function approvePayslipsForPeriod(int $periodId): void {

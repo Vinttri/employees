@@ -354,6 +354,7 @@ return [
 		['name' => 'payroll#createPeriod', 'url' => '/payroll/periods', 'verb' => 'POST'],
 		['name' => 'payroll#createPlan', 'url' => '/payroll/plans', 'verb' => 'POST'],
 		['name' => 'payroll#updatePlan', 'url' => '/payroll/plans/{planId}', 'verb' => 'PUT'],
+		['name' => 'payroll#saveEmployeeSetup', 'url' => '/payroll/employees/{employeeId}/setup', 'verb' => 'PUT'],
 		['name' => 'payroll#createProfile', 'url' => '/payroll/profiles', 'verb' => 'POST'],
 		['name' => 'payroll#updateProfile', 'url' => '/payroll/profiles/{profileId}', 'verb' => 'PUT'],
 		['name' => 'payroll#createRule', 'url' => '/payroll/profiles/{profileId}/rules', 'verb' => 'POST'],
@@ -367,8 +368,13 @@ return [
 		['name' => 'payroll#deleteInput', 'url' => '/payroll/inputs/{inputId}', 'verb' => 'DELETE'],
 		['name' => 'payroll#calculate', 'url' => '/payroll/periods/{periodId}/calculate', 'verb' => 'POST'],
 		['name' => 'payroll#approve', 'url' => '/payroll/periods/{periodId}/approve', 'verb' => 'POST'],
+		['name' => 'payroll#publish', 'url' => '/payroll/periods/{periodId}/publish', 'verb' => 'POST'],
 		['name' => 'payroll#recordPayment', 'url' => '/payroll/payslips/{payslipId}/payments', 'verb' => 'POST'],
+		['name' => 'payroll#bankSettings', 'url' => '/payroll/bank-settings', 'verb' => 'GET'],
+		['name' => 'payroll#updateBankSettings', 'url' => '/payroll/bank-settings', 'verb' => 'PUT'],
 		['name' => 'payroll#export', 'url' => '/payroll/periods/{periodId}/export.csv', 'verb' => 'GET'],
+		['name' => 'payroll#exportSepa', 'url' => '/payroll/periods/{periodId}/sepa.xml', 'verb' => 'GET'],
+		['name' => 'payroll#payslipPdf', 'url' => '/payroll/payslips/{payslipId}/document.pdf', 'verb' => 'GET'],
 		['name' => 'payroll#exportPayments', 'url' => '/payroll/periods/{periodId}/payments.csv', 'verb' => 'GET'],
 
 		/************************** UNIVERSAL AI IMPORT ************************************/

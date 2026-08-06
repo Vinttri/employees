@@ -64,6 +64,14 @@ final class PayrollController extends Controller {
 	}
 
 	/** @NoAdminRequired */
+	public function saveEmployeeSetup(int $employeeId): DataResponse {
+		return $this->respond(function () use ($employeeId): array {
+			$this->permissions->requireCanSee('payroll.manage');
+			return $this->service->saveEmployeeSetup($employeeId, $this->request->getParams(), $this->uid());
+		});
+	}
+
+	/** @NoAdminRequired */
 	public function createProfile(): DataResponse {
 		return $this->respond(function (): array {
 			$this->permissions->requireCanSee('payroll.manage');
@@ -168,6 +176,30 @@ final class PayrollController extends Controller {
 	}
 
 	/** @NoAdminRequired */
+	public function bankSettings(): DataResponse {
+		return $this->respond(function (): array {
+			$this->permissions->requireCanSeeAny(['payroll.manage', 'payroll.export']);
+			return $this->service->bankSettings();
+		});
+	}
+
+	/** @NoAdminRequired */
+	public function updateBankSettings(): DataResponse {
+		return $this->respond(function (): array {
+			$this->permissions->requireCanSee('payroll.manage');
+			return $this->service->saveBankSettings($this->request->getParams());
+		});
+	}
+
+	/** @NoAdminRequired */
+	public function publish(int $periodId): DataResponse {
+		return $this->respond(function () use ($periodId): array {
+			$this->permissions->requireCanSeeAny(['payroll.approve', 'payroll.export']);
+			return $this->service->publishPeriod($periodId, $this->uid());
+		});
+	}
+
+	/** @NoAdminRequired */
 	public function recordPayment(int $payslipId): DataResponse {
 		return $this->respond(function () use ($payslipId): array {
 			$this->permissions->requireCanSee('payroll.pay');
@@ -181,6 +213,32 @@ final class PayrollController extends Controller {
 			$this->permissions->requireCanSee('payroll.export');
 			$content = $this->service->exportPeriodCsv($periodId, $this->uid());
 			return new DataDownloadResponse($content, 'payroll-' . $periodId . '.csv', 'text/csv; charset=utf-8');
+		} catch (Throwable $e) {
+			return $this->error($e);
+		}
+	}
+
+	/** @NoAdminRequired */
+	public function exportSepa(int $periodId): DataDownloadResponse|DataResponse {
+		try {
+			$this->permissions->requireCanSee('payroll.export');
+			$content = $this->service->exportSepa($periodId, $this->uid());
+			return new DataDownloadResponse($content, 'sepa-payroll-' . $periodId . '.xml', 'application/xml; charset=utf-8');
+		} catch (Throwable $e) {
+			return $this->error($e);
+		}
+	}
+
+	/** @NoAdminRequired */
+	public function payslipPdf(int $payslipId): DataDownloadResponse|DataResponse {
+		try {
+			$this->permissions->requireCanSeeAny(['payroll.view', 'payroll.manage', 'payroll.pay', 'payroll.export']);
+			$content = $this->service->payslipPdf(
+				$payslipId,
+				$this->uid(),
+				$this->permissions->canSeeAny(['payroll.manage', 'payroll.pay', 'payroll.export']),
+			);
+			return new DataDownloadResponse($content, 'payslip-' . $payslipId . '.pdf', 'application/pdf');
 		} catch (Throwable $e) {
 			return $this->error($e);
 		}
