@@ -10,6 +10,18 @@ const eligibleSelector = [
 
 let fieldHelpId = 0
 
+const portalTooltip = (tooltip, ownerId) => {
+	tooltip.dataset.employeesFieldHelpOwner = ownerId
+	document.body.append(tooltip)
+}
+
+const cleanupDetachedTooltips = () => {
+	document.querySelectorAll('.employees-field-help__tooltip[data-employees-field-help-owner]').forEach(tooltip => {
+		const ownerId = tooltip.dataset.employeesFieldHelpOwner
+		if (!ownerId || !document.getElementById(ownerId)) tooltip.remove()
+	})
+}
+
 const cleanText = (element) => {
 	if (!element) return ''
 	const clone = element.cloneNode(true)
@@ -136,7 +148,8 @@ const createHelp = (control, marker, root) => {
 		tooltip.setAttribute('role', 'tooltip')
 		tooltip.textContent = content.detail
 		tooltip.hidden = true
-		row.append(button, tooltip)
+		row.append(button)
+		portalTooltip(tooltip, shortId)
 
 		let pinned = false
 		let focused = false
@@ -188,6 +201,7 @@ const enhance = (root) => {
 }
 
 const enhanceAppAndDialogs = (root) => {
+	cleanupDetachedTooltips()
 	enhance(root)
 	document.querySelectorAll('.modal-mask[role="dialog"]').forEach(dialog => enhance(dialog))
 }
@@ -211,6 +225,7 @@ export const startContextualFieldHelp = (rootSelector) => {
 	return () => {
 		observer.disconnect()
 		if (frame !== null) window.cancelAnimationFrame(frame)
+		document.querySelectorAll('.employees-field-help__tooltip[data-employees-field-help-owner]').forEach(tooltip => tooltip.remove())
 	}
 }
 

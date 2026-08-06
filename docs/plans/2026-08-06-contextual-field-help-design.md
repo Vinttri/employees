@@ -12,6 +12,8 @@ Existing `HelpHint` components remain authoritative and are not duplicated. Thos
 
 The enhancer runs in both the main Employees application and its administration settings. A MutationObserver covers dialogs, conditional tabs and dynamically added table rows. It never changes submitted values or application data.
 
+Tooltips are rendered through a lightweight portal attached directly to `document.body`. This lets them escape navigation, sidebar, split-view and modal stacking contexts that would otherwise clip a fixed element regardless of its local `z-index`. The portal uses the same overlay level as Nextcloud popovers, keeps `aria-controls` connected to the trigger, and removes detached tooltips when their field leaves the DOM.
+
 ## Verification
 
 - Static coverage verifies that both entry points start the enhancer and that all supported control families are included.

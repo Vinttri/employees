@@ -35,6 +35,9 @@ for (const contract of [
 	'dataset.employeesFieldHelp',
 	'.modal-mask[role="dialog"]',
 	'document.body || root',
+	'document.body.append(tooltip)',
+	'employeesFieldHelpOwner',
+	'cleanupDetachedTooltips',
 ]) {
 	assert.ok(enhancer.includes(contract), `missing accessibility or lifecycle contract ${contract}`)
 }
@@ -52,6 +55,7 @@ assert.equal(/#[0-9a-f]{3,8}\b/i.test(styles), false, 'field help must not hardc
 for (const token of ['--color-main-background', '--color-main-text', '--color-primary-element', '--color-border']) {
 	assert.ok(styles.includes(token), `missing Nextcloud theme token ${token}`)
 }
+assert.match(styles, /z-index:\s*100000/, 'tooltip must use the same top overlay level as Nextcloud popovers')
 for (const key of [
 	'Why: {purpose} Example: {example}.',
 	'Example: {example}.',
