@@ -288,12 +288,7 @@ class DirectorySyncService {
 		$rawContacts = [];
 		$addressBooks = $this->cardDavBackend->getAddressBooksForUser('principals/users/' . $dataManagerUid);
 		foreach ($addressBooks as $addressBook) {
-			$rows = $this->cardDavBackend->search(
-				(int)$addressBook['id'],
-				'',
-				['FN', 'EMAIL', 'ORG', 'TITLE', 'ROLE', 'UID', 'X-MANAGERSNAME'],
-				['limit' => 1000, 'enumeration' => true, 'fullmatch' => true],
-			);
+			$rows = $this->cardDavBackend->getCards((int)$addressBook['id']);
 			foreach ($rows as $row) {
 				try {
 					$rawContacts[] = $this->vCardRowToArray($row);
