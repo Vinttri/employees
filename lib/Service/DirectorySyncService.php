@@ -287,6 +287,9 @@ class DirectorySyncService {
 
 		$rawContacts = [];
 		$addressBooks = $this->cardDavBackend->getAddressBooksForUser('principals/users/' . $dataManagerUid);
+		foreach ($this->cardDavBackend->getAddressBooksForUser('principals/system/system') as $id => $systemAddressBook) {
+			$addressBooks[$id] = $systemAddressBook;
+		}
 		foreach ($addressBooks as $addressBook) {
 			$rows = $this->cardDavBackend->getCards((int)$addressBook['id']);
 			foreach ($rows as $row) {
