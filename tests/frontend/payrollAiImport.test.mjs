@@ -2,12 +2,13 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 
 const read = path => readFile(new URL(`../../${path}`, import.meta.url), 'utf8')
-const [router, navigation, payroll, aiImport, payrollService, aiService, routes, migration, canonical, repository] = await Promise.all([
+const [router, navigation, payroll, aiImport, payrollService, aiService, routes, migration, canonical, repository, aiImportBackend] = await Promise.all([
 	read('src/router/index.js'), read('src/views/navigator/SideNavigation.vue'),
 	read('src/views/components/Payroll/Payroll.vue'), read('src/views/components/AiImport/AiImport.vue'),
 	read('src/services/payrollService.js'), read('src/services/aiImportService.js'),
 	read('appinfo/routes.php'), read('lib/Migration/Version2052Date20260806120000.php'),
 	read('lib/Migration/CanonicalSchema.php'), read('lib/Db/PayrollRepository.php'),
+	read('lib/Service/AiImportService.php'),
 ])
 
 assert.match(router, /name:\s*'Payroll'/)
@@ -27,8 +28,18 @@ assert.match(payroll, /payrollService\.updateEmployeeRuleAssignment/)
 assert.match(aiImport, /canApply/)
 assert.match(aiImport, /Apply reviewed rows/)
 assert.match(aiImport, /accept="\.csv,\.md,\.txt/)
+assert.match(aiImport, /aiImportService\.create\('auto'/)
+assert.match(aiImport, /What can be imported/)
+assert.match(aiImport, /Proposed destination/)
+assert.match(aiImport, /Routing summary/)
+assert.doesNotMatch(aiImport, /input-label="t\('employees', 'Import destination'\)"/)
+assert.doesNotMatch(payroll, /\$router\.push\(\{ name: 'AiImport'/)
 assert.match(aiService, /\/batches\/\$\{id\}\/apply/)
 assert.match(aiService, /\/batches\/\$\{id\}\/review/)
+assert.match(aiImportBackend, /AUTO_TARGET\s*=\s*'auto'/)
+assert.match(aiImportBackend, /validateMixed/)
+assert.match(aiImportBackend, /\['_target'\]/)
+assert.match(aiImportBackend, /Allowed target schemas/)
 assert.match(payrollService, /export\.csv/)
 assert.match(routes, /ai_import#apply/)
 assert.match(routes, /ai_import#review/)

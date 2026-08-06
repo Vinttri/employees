@@ -49,4 +49,53 @@ final class AiImportValidatorTest extends TestCase {
 
 		$this->assertSame(['ready' => 1, 'review' => 0, 'invalid' => 2], $result['counts']);
 	}
+
+	public function testMixedRowsAreValidatedAgainstTheirOwnDestination(): void {
+		$result = (new AiImportValidator())->validateMixed([
+			'positions' => ['fields' => [
+				'name' => ['type' => 'string', 'required' => true],
+				'level' => ['type' => 'integer', 'required' => false],
+			]],
+			'departments' => ['fields' => [
+				'name' => ['type' => 'string', 'required' => true],
+				'parent' => ['type' => 'string', 'required' => false],
+			]],
+		], [
+			['_target' => 'positions', '_source_row' => 4, 'name' => 'Senior Producer', 'level' => '5'],
+			['_target' => 'departments', '_source_row' => 7, 'name' => 'Production', 'parent' => 'Operations'],
+		], []);
+
+		$this->assertSame(['ready' => 2, 'review' => 0, 'invalid' => 0], $result['counts']);
+		$this->assertSame('positions', $result['rows'][0]['_target']);
+		$this->assertSame(4, $result['rows'][0]['_source_row']);
+		$this->assertSame(5, $result['rows'][0]['level']);
+		$this->assertSame('departments', $result['rows'][1]['_target']);
+	}
+
+	public function testUnknownOrMissingMixedDestinationCannotBeApplied(): void {
+		$result = (new AiImportValidator())->validateMixed([
+			'positions' => ['fields' => ['name' => ['type' => 'string', 'required' => true]]],
+		], [
+			['_target' => 'payroll_payments', '_source_row' => 2, 'name' => 'Not allowed'],
+			['_source_row' => 3, 'name' => 'Ambiguous'],
+		], []);
+
+		$this->assertSame(['ready' => 0, 'review' => 0, 'invalid' => 2], $result['counts']);
+		$this->assertSame('payroll_payments', $result['rows'][0]['_target']);
+		$this->assertStringContainsString('not available', $result['rows'][0]['_messages'][0]);
+		$this->assertNull($result['rows'][1]['_target']);
+		$this->assertStringContainsString('destination', $result['rows'][1]['_messages'][0]);
+	}
+
+	public function testMixedReviewMetadataIsBoundedAndPreserved(): void {
+		$result = (new AiImportValidator())->validateMixed([
+			'positions' => ['fields' => ['name' => ['type' => 'string', 'required' => true]]],
+		], [[
+			'_target' => 'positions', '_source_row' => '9',
+			'_source_excerpt' => str_repeat('x', 600), 'name' => 'Designer',
+		]], []);
+
+		$this->assertSame(9, $result['rows'][0]['_source_row']);
+		$this->assertSame(240, mb_strlen($result['rows'][0]['_source_excerpt']));
+	}
 }

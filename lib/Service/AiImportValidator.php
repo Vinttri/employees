@@ -8,6 +8,63 @@ use DateTimeImmutable;
 
 final class AiImportValidator {
 	/**
+	 * Validate a mixed batch where every row declares its proposed destination.
+	 *
+	 * @param array<string, array<string, mixed>> $definitions
+	 * @param array<int, mixed> $rows
+	 * @param array<int, array<string, mixed>> $employees
+	 * @return array{rows:array<int, array<string, mixed>>,counts:array{ready:int,review:int,invalid:int}}
+	 */
+	public function validateMixed(array $definitions, array $rows, array $employees): array {
+		$validated = [];
+		$counts = ['ready' => 0, 'review' => 0, 'invalid' => 0];
+		foreach ($rows as $index => $candidate) {
+			if (!is_array($candidate)) {
+				$row = [
+					'_target' => null,
+					'_source_row' => $index + 1,
+					'_row' => $index + 1,
+					'_status' => 'invalid',
+					'_messages' => ['Row must be an object.'],
+				];
+				$validated[] = $row;
+				$counts['invalid']++;
+				continue;
+			}
+
+			$target = trim((string)($candidate['_target'] ?? ''));
+			$sourceRow = filter_var($candidate['_source_row'] ?? null, FILTER_VALIDATE_INT);
+			$sourceRow = $sourceRow !== false && $sourceRow > 0 ? $sourceRow : $index + 1;
+			$excerpt = mb_substr(trim((string)($candidate['_source_excerpt'] ?? '')), 0, 240);
+			if ($target === '' || !isset($definitions[$target])) {
+				$message = $target === ''
+					? 'Choose an import destination for this row.'
+					: "Import destination is not available: {$target}.";
+				$validated[] = [
+					'_target' => $target !== '' ? $target : null,
+					'_source_row' => $sourceRow,
+					'_source_excerpt' => $excerpt,
+					'_row' => $index + 1,
+					'_status' => 'invalid',
+					'_messages' => [$message],
+				];
+				$counts['invalid']++;
+				continue;
+			}
+
+			$result = $this->validate($definitions[$target], [$candidate], $employees);
+			$row = $result['rows'][0];
+			$row['_target'] = $target;
+			$row['_source_row'] = $sourceRow;
+			$row['_source_excerpt'] = $excerpt;
+			$row['_row'] = $index + 1;
+			$validated[] = $row;
+			$counts[$row['_status']]++;
+		}
+		return ['rows' => $validated, 'counts' => $counts];
+	}
+
+	/**
 	 * @param array<string, mixed> $definition
 	 * @param array<int, mixed> $rows
 	 * @param array<int, array<string, mixed>> $employees

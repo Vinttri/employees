@@ -8,9 +8,6 @@
 					</p><h2>{{ t('employees', 'Payroll') }}</h2><p>{{ t('employees', 'Flexible salary plans, monthly inputs, individual tax rules and payment tracking.') }}</p>
 				</div>
 				<div class="header-actions">
-					<NcButton v-if="canImport" @click="$router.push({ name: 'AiImport', query: { target: 'payroll_inputs' } })">
-						{{ t('employees', 'AI import') }}
-					</NcButton>
 					<NcButton v-if="canExport && selectedPeriod" :href="exportUrl">
 						{{ t('employees', 'Export CSV') }}
 					</NcButton>
@@ -279,7 +276,6 @@ export default {
 		canApprove() { return this.canSee('payroll.approve') },
 		canPay() { return this.canSee('payroll.pay') },
 		canExport() { return this.canSee('payroll.export') },
-		canImport() { return this.canSee('payroll.import') },
 		periodOptions() { return (this.overview.periods || []).map(item => ({ id: Number(item.id), label: `${item.name} · ${this.statusLabel(item.status)}` })) },
 		selectedPeriod() { return this.selectedPeriodOption?.id || this.overview.selected_period?.id || null },
 		period() { return this.overview.selected_period || null },
