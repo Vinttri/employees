@@ -154,6 +154,7 @@ import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../../utils/absenceTypeLabel.js'
+import { nextcloudLocale } from '../../../../utils/nextcloudLocale.js'
 
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
@@ -269,7 +270,7 @@ export default {
 
 		fechaLimiteFormateada() {
 			if (!this.fechaLimitePeriodoVigente) return ''
-			return new Date(this.fechaLimitePeriodoVigente + 'T00:00:00').toLocaleDateString('es-MX')
+			return new Date(this.fechaLimitePeriodoVigente + 'T00:00:00').toLocaleDateString(nextcloudLocale())
 		},
 
 		canSave() {

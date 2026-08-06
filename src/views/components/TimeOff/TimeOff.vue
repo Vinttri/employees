@@ -80,7 +80,7 @@
 														{{ t('employees', 'Use before {date} or they expire', {
 															date: new Date(
 																Ausencias.accrued_expiration_date,
-															).toLocaleDateString('es-MX'),
+															).toLocaleDateString(nextcloudLocale()),
 														}) }}
 													</span>
 												</div>
@@ -574,6 +574,7 @@ import axios from '@nextcloud/axios'
 import { getLanguage, translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 
 import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 import AccountGroup from 'vue-material-design-icons/AccountGroup.vue'
@@ -806,6 +807,7 @@ export default {
 
 	methods: {
 		t,
+		nextcloudLocale,
 
 		responsePayload(response) {
 			return response?.data?.ocs?.data ?? response?.data ?? null

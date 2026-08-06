@@ -496,6 +496,7 @@ import { generateUrl } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -885,7 +886,7 @@ export default {
 			if (!ts) return '—'
 			const d = new Date(ts)
 			if (isNaN(d)) return ts
-			return d.toLocaleString('es-MX', {
+			return d.toLocaleString(nextcloudLocale(), {
 				day: '2-digit',
 				month: '2-digit',
 				year: 'numeric',

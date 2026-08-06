@@ -7,6 +7,7 @@ const sourceRoot = fileURLToPath(new URL('../../src/', import.meta.url))
 const russian = JSON.parse(await readFile(new URL('../../l10n/ru.json', import.meta.url), 'utf8')).translations
 const english = JSON.parse(await readFile(new URL('../../l10n/en.json', import.meta.url), 'utf8')).translations
 const sourceFiles = []
+let combinedSource = ''
 
 async function collectFiles(directory) {
 	for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -43,6 +44,7 @@ function decodeKey(value) {
 
 for (const path of sourceFiles) {
 	const source = await readFile(path, 'utf8')
+	combinedSource += `\n${source}`
 	for (const translationCall of translationCalls) {
 		for (const match of source.matchAll(translationCall)) {
 			usedKeys.add(decodeKey(match[1]))
@@ -81,6 +83,12 @@ assert.deepEqual(
 	untranslatedRussian,
 	[],
 	`Russian translations still equal their English source:\n${untranslatedRussian.join('\n')}`,
+)
+
+assert.equal(
+	/Intl\.(?:DateTimeFormat|NumberFormat)\(undefined|toLocale(?:Date|Time|String)\(['"]es/.test(combinedSource),
+	false,
+	'Date and number formatting must follow the active Nextcloud language',
 )
 
 console.log(`RUSSIAN_L10N_COVERAGE_OK keys=${usedKeys.size}`)

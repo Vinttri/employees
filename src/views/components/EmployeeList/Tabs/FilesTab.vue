@@ -315,6 +315,7 @@ import { getClient, defaultRootPath } from '@nextcloud/files/dav'
 import { upload } from '@nextcloud/upload'
 import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
+import { nextcloudLocale } from '../../../../utils/nextcloudLocale.js'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcActionButton,
@@ -853,7 +854,7 @@ export default {
 			const units = ['B', 'KB', 'MB', 'GB', 'TB']
 			const index = Math.min(Math.floor(Math.log(size) / Math.log(1024)), units.length - 1)
 			const value = size / (1024 ** index)
-			return `${new Intl.NumberFormat(undefined, {
+			return `${new Intl.NumberFormat(nextcloudLocale(), {
 				maximumFractionDigits: index === 0 ? 0 : 1,
 			}).format(value)} ${units[index]}`
 		},
@@ -861,7 +862,7 @@ export default {
 			if (!date) return '—'
 			const parsed = new Date(date)
 			if (Number.isNaN(parsed.getTime())) return '—'
-			return new Intl.DateTimeFormat(undefined, {
+			return new Intl.DateTimeFormat(nextcloudLocale(), {
 				dateStyle: 'medium',
 				timeStyle: 'short',
 			}).format(parsed)
@@ -870,7 +871,7 @@ export default {
 			if (!date) return ''
 			const parsed = new Date(date)
 			if (Number.isNaN(parsed.getTime())) return ''
-			return new Intl.DateTimeFormat(undefined, {
+			return new Intl.DateTimeFormat(nextcloudLocale(), {
 				dateStyle: 'full',
 				timeStyle: 'medium',
 			}).format(parsed)

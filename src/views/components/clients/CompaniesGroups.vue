@@ -1070,6 +1070,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 
 import List from '../Helpers/Lists/List.vue'
 import permissionsMixin from '../../../mixins/permissions.js'
@@ -1699,7 +1700,7 @@ export default {
 		},
 
 		formatImporte(valor) {
-			return Number(valor).toLocaleString('es-MX', {
+			return Number(valor).toLocaleString(nextcloudLocale(), {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2,
 			})

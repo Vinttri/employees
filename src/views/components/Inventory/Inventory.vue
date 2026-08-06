@@ -813,6 +813,7 @@ import CalendarMonth from 'vue-material-design-icons/CalendarMonth.vue'
 import inventoryService from '../../../services/inventoryService.js'
 import { parseInventoryDeviceId } from '../../../utils/inventoryRoute.js'
 import { inventoryStatusLabel } from '../../../utils/inventoryStatusLabel.js'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 import { formatSupportDuration, isValidSupportDate } from '../../../utils/supportDuration.js'
 import SupportDurationFields from '../../../components/Inventory/SupportDurationFields.vue'
 import permissionsMixin from '../../../mixins/permissions.js'
@@ -1583,7 +1584,7 @@ export default {
 			const date = new Date(String(value).replace(' ', 'T'))
 			return Number.isNaN(date.getTime())
 				? String(value)
-				: new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date)
+				: new Intl.DateTimeFormat(nextcloudLocale(), { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 		},
 
 		historyChanges(entry) {

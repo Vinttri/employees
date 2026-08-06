@@ -273,6 +273,7 @@ import ViewList from 'vue-material-design-icons/ViewList.vue'
 import inventoryService from '../../../services/inventoryService.js'
 import permissionsMixin from '../../../mixins/permissions.js'
 import TeamSupportDashboardWidget from '../../../Dashboard/TeamSupportDashboardWidget.vue'
+import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
 
 export default {
 	name: 'Dashboard',
@@ -348,7 +349,7 @@ export default {
 		},
 
 		currentDateLabel() {
-			return new Intl.DateTimeFormat(undefined, {
+			return new Intl.DateTimeFormat(nextcloudLocale(), {
 				weekday: 'long',
 				day: '2-digit',
 				month: 'short',

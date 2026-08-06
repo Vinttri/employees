@@ -155,6 +155,7 @@ import axios from '@nextcloud/axios'
 import { translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../../utils/absenceTypeLabel.js'
+import { nextcloudLocale } from '../../../../utils/nextcloudLocale.js'
 
 // icons
 import Airplane from 'vue-material-design-icons/Airplane.vue'
@@ -256,7 +257,7 @@ export default {
 
 		fechaExpiracionFormateada() {
 			if (!this.fechaVencimientoReal) return ''
-			return this.fechaVencimientoReal.toLocaleDateString('es-MX')
+			return this.fechaVencimientoReal.toLocaleDateString(nextcloudLocale())
 		},
 
 		excedeFechaLimite() {
@@ -274,7 +275,7 @@ export default {
 		fechaLimiteFormateada() {
 			const d = this.parseFechaLocal(this.fechaLimitePeriodoVigente)
 			if (!d) return ''
-			return d.toLocaleDateString('es-MX')
+			return d.toLocaleDateString(nextcloudLocale())
 		},
 
 		diasDentroDeVigencia() {
@@ -340,11 +341,11 @@ export default {
 				},
 				{
 					label: t('employees', 'From:'),
-					value: this.date?.start?.toLocaleDateString() || '-',
+					value: this.date?.start?.toLocaleDateString(nextcloudLocale()) || '-',
 				},
 				{
 					label: t('employees', 'To:'),
-					value: this.date?.end?.toLocaleDateString() || t('employees', 'Undefined'),
+					value: this.date?.end?.toLocaleDateString(nextcloudLocale()) || t('employees', 'Undefined'),
 				},
 			]
 
