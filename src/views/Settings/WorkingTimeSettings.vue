@@ -1150,7 +1150,7 @@ export default {
 	gap: 12px;
 	padding: 16px 12px 16px 16px;
 	border-bottom: 1px solid var(--color-border);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 }
 
 .card-title-wrap {
@@ -1200,7 +1200,7 @@ export default {
 	font-size: 0.85rem;
 
 	thead tr {
-		background: var(--color-background-soft);
+		background: var(--color-background-hover);
 		border-bottom: 1px solid var(--color-border);
 	}
 
@@ -1296,7 +1296,7 @@ export default {
 	}
 
 	&--no {
-		background: var(--color-background-soft);
+		background: var(--color-background-hover);
 		color: var(--color-text-maxcontrast);
 		border: 1px solid var(--color-border);
 	}
@@ -1307,7 +1307,7 @@ export default {
 	align-items: center;
 	padding: 2px 8px;
 	border-radius: 6px;
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 	font-size: 0.8rem;
 	font-family: monospace;
@@ -1366,7 +1366,7 @@ export default {
 	gap: 12px;
 	padding: 12px 14px;
 	border-radius: var(--border-radius-large);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 }
 

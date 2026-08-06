@@ -8,7 +8,8 @@ export function getNextcloudThemeColorWithAlpha(variable, alpha) {
 	const rgbVariable = `${variable}-rgb`
 	const rgb = getNextcloudThemeColor(rgbVariable)
 	if (rgb) {
-		return ['rgb(', rgb, ' / ', alpha, ')'].join('')
+		const channels = rgb.split(',').map(channel => channel.trim()).join(' ')
+		return ['rgb(', channels, ' / ', alpha, ')'].join('')
 	}
 
 	const probe = document.createElement('span')

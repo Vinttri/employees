@@ -451,9 +451,9 @@ export default {
 	letter-spacing: 0.03em;
 }
 
-.status-badge--pending   { background: var(--color-warning-light); color: var(--color-warning); }
-.status-badge--approved  { background: var(--color-success-light); color: var(--color-success); }
-.status-badge--rejected  { background: var(--color-error-light); color: var(--color-error); }
+.status-badge--pending   { border: 1px solid var(--color-element-warning); background: var(--color-warning); color: var(--color-warning-text); }
+.status-badge--approved  { border: 1px solid var(--color-border-success); background: var(--color-success); color: var(--color-success-text); }
+.status-badge--rejected  { border: 1px solid var(--color-border-error); background: var(--color-error); color: var(--color-error-text); }
 .status-badge--cancelled { background: var(--color-background-darker); color: var(--color-text-maxcontrast); }
 
 /* ── Info grid ───────────────────────────────── */
@@ -489,7 +489,7 @@ export default {
 	font-size: 0.9rem;
 	margin: 0;
 	white-space: pre-wrap;
-	color: var(--color-text-lighter);
+	color: var(--color-text-maxcontrast);
 }
 
 /* ── Actions ─────────────────────────────────── */

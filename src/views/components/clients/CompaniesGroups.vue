@@ -2740,7 +2740,7 @@ export default {
 	gap: 12px;
 	padding: 16px;
 	border-radius: var(--border-radius-large);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 
 	div {
@@ -2934,7 +2934,7 @@ export default {
 	gap: 4px;
 	padding: 12px 14px;
 	border-radius: var(--border-radius-large);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 
 	span {
@@ -3017,7 +3017,7 @@ export default {
 	gap: 12px;
 	padding: 12px 14px;
 	border-radius: var(--border-radius-large);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 	cursor: pointer;
 	text-align: left;
@@ -3215,7 +3215,7 @@ export default {
 	border-top: 1px solid var(--color-border);
 	display: flex;
 	flex-direction: column;
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 }
 
 .parcialidades-head {
@@ -3370,7 +3370,7 @@ export default {
 	gap: 12px;
 	padding: 12px 14px;
 	border-radius: var(--border-radius-large);
-	background: var(--color-background-soft);
+	background: var(--color-background-hover);
 	border: 1px solid var(--color-border);
 }
 
@@ -3685,7 +3685,7 @@ export default {
     padding: 10px 8px;
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-large);
-    background: var(--color-background-soft);
+    background: var(--color-background-hover);
     cursor: pointer;
     font-size: 0.8rem;
     color: var(--color-text-maxcontrast);

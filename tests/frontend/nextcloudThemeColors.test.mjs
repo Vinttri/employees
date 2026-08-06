@@ -6,6 +6,20 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const sourceRoot = path.join(root, 'src')
+const supportedThemeVariables = new Set([
+	'--color-background-dark', '--color-background-darker', '--color-background-hover',
+	'--color-border', '--color-border-dark', '--color-border-error',
+	'--color-border-maxcontrast', '--color-border-success', '--color-box-shadow',
+	'--color-element-success', '--color-element-warning', '--color-error',
+	'--color-error-hover', '--color-error-text', '--color-info', '--color-info-text',
+	'--color-main-background', '--color-main-background-translucent', '--color-main-text',
+	'--color-primary', '--color-primary-element', '--color-primary-element-hover',
+	'--color-primary-element-light', '--color-primary-element-light-text',
+	'--color-primary-element-text', '--color-primary-light', '--color-primary-text',
+	'--color-success', '--color-success-hover', '--color-success-text',
+	'--color-text-maxcontrast', '--color-warning', '--color-warning-hover',
+	'--color-warning-text',
+])
 
 function sourceFiles(directory) {
 	return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -31,6 +45,12 @@ test('UI colors are inherited from semantic Nextcloud theme variables', () => {
 				const line = source.slice(0, match.index).split('\n').length
 				violations.push(`${path.relative(root, file)}:${line}: ${label}: ${match[0]}`)
 			}
+		}
+
+		for (const match of source.matchAll(/--color-[\w-]+/g)) {
+			if (supportedThemeVariables.has(match[0])) continue
+			const line = source.slice(0, match.index).split('\n').length
+			violations.push(`${path.relative(root, file)}:${line}: unsupported Nextcloud theme variable: ${match[0]}`)
 		}
 	}
 

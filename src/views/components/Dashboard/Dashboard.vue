@@ -1092,15 +1092,15 @@ export default {
 }
 
 .today-panel.is-ok::before {
-	background: var(--color-success);
+	background: var(--color-element-success);
 }
 
 .today-panel.is-pending::before {
-	background: var(--color-error);
+	background: var(--color-border-error);
 }
 
 .today-panel.is-warning::before {
-	background: var(--color-warning);
+	background: var(--color-element-warning);
 }
 
 .today-status {

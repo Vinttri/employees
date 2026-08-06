@@ -441,10 +441,13 @@ export default {
 	white-space: nowrap;
 }
 
-.level-badge--1 { background: rgb(from var(--color-success) r g b / 0.15); color: var(--color-success-text); }
-.level-badge--2 { background: rgb(from var(--color-warning) r g b / 0.18); color: var(--color-warning-text); }
-.level-badge--3 { background: rgb(from var(--color-error) r g b / 0.15); color: var(--color-error-text); }
-.level-badge--4 { background: rgb(from var(--color-primary-element-light) r g b / 0.16); color: var(--color-primary-element-light-text); }
+.level-badge--1,
+.level-badge--2,
+.level-badge--3,
+.level-badge--4 {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
 
 .expand-enter-active,
 .expand-leave-active {
