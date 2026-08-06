@@ -17,6 +17,7 @@ use OCA\Employees\Db\TeamMapper;
 use OCA\Employees\Db\UserSavings;
 use OCA\Employees\Db\UserSavingsMapper;
 use OCP\Contacts\IManager as ContactsManager;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
@@ -352,26 +353,33 @@ class DirectorySyncService {
 	private function loadNextcloudTeams(array $users, array &$summary): array {
 		$teams = [];
 		$memberships = [];
-		$isCollective = [];
 		try {
 			if (!$this->teamManager->hasTeamSupport()) {
 				return [$teams, $memberships];
 			}
+
+			// Collectives are backed by Teams/Circles, but their resource provider
+			// cannot be queried from cron because it is session-user scoped. Read
+			// only the stable Circle ids from the Collectives registry, then use the
+			// public Teams API for display names and memberships.
+			$collectiveIds = [];
+			$qb = $this->db->getQueryBuilder();
+			$result = $qb->select('circle_unique_id')
+				->from('collectives')
+				->where($qb->expr()->eq('trash_timestamp', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+				->executeQuery();
+			foreach ($result->fetchAll() as $row) {
+				$id = trim((string)($row['circle_unique_id'] ?? ''));
+				if ($id !== '') { $collectiveIds[$id] = true; }
+			}
+			$result->closeCursor();
+
 			foreach ($users as $uid => $_user) {
 				foreach ($this->teamManager->getTeamsForUser($uid) as $team) {
 					$id = trim($team->getId());
 					$name = trim($team->getDisplayName());
 					if ($id === '' || $name === '') { continue; }
-					if (!array_key_exists($id, $isCollective)) {
-						$isCollective[$id] = false;
-						foreach ($this->teamManager->getSharedWith($id, $uid) as $resource) {
-							if ($resource->getProvider()->getId() === 'collectives') {
-								$isCollective[$id] = true;
-								break;
-							}
-						}
-					}
-					if (!$isCollective[$id]) { continue; }
+					if (!isset($collectiveIds[$id])) { continue; }
 					$teams[$id] = $name;
 					$memberships[$uid][] = $id;
 				}
