@@ -439,7 +439,7 @@ export default {
 	position: absolute;
 	z-index: 50;
 	top: 6px;
-	right: -50px;
+	right: 12px;
 }
 
 .side-toggle-icon {
@@ -459,6 +459,7 @@ export default {
 
 .side-navigation-content {
 	width: 100%;
+	padding-top: 54px;
 	box-sizing: border-box;
 }
 
@@ -477,7 +478,11 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
-	padding-top: 5px;
+	padding-top: 54px;
+}
+
+.employees-side-navigation--compact .side-toggle-button--floating {
+	right: 16px;
 }
 
 .employees-side-navigation--compact :deep(.app-navigation-caption) {
@@ -531,6 +536,10 @@ export default {
 
 .employees-side-navigation--hidden .side-navigation-content {
 	display: none !important;
+}
+
+.employees-side-navigation--hidden .side-toggle-button--floating {
+	right: -52px;
 }
 
 </style>
