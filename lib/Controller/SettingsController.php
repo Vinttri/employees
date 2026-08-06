@@ -196,7 +196,6 @@ class SettingsController extends Controller {
                 'recordatorios_enabled' => $this->config->getAppValue(Application::APP_ID, 'reportes_recordatorios_enabled', 'true'),
                 'recordatorios_grupo' => $this->config->getAppValue(Application::APP_ID, 'reportes_recordatorios_grupo', 'employees'),
                 'recordatorios_hora' => $this->config->getAppValue(Application::APP_ID, 'reportes_recordatorios_hora', '17'),
-                'recordatorios_zona_horaria' => $this->config->getAppValue(Application::APP_ID, 'reportes_recordatorios_zona_horaria', 'America/Mexico_City'),
                 'recordatorios_email' => $this->config->getAppValue(Application::APP_ID, 'reportes_recordatorios_email', 'true'),
                 'horas_minimas' => $this->config->getAppValue(Application::APP_ID, 'reportes_horas_minimas', '0'),
                 'admin_reports_group' => $this->config->getAppValue(
@@ -252,17 +251,6 @@ class SettingsController extends Controller {
         $hora = (int)$this->request->getParam('recordatorios_hora', 17);
         $hora = max(0, min(23, $hora));
 
-        $zonaHoraria = trim((string)$this->request->getParam('recordatorios_zona_horaria', 'America/Mexico_City'));
-
-        try {
-            new \DateTimeZone($zonaHoraria);
-        } catch (\Throwable $e) {
-            return new DataResponse([
-                'status' => 'error',
-                'message' => 'Zona horaria inválida',
-            ], Http::STATUS_BAD_REQUEST);
-        }
-
         $horasMinimas = (float)$this->request->getParam('horas_minimas', 0);
 
         if ($horasMinimas < 0) {
@@ -272,7 +260,7 @@ class SettingsController extends Controller {
         $this->config->setAppValue(Application::APP_ID, 'reportes_recordatorios_enabled', $recordatoriosEnabled ? 'true' : 'false');
         $this->config->setAppValue(Application::APP_ID, 'reportes_recordatorios_grupo', $grupo);
         $this->config->setAppValue(Application::APP_ID, 'reportes_recordatorios_hora', (string)$hora);
-        $this->config->setAppValue(Application::APP_ID, 'reportes_recordatorios_zona_horaria', $zonaHoraria);
+        $this->config->deleteAppValue(Application::APP_ID, 'reportes_recordatorios_zona_horaria');
         $this->config->setAppValue(Application::APP_ID, 'reportes_recordatorios_email', $recordatoriosEmail ? 'true' : 'false');
         $this->config->setAppValue(Application::APP_ID, 'reportes_horas_minimas', (string)$horasMinimas);
         $this->config->setAppValue(
@@ -287,7 +275,6 @@ class SettingsController extends Controller {
                 'recordatorios_enabled' => $recordatoriosEnabled,
                 'recordatorios_grupo' => $grupo,
                 'recordatorios_hora' => $hora,
-                'recordatorios_zona_horaria' => $zonaHoraria,
                 'recordatorios_email' => $recordatoriosEmail,
                 'horas_minimas' => $horasMinimas,
                 'admin_reports_group' => $adminReportsGroup,

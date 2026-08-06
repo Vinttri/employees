@@ -466,6 +466,7 @@
     "Send reminders by email": "Отправлять напоминания по электронной почте",
     "Group required to report": "Группа, обязана предоставлять отчеты",
     "Reminder hour": "Час напоминания",
+    "The reminder hour uses each user's time zone from their Nextcloud profile.": "Час напоминания применяется в часовом поясе из профиля каждого пользователя Nextcloud.",
     "Time zone": "Часовой пояс",
     "Minimum hours to consider reported": "Минимальное количество часов для учёта отчётности",
     "Group with access to admin reports and compliance tracking": "Группа с доступом к административным отчётам и отслеживанию соответствия",

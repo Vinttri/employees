@@ -37,7 +37,6 @@ final class RepairConfigCommand extends Command {
 		'reportes_recordatorios_enabled' => 'true',
 		'reportes_recordatorios_grupo' => 'employees',
 		'reportes_recordatorios_hora' => '17',
-		'reportes_recordatorios_zona_horaria' => 'America/Mexico_City',
 		'reportes_recordatorios_email' => 'true',
 		'reportes_horas_minimas' => '0',
 		'reportes_admin_reports_group' => 'hr',

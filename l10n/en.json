@@ -466,6 +466,7 @@
     "Send reminders by email": "Send reminders by email",
     "Group required to report": "Group required to report",
     "Reminder hour": "Reminder hour",
+    "The reminder hour uses each user's time zone from their Nextcloud profile.": "The reminder hour uses each user's time zone from their Nextcloud profile.",
     "Time zone": "Time zone",
     "Minimum hours to consider reported": "Minimum hours to consider reported",
     "Group with access to admin reports and compliance tracking": "Group with access to admin reports and compliance tracking",

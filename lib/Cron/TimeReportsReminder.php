@@ -7,6 +7,7 @@ namespace OCA\Employees\Cron;
 use OCA\Employees\AppInfo\Application;
 use OCA\Employees\Db\EmployeeMapper;
 use OCA\Employees\Db\TimeReportMapper;
+use OCA\Employees\Service\UserTimezoneService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
@@ -19,21 +20,19 @@ use OCP\Notification\IManager as INotificationManager;
 
 class TimeReportsReminder extends TimedJob {
 
-	private const DEFAULT_TIMEZONE = 'America/Mexico_City';
 	private const DEFAULT_GROUP = 'employees';
 	private const DEFAULT_REMINDER_HOUR = 17;
 
 	private const CONFIG_ENABLED = 'reportes_recordatorios_enabled';
 	private const CONFIG_GROUP = 'reportes_recordatorios_grupo';
 	private const CONFIG_HOUR = 'reportes_recordatorios_hora';
-	private const CONFIG_TIMEZONE = 'reportes_recordatorios_zona_horaria';
 	private const CONFIG_EMAIL = 'reportes_recordatorios_email';
 	private const CONFIG_MIN_HOURS = 'reportes_horas_minimas';
 
 	private const USER_CONFIG_LAST_REMINDER = 'ultimo_recordatorio_reporte_tiempo';
 
 	public function __construct(
-		ITimeFactory $time,
+		private ITimeFactory $timeFactory,
 		private IGroupManager $groupManager,
 		private EmployeeMapper $EmployeeMapper,
 		private TimeReportMapper $TimeReportMapper,
@@ -42,8 +41,9 @@ class TimeReportsReminder extends TimedJob {
 		private IURLGenerator $urlGenerator,
 		private LoggerInterface $logger,
 		private INotificationManager $notificationManager,
+		private UserTimezoneService $userTimezoneService,
 	) {
-		parent::__construct($time);
+		parent::__construct($timeFactory);
 
 		$this->setInterval(3600);
 		$this->setAllowParallelRuns(false);
@@ -58,22 +58,7 @@ class TimeReportsReminder extends TimedJob {
 		//	return;
 		// }
 
-		$now = new \DateTimeImmutable('now', $this->getConfiguredTimezone());
-
-		$date = $now->format('Y-m-d');
-		$horaActual = (int)$now->format('H');
-		$diaSemana = (int)$now->format('N'); // 1 lunes, 7 domingo
-
-		if ($diaSemana > 5) {
-			return;
-		}
-
 		$horaRecordatorio = $this->getReminderHour();
-
-		if ($horaActual !== $horaRecordatorio) {
-			return;
-		}
-
 		$grupoRecordatorio = $this->getStringConfig(self::CONFIG_GROUP, self::DEFAULT_GROUP);
 		$grupo = $this->groupManager->get($grupoRecordatorio);
 
@@ -88,11 +73,18 @@ class TimeReportsReminder extends TimedJob {
 		$horasMinimas = $this->getMinimumHours();
 		$minutosMinimos = $horasMinimas > 0 ? $horasMinimas * 60 : 0;
 		$quickReportUrl = $this->getQuickReportUrl();
+		$timestamp = $this->timeFactory->getTime();
 
 		foreach ($grupo->getUsers() as $user) {
+			$now = $this->userTimezoneService->localDateTime($user->getUID(), $timestamp);
+
+			if ((int)$now->format('N') > 5 || (int)$now->format('H') !== $horaRecordatorio) {
+				continue;
+			}
+
 			$this->processUserReminder(
 				$user,
-				$date,
+				$now->format('Y-m-d'),
 				$quickReportUrl,
 				$minutosMinimos,
 				$horasMinimas
@@ -282,22 +274,6 @@ class TimeReportsReminder extends TimedJob {
 			self::USER_CONFIG_LAST_REMINDER,
 			$date
 		);
-	}
-
-	private function getConfiguredTimezone(): \DateTimeZone {
-		$timezone = $this->getStringConfig(self::CONFIG_TIMEZONE, self::DEFAULT_TIMEZONE);
-
-		try {
-			return new \DateTimeZone($timezone);
-		} catch (\Throwable $e) {
-			$this->logger->warning('Zona horaria inválida en configuración de reportes. Se usará la zona horaria por defecto.', [
-				'app' => Application::APP_ID,
-				'timezone' => $timezone,
-				'default' => self::DEFAULT_TIMEZONE,
-			]);
-
-			return new \DateTimeZone(self::DEFAULT_TIMEZONE);
-		}
 	}
 
 	private function getReminderHour(): int {

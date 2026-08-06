@@ -253,6 +253,10 @@
 						</NcCheckboxRadioSwitch>
 					</div>
 
+					<NcNoteCard type="info">
+						<p>{{ t('employees', "The reminder hour uses each user's time zone from their Nextcloud profile.") }}</p>
+					</NcNoteCard>
+
 					<div class="settings-grid">
 						<NcTextField
 							:value.sync="reportes_recordatorios_grupo"
@@ -264,10 +268,6 @@
 							min="0"
 							max="23"
 							:label="t('employees', 'Reminder hour')" />
-
-						<NcTextField
-							:value.sync="reportes_recordatorios_zona_horaria"
-							:label="t('employees', 'Time zone')" />
 
 						<NcTextField
 							:value.sync="reportes_horas_minimas"
@@ -405,7 +405,6 @@ export default {
 			reportes_recordatorios_enabled: true,
 			reportes_recordatorios_grupo: 'employees',
 			reportes_recordatorios_hora: 17,
-			reportes_recordatorios_zona_horaria: 'America/Mexico_City',
 			reportes_recordatorios_email: true,
 			reportes_horas_minimas: 0,
 			optionsGroups: [],
@@ -455,7 +454,6 @@ export default {
 				this.reportes_recordatorios_enabled = String(reportes.recordatorios_enabled ?? 'true') === 'true'
 				this.reportes_recordatorios_grupo = reportes.recordatorios_grupo || 'employees'
 				this.reportes_recordatorios_hora = Number(reportes.recordatorios_hora ?? 17)
-				this.reportes_recordatorios_zona_horaria = reportes.recordatorios_zona_horaria || 'America/Mexico_City'
 				this.reportes_recordatorios_email = String(reportes.recordatorios_email ?? 'true') === 'true'
 				this.reportes_horas_minimas = Number(reportes.horas_minimas ?? 0)
 				this.optionsGroups = (response.data.Groups || []).map(group => ({
@@ -596,7 +594,6 @@ export default {
 					recordatorios_enabled: this.reportes_recordatorios_enabled.toString(),
 					recordatorios_grupo: this.reportes_recordatorios_grupo,
 					recordatorios_hora: Number(this.reportes_recordatorios_hora),
-					recordatorios_zona_horaria: this.reportes_recordatorios_zona_horaria,
 					recordatorios_email: this.reportes_recordatorios_email.toString(),
 					horas_minimas: Number(this.reportes_horas_minimas),
 					admin_reports_group: this.selected_admin_reports_group?.id || this.reportes_admin_reports_group,

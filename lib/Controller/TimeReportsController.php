@@ -14,6 +14,7 @@ use OCA\Employees\Db\TimeReportMapper;
 use OCA\Employees\Db\AbsenceHistoryMapper;
 use OCA\Employees\Service\PermissionsService;
 use OCA\Employees\Service\TimeReportRules;
+use OCA\Employees\Service\UserTimezoneService;
 use OCA\Employees\Service\VacationCalculationService;
 use OCA\Employees\Exception\TimeReportRuleException;
 use OCA\Employees\UploadException;
@@ -62,6 +63,7 @@ class TimeReportsController extends BaseController {
 	private INotificationManager $notificationManager;
 	private PermissionsService $permisosService;
 	private VacationCalculationService $vacacionesCalculoService;
+	private UserTimezoneService $userTimezoneService;
 
 	public function __construct(
 		IRequest $request,
@@ -83,6 +85,7 @@ class TimeReportsController extends BaseController {
 		INotificationManager $notificationManager,
 		VacationCalculationService $vacacionesCalculoService,
 		PermissionsService $permisosService,
+		UserTimezoneService $userTimezoneService,
 	) {
 		parent::__construct(
 			Application::APP_ID,
@@ -111,6 +114,7 @@ class TimeReportsController extends BaseController {
 		$this->AbsenceHistoryMapper = $AbsenceHistoryMapper;
 		$this->vacacionesCalculoService = $vacacionesCalculoService;
 		$this->permisosService = $permisosService;
+		$this->userTimezoneService = $userTimezoneService;
 	}
 
 	private function requireAdminReportsAccess(): void {
@@ -1976,17 +1980,7 @@ class TimeReportsController extends BaseController {
 			], Http::STATUS_UNAUTHORIZED);
 		}
 
-		$zonaHoraria = $this->config->getAppValue(
-			Application::APP_ID,
-			'reportes_recordatorios_zona_horaria',
-			'America/Mexico_City'
-		);
-
-		try {
-			$tz = new \DateTimeZone($zonaHoraria);
-		} catch (\Throwable $e) {
-			$tz = new \DateTimeZone('America/Mexico_City');
-		}
+		$tz = $this->userTimezoneService->forUser($user->getUID());
 
 		if (empty($date)) {
 			$date = (new \DateTimeImmutable('now', $tz))->format('Y-m-d');
