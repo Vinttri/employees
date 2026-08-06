@@ -451,10 +451,10 @@ export default {
 	letter-spacing: 0.03em;
 }
 
-.status-badge--pending   { background: var(--color-warning-light, #dfae0c); color: var(--color-warning, #ffffff); }
-.status-badge--approved  { background: var(--color-success-light, #d1e7dd); color: var(--color-success, #0a3622); }
-.status-badge--rejected  { background: var(--color-error-light,   #f8d7da); color: var(--color-error,   #58151c); }
-.status-badge--cancelled { background: var(--color-background-darker, #e9ecef); color: var(--color-text-maxcontrast); }
+.status-badge--pending   { background: var(--color-warning-light); color: var(--color-warning); }
+.status-badge--approved  { background: var(--color-success-light); color: var(--color-success); }
+.status-badge--rejected  { background: var(--color-error-light); color: var(--color-error); }
+.status-badge--cancelled { background: var(--color-background-darker); color: var(--color-text-maxcontrast); }
 
 /* ── Info grid ───────────────────────────────── */
 .detalle-ausencia__grid {
@@ -502,13 +502,13 @@ export default {
 
 /* Botón cancelar en rojo */
 .btn-cancel {
-	background-color: #c0392b !important;
-	color: #fff !important;
-	border-color: #c0392b !important;
+	background-color: var(--color-error) !important;
+	color: var(--color-main-text) !important;
+	border-color: var(--color-border-error) !important;
 }
 .btn-cancel:hover {
-	background-color: #a93226 !important;
-	border-color: #a93226 !important;
+	background-color: var(--color-error) !important;
+	border-color: var(--color-border-error) !important;
 }
 
 /* ── Confirm ─────────────────────────────────── */
@@ -564,8 +564,8 @@ export default {
 	font-size: 0.88rem;
 }
 
-.aprobaciones__estado--aprobado  { color: #488d48; font-weight: 800; }
-.aprobaciones__estado--rechazado { color: #972c2cfa; font-weight: 800; }
+.aprobaciones__estado--aprobado  { color: var(--color-success-text); font-weight: 800; }
+.aprobaciones__estado--rechazado { color: rgb(from var(--color-error-text) r g b / 0.98); font-weight: 800; }
 .aprobaciones__estado--cancelado { color: var(--color-text-maxcontrast); font-weight: 800; }
-.aprobaciones__estado--pendiente { color: #ccad3d; font-weight: 800; }
+.aprobaciones__estado--pendiente { color: var(--color-warning-text); font-weight: 800; }
 </style>

@@ -1291,8 +1291,8 @@ export default {
 	font-weight: 600;
 
 	&--yes {
-		background: #dcfce7;
-		color: #166534;
+		background: var(--color-success);
+		color: var(--color-success-text);
 	}
 
 	&--no {
@@ -1318,8 +1318,8 @@ export default {
 	margin: 6px 0 0 !important;
 	padding: 8px 12px;
 	border-radius: var(--border-radius);
-	background: #fef9c3;
-	color: #713f12;
+	background: var(--color-warning);
+	color: var(--color-warning-text);
 	font-size: 0.8rem !important;
 }
 

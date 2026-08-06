@@ -338,7 +338,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 16px;
 	padding: 24px;
-	box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+	box-shadow: 0 4px 18px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .header {

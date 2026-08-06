@@ -468,7 +468,7 @@ export default {
 }
 
 .parking {
-	background: #dcdcdc;
+	background: var(--color-main-background);
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
@@ -486,14 +486,14 @@ export default {
 }
 
 .slot {
-	background: #efefef;
-	border: 1px solid #222;
+	background: var(--color-main-background);
+	border: 1px solid var(--color-border);
 	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
-	color: #000;
+	color: var(--color-main-text);
 	font-size: 18px;
 	min-height: 78px;
 }
@@ -515,7 +515,7 @@ export default {
 }
 
 .slot.empty {
-	color: #d10000;
+	color: var(--color-error-text);
 	font-size: 22px;
 	font-weight: 600;
 }

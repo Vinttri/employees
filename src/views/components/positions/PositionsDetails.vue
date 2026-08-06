@@ -389,9 +389,9 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 22px;
 	background:
-		radial-gradient(circle at top right, rgba(52, 120, 246, 0.14), transparent 26%),
+		radial-gradient(circle at top right, rgb(from var(--color-primary-element-light) r g b / 0.14), transparent 26%),
 		linear-gradient(135deg, var(--color-main-background), var(--color-background-dark));
-	box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 16px 36px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .position-hero__content {
@@ -404,7 +404,7 @@ export default {
 	margin-bottom: 10px;
 	padding: 5px 11px;
 	border-radius: 999px;
-	background: rgba(52, 120, 246, 0.12);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.12);
 	color: var(--color-primary-element);
 	font-size: 11px;
 	font-weight: 700;
@@ -452,9 +452,9 @@ export default {
 
 .position-meta-card {
 	padding: 14px 16px;
-	border: 1px solid rgba(255, 255, 255, 0.65);
+	border: 1px solid rgb(from var(--color-border) r g b / 0.65);
 	border-radius: 16px;
-	background: rgba(255, 255, 255, 0.72);
+	background: rgb(from var(--color-main-background) r g b / 0.72);
 	backdrop-filter: blur(8px);
 }
 
@@ -486,8 +486,8 @@ export default {
 	padding: 20px;
 	border: 1px solid var(--color-border);
 	border-radius: 22px;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), var(--color-main-background));
-	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+	background: linear-gradient(180deg, rgb(from var(--color-main-background) r g b / 0.88), var(--color-main-background));
+	box-shadow: 0 10px 28px rgb(from var(--color-box-shadow) r g b / 0.06);
 }
 
 .employees-panel__header {
@@ -526,7 +526,7 @@ export default {
 .employees-list-panel {
 	padding: 8px;
 	border-radius: 18px;
-	background: rgba(148, 163, 184, 0.08);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.08);
 }
 
 .employees-grid {
@@ -548,16 +548,16 @@ export default {
 	gap: 14px;
 	height: 100%;
 	padding: 16px;
-	border: 1px solid rgba(148, 163, 184, 0.2);
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.2);
 	border-radius: 18px;
-	background: linear-gradient(180deg, #fff, rgba(248, 250, 252, 0.96));
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+	background: linear-gradient(180deg, var(--color-main-background), rgb(from var(--color-main-background) r g b / 0.96));
+	box-shadow: 0 10px 24px rgb(from var(--color-box-shadow) r g b / 0.08);
 	transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .employee-card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+	box-shadow: 0 16px 30px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .employee-card__body {
@@ -612,7 +612,7 @@ export default {
 	padding: 36px;
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 2px 16px rgb(from var(--color-box-shadow) r g b / 0.08);
 	text-align: center;
 }
 

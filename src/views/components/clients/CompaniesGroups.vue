@@ -2805,10 +2805,10 @@ export default {
 	box-sizing: border-box;
 	padding: 6px 0;
 	overflow: hidden;
-	border: 1px solid rgba(0, 0, 0, 0.28);
+	border: 1px solid rgb(from var(--color-border) r g b / 0.28);
 	border-radius: var(--border-radius);
 	background: var(--color-main-background);
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 4px 16px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .filter-section {
@@ -3132,7 +3132,7 @@ export default {
 
 	&:hover {
 		border-color: color-mix(in srgb, var(--color-primary-element) 35%, var(--color-border));
-		box-shadow: 0 2px 10px rgb(0 0 0 / 5%);
+		box-shadow: 0 2px 10px var(--color-box-shadow);
 	}
 }
 
@@ -3256,7 +3256,7 @@ export default {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	color: var(--color-text-maxcontrast, #666);
+	color: var(--color-text-maxcontrast);
 	transition: transform 0.2s ease;
 	user-select: none;
 }
@@ -3310,7 +3310,7 @@ export default {
 
 .parcialidad-date-pago {
 	font-size: 0.75rem;
-	color: #5ae779;
+	color: var(--color-success-text);
 	font-weight: 1000;
 }
 
@@ -3476,13 +3476,13 @@ export default {
 }
 
 .btn-factura {
-	background-color: #21ba44 !important;
-	color: #fff !important;
+	background-color: var(--color-success) !important;
+	color: var(--color-main-text) !important;
 	border: none !important;
 }
 
 .btn-factura:hover {
-	background-color: #1f973b !important;
+	background-color: var(--color-success) !important;
 }
 
 .dialog-content {
@@ -3491,12 +3491,12 @@ export default {
 
 .parcialidad-detail-text {
 	font-size: 0.8rem;
-	color: var(--color-text-maxcontrast, #000000);
+	color: var(--color-text-maxcontrast);
 	line-height: 1.2;
 }
 
 .parcialidad-completada {
-	color: #21ba44;
+	color: var(--color-success-text);
 	font-weight: bold;
 	font-size: 0.7rem;
 }
@@ -3528,7 +3528,7 @@ export default {
 }
 
 .details-header--special {
-	background: linear-gradient(135deg, #6c9cda 10%, var(--color-main-background) 100%);
+	background: linear-gradient(135deg, var(--color-primary-element-light) 10%, var(--color-main-background) 100%);
 	border-radius: 8px;
 	padding: 16px 16px 10px 16px;
 }
@@ -3536,11 +3536,11 @@ export default {
 .details-header--special .eyebrow,
 .details-header--special h2,
 .details-header--special p {
-	color: #ffffff;
+	color: var(--color-main-text);
 }
 
 .details-header--special .details-icon {
-	color: #ffffff;
+	color: var(--color-main-text);
 }
 
 .filter-icon-button {
@@ -3578,12 +3578,12 @@ export default {
 	width: 72px;
 	height: 72px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, #43a047, #2e7d32);
+	background: linear-gradient(135deg, var(--color-success), var(--color-success));
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	margin-bottom: 16px;
-	box-shadow: 0 4px 14px rgba(46, 125, 50, 0.35);
+	box-shadow: 0 4px 14px rgb(from var(--color-box-shadow) r g b / 0.35);
 }
 
 .payment-icon {
@@ -3714,8 +3714,8 @@ export default {
 }
 
 .badge-type {
-    background: #f3e8ff;
-    color: #7c3aed;
+    background: var(--color-primary-element-light);
+    color: var(--color-primary-element-light-text);
     text-transform: capitalize;
 }
 
@@ -3727,7 +3727,7 @@ export default {
 }
 
 .action-danger :deep(button) {
-	color: #a82222 !important;
+	color: var(--color-error-text) !important;
 }
 
 .action-danger :deep(.action-button__icon) {
@@ -3735,18 +3735,18 @@ export default {
 }
 
 .badge-type-parcial {
-	background-color: #f3e8ff;
-	color: #6b21a8;
+	background-color: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
 }
 
 .badge-type-iguala {
-	background-color: #dcfce7;
-	color: #15803d;
+	background-color: var(--color-success);
+	color: var(--color-success-text);
 }
 
 .badge-type-eventual {
-	background-color: #fef9c3;
-	color: #92400e;
+	background-color: var(--color-warning);
+	color: var(--color-warning-text);
 }
 .separator-top {
 	margin-bottom: 20px;

@@ -193,14 +193,14 @@ export default {
 }
 
 .status-ok {
-	border-left: 5px solid #46ba61;
+	border-left: 5px solid var(--color-border-success);
 }
 
 .status-pending {
-	border-left: 5px solid #e9322d;
+	border-left: 5px solid var(--color-border-error);
 }
 
 .status-warning {
-	border-left: 5px solid #eca700;
+	border-left: 5px solid var(--color-element-warning);
 }
 </style>

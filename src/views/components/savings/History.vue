@@ -147,7 +147,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 8px;
 	background: var(--color-main-background);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.04);
 }
 
 .history-header {
@@ -251,13 +251,13 @@ export default {
 }
 
 .status-pending {
-	background: rgba(199, 130, 0, .14);
-	color: #9f6500;
+	background: rgb(from var(--color-warning) r g b / 0.14);
+	color: var(--color-warning-text);
 }
 
 .status-approved {
-	background: rgba(16, 133, 72, .12);
-	color: #108548;
+	background: rgb(from var(--color-success) r g b / 0.12);
+	color: var(--color-success-text);
 }
 
 .empty-state {

@@ -306,11 +306,11 @@ export default {
 }
 
 .kpi-card.ok {
-	border-left: 5px solid #46ba61;
+	border-left: 5px solid var(--color-border-success);
 }
 
 .kpi-card.pending {
-	border-left: 5px solid #e9322d;
+	border-left: 5px solid var(--color-border-error);
 }
 
 .table-card {
@@ -348,13 +348,13 @@ export default {
 }
 
 .badge.reportado {
-	background-color: rgba(70, 186, 97, .15);
-	color: #2f8f46;
+	background-color: rgb(from var(--color-success) r g b / 0.15);
+	color: var(--color-success-text);
 }
 
 .badge.pendiente {
-	background-color: rgba(233, 50, 45, .15);
-	color: #c4211d;
+	background-color: rgb(from var(--color-error) r g b / 0.15);
+	color: var(--color-error-text);
 }
 
 .empty {

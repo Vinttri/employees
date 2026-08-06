@@ -785,10 +785,10 @@ export default {
 
 <style scoped>
 .dashboard {
-	--erp-primary: #714b67;
-	--erp-primary-dark: #56384e;
-	--erp-secondary: #017e84;
-	--erp-soft: rgba(113, 75, 103, 0.08);
+	--erp-primary: var(--color-primary-element);
+	--erp-primary-dark: var(--color-primary-element-hover);
+	--erp-secondary: var(--color-primary-element);
+	--erp-soft: var(--color-primary-element-light);
 
 	display: flex;
 	flex-direction: column;
@@ -796,9 +796,7 @@ export default {
 	width: 100%;
 	min-height: 100%;
 	padding: 24px 32px 40px;
-	background:
-		radial-gradient(circle at 0% 0%, rgba(113, 75, 103, 0.10), transparent 28%),
-		var(--color-background-hover);
+	background: var(--color-main-background);
 }
 
 .hero {
@@ -806,11 +804,11 @@ export default {
 	grid-template-columns: minmax(0, 1fr) 340px;
 	gap: 18px;
 	padding: 28px;
-	border: 1px solid rgba(113, 75, 103, 0.18);
+	border: 1px solid var(--color-border);
 	border-radius: 26px;
-	background: linear-gradient(135deg, var(--erp-primary), var(--erp-primary-dark));
-	color: white;
-	box-shadow: 0 18px 36px rgba(0, 0, 0, 0.16);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	box-shadow: none;
 }
 
 .hero-main {
@@ -822,7 +820,7 @@ export default {
 
 .kicker {
 	margin: 0 0 8px;
-	color: rgba(255, 255, 255, 0.74);
+	color: var(--color-text-maxcontrast);
 	font-size: 12px;
 	font-weight: 800;
 	letter-spacing: .08em;
@@ -839,7 +837,7 @@ export default {
 .hero-text {
 	max-width: 800px;
 	margin: 12px 0 0;
-	color: rgba(255, 255, 255, 0.84);
+	color: var(--color-text-maxcontrast);
 	font-size: 15px;
 	line-height: 1.55;
 }
@@ -860,10 +858,9 @@ export default {
 .date-card,
 .workspace-card,
 .hero-stats > div {
-	border: 1px solid rgba(255, 255, 255, 0.20);
+	border: 1px solid var(--color-border);
 	border-radius: 20px;
-	background: rgba(255, 255, 255, 0.10);
-	backdrop-filter: blur(12px);
+	background: var(--color-background-hover);
 }
 
 .date-card {
@@ -884,14 +881,14 @@ export default {
 	width: 58px;
 	height: 58px;
 	border-radius: 18px;
-	background: rgba(255, 255, 255, 0.16);
+	background: var(--color-primary-element-light);
 }
 
 .date-card span,
 .workspace-card span,
 .hero-stats span {
 	display: block;
-	color: rgba(255, 255, 255, 0.72);
+	color: var(--color-text-maxcontrast);
 	font-size: 12px;
 	font-weight: 700;
 }
@@ -901,7 +898,7 @@ export default {
 .hero-stats strong {
 	display: block;
 	margin-top: 4px;
-	color: white;
+	color: var(--color-main-text);
 	font-size: 18px;
 	font-weight: 850;
 }
@@ -927,7 +924,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 22px;
 	background: var(--color-main-background);
-	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.055);
+	box-shadow: none;
 }
 
 .kpi-card {
@@ -1059,9 +1056,9 @@ export default {
 
 .app-tile:hover,
 .app-tile:focus {
-	border-color: rgba(113, 75, 103, 0.45);
+	border-color: rgb(from var(--color-primary-element) r g b / 0.45);
 	background: linear-gradient(180deg, var(--color-main-background), var(--erp-soft));
-	box-shadow: 0 12px 26px rgba(0, 0, 0, 0.11);
+	box-shadow: 0 12px 26px rgb(from var(--color-box-shadow) r g b / 0.11);
 	transform: translateY(-2px);
 	outline: none;
 }
@@ -1095,15 +1092,15 @@ export default {
 }
 
 .today-panel.is-ok::before {
-	background: #46ba61;
+	background: var(--color-success);
 }
 
 .today-panel.is-pending::before {
-	background: #e9322d;
+	background: var(--color-error);
 }
 
 .today-panel.is-warning::before {
-	background: #eca700;
+	background: var(--color-warning);
 }
 
 .today-status {
@@ -1260,7 +1257,7 @@ export default {
 }
 
 .module-state.enabled {
-	background: rgba(1, 126, 132, 0.12);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.12);
 	color: var(--erp-secondary);
 }
 

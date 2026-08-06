@@ -379,7 +379,7 @@ export default {
 	margin-left: 4px;
 	border-radius: 999px;
 	background-color: var(--color-primary);
-	color: #fff;
+	color: var(--color-main-text);
 	font-size: 11px;
 	font-weight: 600;
 }
@@ -393,10 +393,10 @@ export default {
 	box-sizing: border-box;
 	padding: 6px 0;
 	overflow: hidden;
-	border: 1px solid rgba(0, 0, 0, 0.28);
+	border: 1px solid rgb(from var(--color-border) r g b / 0.28);
 	border-radius: var(--border-radius);
 	background: var(--color-main-background);
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 4px 16px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .filter-section {

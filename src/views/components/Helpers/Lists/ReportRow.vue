@@ -258,8 +258,7 @@ export default {
 			return this.listas.filter(activity => (activity.type_activity || 'cliente') === type)
 		},
 		indicatorColor() {
-			// rojo editable, verde bloqueado
-			return this.editable ? 'red' : 'green'
+			return this.editable ? 'var(--color-error)' : 'var(--color-success)'
 		},
 		counterText() {
 			const v = this.source?.recorded_time ?? this.source?.recordedTime ?? 0

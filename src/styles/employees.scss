@@ -1,4 +1,4 @@
-#content {
+#content-vue {
 	--employees-surface: var(--color-main-background);
 	--employees-surface-muted: var(--color-background-hover);
 	--employees-text: var(--color-main-text);
@@ -23,33 +23,33 @@
 	box-sizing: border-box;
 }
 
-#content .inputtype,
-#content .organigrama-search,
-#content input[type='text'],
-#content input[type='number'],
-#content input[type='date'],
-#content input[type='email'],
-#content textarea {
+#content-vue .inputtype,
+#content-vue .organigrama-search,
+#content-vue input[type='text'],
+#content-vue input[type='number'],
+#content-vue input[type='date'],
+#content-vue input[type='email'],
+#content-vue textarea {
 	border-color: var(--employees-border);
 	border-radius: var(--employees-radius);
 	background: var(--employees-surface);
 	color: var(--employees-text);
 }
 
-#content .inputtype:focus,
-#content .organigrama-search:focus,
-#content input:focus,
-#content textarea:focus {
+#content-vue .inputtype:focus,
+#content-vue .organigrama-search:focus,
+#content-vue input:focus,
+#content-vue textarea:focus {
 	border-color: var(--employees-primary);
 	box-shadow: 0 0 0 2px var(--color-primary-element-light);
 	outline: none;
 }
 
-#content :is(.empleado-switch-btn, .view-switch-btn, .stepper-btn, .acordeon-title, .acordeon-notification, .accordion-option, .pending-card, .manager-card__header) {
+#content-vue :is(.empleado-switch-btn, .view-switch-btn, .stepper-btn, .acordeon-title, .acordeon-notification, .accordion-option, .pending-card, .manager-card__header) {
 	border-radius: var(--employees-radius);
 }
 
-#content :is(.area-hero, .position-hero, .team-hero, .employees-panel, .members-panel, .position-meta-card, .area-meta-card, .team-meta-card, .employee-card, .member-card, .kpi-card, .module-card, .app-tile, .date-card, .workspace-card) {
+#content-vue :is(.area-hero, .position-hero, .team-hero, .employees-panel, .members-panel, .position-meta-card, .area-meta-card, .team-meta-card, .employee-card, .member-card, .kpi-card, .module-card, .app-tile, .date-card, .workspace-card) {
 	border-color: var(--employees-border);
 	border-radius: var(--employees-radius);
 	background: var(--employees-surface);
@@ -58,13 +58,13 @@
 	backdrop-filter: none;
 }
 
-#content :is(.area-hero__actions, .position-hero__actions, .team-hero__actions, .button-container) {
+#content-vue :is(.area-hero__actions, .position-hero__actions, .team-hero__actions, .button-container) {
 	display: flex;
 	align-items: center;
 	gap: var(--employees-space-2);
 }
 
-#content .cards {
+#content-vue .cards {
 	--sidebar-primary: var(--employees-primary);
 	--sidebar-primary-dark: var(--employees-primary);
 	--sidebar-primary-soft: var(--employees-surface-muted);
@@ -81,13 +81,13 @@
 	box-shadow: none;
 }
 
-#content .headers {
+#content-vue .headers {
 	background: var(--employees-primary);
 	border-radius: var(--employees-radius);
 	box-shadow: none;
 }
 
-#content :is(.vacations-grid, .vacation-card) {
+#content-vue :is(.vacations-grid, .vacation-card) {
 	background: var(--employees-surface);
 	color: var(--employees-text);
 	border-color: var(--employees-border);
@@ -95,14 +95,14 @@
 	box-shadow: none;
 }
 
-#content :is(.vacation-card__title, .vacation-card__subtitle) {
+#content-vue :is(.vacation-card__title, .vacation-card__subtitle) {
 	color: var(--employees-text-muted);
 	white-space: normal;
 }
 
-#content .vacation-card__value { color: var(--employees-primary); }
+#content-vue .vacation-card__value { color: var(--employees-primary); }
 
-#content .hero {
+#content-vue .hero {
 	border: 1px solid var(--employees-border);
 	border-radius: var(--employees-radius);
 	background: var(--employees-surface);
@@ -110,13 +110,13 @@
 	box-shadow: none;
 }
 
-#content .inventory-table-wrapper,
-#content .table-wrapper {
+#content-vue .inventory-table-wrapper,
+#content-vue .table-wrapper {
 	overflow-x: auto;
 	scrollbar-gutter: stable;
 }
 
-#content .modal-form {
+#content-vue .modal-form {
 	display: grid;
 	gap: var(--employees-space-4);
 	min-width: min(520px, calc(100vw - 48px));
@@ -124,16 +124,16 @@
 }
 
 @media (max-width: 700px) {
-	#content .employee-edit-toolbar {
+	#content-vue .employee-edit-toolbar {
 		align-items: stretch;
 		flex-direction: column;
 	}
 
-	#content .employee-edit-toolbar__actions {
+	#content-vue .employee-edit-toolbar__actions {
 		justify-content: flex-end;
 	}
 
-	#content :is(.area-hero, .position-hero, .team-hero) {
+	#content-vue :is(.area-hero, .position-hero, .team-hero) {
 		flex-direction: column;
 		padding: var(--employees-space-4);
 	}

@@ -1549,7 +1549,7 @@ export default {
 	width: 100px;
 	margin: 10px;
 	border-radius: 8px;
-	box-shadow: 0 2px 10px rgba(0, 41, 0, 0.12);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .float,
@@ -1757,7 +1757,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+	box-shadow: 0 8px 24px rgb(from var(--color-box-shadow) r g b / 0.18);
 }
 
 .equipo-computo-select .vs__dropdown-option {
@@ -1947,7 +1947,7 @@ export default {
 	background: var(--color-main-background);
 	border: 1px solid var(--color-border);
 	border-radius: 999px;
-	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14);
+	box-shadow: 0 6px 20px rgb(from var(--color-box-shadow) r g b / 0.14);
 }
 
 .empleado-switch-btn,
@@ -1979,8 +1979,8 @@ export default {
 .empleado-switch-btn.active:focus,
 .empleado-switch-btn.active:active {
 	background: var(--color-primary-element);
-	color: var(--color-primary-element-text, #fff);
-	box-shadow: 0 2px 10px rgba(52, 120, 246, 0.35);
+	color: var(--color-primary-element-text);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.35);
 }
 
 @media (max-width: 600px) {
@@ -2092,7 +2092,7 @@ export default {
 .OnboardingItem-toggle-btn.active,
 .OnboardingItem-toggle-btn.active:hover,
 .OnboardingItem-toggle-btn.active:focus {
-	color: var(--color-primary-element-text, #fff) !important;
+	color: var(--color-primary-element-text) !important;
 }
 
 /* Checklist funcional */

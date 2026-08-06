@@ -385,7 +385,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 24px;
 	background: var(--color-main-background);
-	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 18px 40px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .area-hero__content {
@@ -398,7 +398,7 @@ export default {
 	margin-bottom: 12px;
 	padding: 6px 12px;
 	border-radius: 999px;
-	background: rgba(52, 120, 246, 0.12);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.12);
 	color: var(--color-primary-element);
 	font-size: 12px;
 	font-weight: 700;
@@ -481,7 +481,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 24px;
 	background: var(--color-main-background);
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+	box-shadow: 0 10px 30px rgb(from var(--color-box-shadow) r g b / 0.06);
 }
 
 .employees-panel__header {
@@ -539,14 +539,14 @@ export default {
 	gap: 16px;
 	height: 100%;
 	padding: 18px;
-	border: 1px solid rgba(148, 163, 184, 0.2);
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.2);
 	border-radius: 20px;
 	transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .employee-card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+	box-shadow: 0 18px 34px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .employee-card__body {
@@ -601,7 +601,7 @@ export default {
 	padding: 36px;
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 2px 16px rgb(from var(--color-box-shadow) r g b / 0.08);
 	text-align: center;
 }
 

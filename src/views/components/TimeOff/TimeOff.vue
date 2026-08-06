@@ -567,7 +567,6 @@ import ruLocale from '@fullcalendar/core/locales/ru'
 
 import { ref } from 'vue'
 
-import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
 import { showError, showInfo } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
@@ -575,6 +574,7 @@ import { getLanguage, translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
 import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
+import { getNextcloudThemeColor } from '../../../utils/nextcloudTheme.js'
 
 import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 import AccountGroup from 'vue-material-design-icons/AccountGroup.vue'
@@ -891,8 +891,8 @@ export default {
 			const esHoy = arg.el.classList.contains('fc-day-today')
 
 			if (!esHoy) {
-				const colorBase = '#e3f5e6'
-				const colorHover = '#d9f0dd'
+				const colorBase = getNextcloudThemeColor('--color-success')
+				const colorHover = getNextcloudThemeColor('--color-success-hover')
 				arg.el.style.setProperty('background-color', colorBase, 'important')
 				arg.el.addEventListener('mouseenter', () => {
 					arg.el.style.setProperty('background-color', colorHover, 'important')
@@ -1291,9 +1291,8 @@ export default {
 			})
 		},
 
-		color(username) {
-			const { r, g, b } = usernameToColor(username)
-			return `rgb(${r}, ${g}, ${b})`
+		color() {
+			return getNextcloudThemeColor('--color-primary-element')
 		},
 
 		isAdmin() {
@@ -1586,37 +1585,37 @@ export default {
 .fc-event.event-pending {
 	background: repeating-linear-gradient(
 		135deg,
-		#73a0cf 0px,
-		#739bc7 8px,
-		#8fb4d9 8px,
-		#8fb4d9 16px
+		var(--color-primary-element-light) 0px,
+		var(--color-primary-element-light) 8px,
+		var(--color-primary-element-light) 8px,
+		var(--color-primary-element-light) 16px
 	) !important;
-	border-color: #86b7ef !important;
-	color: #ffffff !important;
+	border-color: var(--color-primary-element) !important;
+	color: var(--color-main-text) !important;
 }
 
 .fc-event.event-pending-anticipada {
 	background: repeating-linear-gradient(
 		135deg,
-		#e07b28 0px,
-		#d97324 8px,
-		#f0994f 8px,
-		#f0994f 16px
+		var(--color-warning) 0px,
+		var(--color-warning) 8px,
+		var(--color-warning) 8px,
+		var(--color-warning) 16px
 	) !important;
-	border-color: #f2a05e !important;
-	color: #ffffff !important;
+	border-color: var(--color-element-warning) !important;
+	color: var(--color-main-text) !important;
 }
 
 .fc-event.event-approved {
-	background: #68b868 !important;
-	border-color: #1e8a46 !important;
-	color: #ffffff !important;
+	background: var(--color-success) !important;
+	border-color: var(--color-border-success) !important;
+	color: var(--color-main-text) !important;
 }
 
 .fc-event.event-rejected {
-	background: #f04747 !important;
-	border-color: #912222 !important;
-	color: #ffffff !important;
+	background: var(--color-error) !important;
+	border-color: var(--color-border-error) !important;
+	color: var(--color-main-text) !important;
 }
 .event-rejected .fc-event-title {
 	text-decoration: line-through;
@@ -1624,9 +1623,9 @@ export default {
 }
 
 .fc-event.event-cancelled {
-	background: #9e9e9e !important;
-	border-color: #7d7d7d !important;
-	color: #ffffff !important;
+	background: var(--color-background-hover) !important;
+	border-color: var(--color-border) !important;
+	color: var(--color-main-text) !important;
 }
 .event-cancelled .fc-event-title {
 	text-decoration: line-through;
@@ -1646,12 +1645,12 @@ export default {
 	 * !important que FullCalendar aplica a "hoy" y a la selección.
 	 * Este valor queda solo como respaldo visual.
 	 */
-	background-color: #e3f5e6;
+	background-color: var(--color-main-background);
 	transition: background-color 0.15s ease;
 }
 
 .fc-day-festivo .fc-daygrid-day-number {
-	color: #2f6b45;
+	color: var(--color-success-text);
 	font-weight: 700;
 }
 
@@ -1667,7 +1666,7 @@ export default {
 
 	overflow: hidden;
 
-	color: #2f6b45;
+	color: var(--color-success-text);
 	font-size: 0.6rem;
 	font-style: normal;
 	font-weight: 600;
@@ -1677,7 +1676,7 @@ export default {
 	white-space: nowrap;
 	letter-spacing: 0.01em;
 
-	background: rgba(255, 255, 255, 0.55);
+	background: rgb(from var(--color-main-background) r g b / 0.55);
 	border-radius: 4px;
 	padding: 2px 4px 3px;
 
@@ -1741,17 +1740,17 @@ export default {
  * ======================================== */
 
 .cards {
-	--sidebar-primary: #2389d7;
-	--sidebar-primary-dark: #1468a8;
-	--sidebar-primary-soft: #e7f3fb;
-	--sidebar-soft: #edf6fc;
-	--sidebar-soft-hover: #dceefa;
-	--sidebar-border: #d4e2ec;
-	--sidebar-border-strong: #b9d5e6;
-	--sidebar-text: #17354d;
-	--sidebar-muted: #66798a;
-	--sidebar-warning: #b45309;
-	--sidebar-warning-soft: #fff7e8;
+	--sidebar-primary: var(--color-primary-element);
+	--sidebar-primary-dark: var(--color-primary-element-hover);
+	--sidebar-primary-soft: var(--color-primary-element-light);
+	--sidebar-soft: var(--color-background-hover);
+	--sidebar-soft-hover: var(--color-background-dark);
+	--sidebar-border: var(--color-border);
+	--sidebar-border-strong: var(--color-border-dark);
+	--sidebar-text: var(--color-main-text);
+	--sidebar-muted: var(--color-text-maxcontrast);
+	--sidebar-warning: var(--color-warning);
+	--sidebar-warning-soft: var(--color-warning);
 
 	display: flex;
 	flex: 1;
@@ -1766,13 +1765,13 @@ export default {
 	overflow: hidden;
 
 	color: var(--sidebar-text);
-	background: #f8fbfd;
+	background: var(--color-main-background);
 	border: 1px solid var(--sidebar-border);
 	border-radius: 16px;
 
 	box-shadow:
-		0 8px 24px rgba(15, 47, 74, 0.08),
-		0 2px 5px rgba(15, 47, 74, 0.05);
+		0 8px 24px rgb(from var(--color-primary-element-light) r g b / 0.08),
+		0 2px 5px rgb(from var(--color-primary-element-light) r g b / 0.05);
 }
 
 /* ========================================
@@ -1802,8 +1801,8 @@ export default {
 	border-radius: 14px;
 
 	box-shadow:
-		0 10px 22px rgba(31, 127, 195, 0.25),
-		0 3px 7px rgba(31, 127, 195, 0.14);
+		0 10px 22px rgb(from var(--color-primary-element-light) r g b / 0.25),
+		0 3px 7px rgb(from var(--color-primary-element-light) r g b / 0.14);
 }
 
 .header-content {
@@ -1818,7 +1817,7 @@ export default {
 .h2-white {
 	margin: 0;
 
-	color: white;
+	color: var(--color-primary-element-text);
 	font-size: 1.15rem;
 	font-weight: 700;
 	letter-spacing: 0.02em;
@@ -1840,11 +1839,11 @@ export default {
 	width: 100%;
 	overflow: hidden;
 
-	background: white;
-	border: 1px solid rgba(15, 23, 42, 0.12);
+	background: var(--color-main-background);
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.12);
 	border-radius: 10px;
 
-	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 4px 12px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .vacation-card {
@@ -1861,12 +1860,12 @@ export default {
 	padding: 10px 6px;
 
 	text-align: center;
-	background: white;
+	background: var(--color-main-background);
 }
 
 .vacation-card + .vacation-card {
 	border-top: 0;
-	border-left: 1px solid rgba(15, 23, 42, 0.12);
+	border-left: 1px solid rgb(from var(--color-primary-element) r g b / 0.12);
 }
 
 .vacations-grid--single .vacation-card {
@@ -1879,7 +1878,7 @@ export default {
 	margin-bottom: 3px;
 	overflow: hidden;
 
-	color: #334155;
+	color: var(--color-primary-element-light-text);
 	font-size: 0.62rem;
 	font-weight: 700;
 	text-overflow: ellipsis;
@@ -1889,7 +1888,7 @@ export default {
 }
 
 .vacation-card__value {
-	color: #8b477f;
+	color: var(--color-primary-element-light-text);
 	font-size: 1.45rem;
 	font-weight: 800;
 	line-height: 1;
@@ -1900,7 +1899,7 @@ export default {
 	margin-top: 4px;
 	overflow: hidden;
 
-	color: #64748b;
+	color: var(--color-primary-element-light-text);
 	font-size: 0.54rem;
 	font-weight: 600;
 	text-overflow: ellipsis;
@@ -1910,7 +1909,7 @@ export default {
 }
 
 .vacation-card--accumulated {
-	background: #fffaf0;
+	background: var(--color-main-background);
 }
 
 .vacation-card__warning {
@@ -1923,11 +1922,11 @@ export default {
 	padding-top: 6px;
 	gap: 3px;
 
-	color: #92400e;
+	color: var(--color-warning-text);
 	font-size: 0.55rem;
 	line-height: 1.2;
 
-	border-top: 1px solid rgba(146, 64, 14, 0.14);
+	border-top: 1px solid rgb(from var(--color-element-warning) r g b / 0.14);
 }
 
 .vacation-card__warning svg {
@@ -1950,7 +1949,7 @@ export default {
 	overscroll-behavior: contain;
 
 	scrollbar-width: thin;
-	scrollbar-color: #a9c7da transparent;
+	scrollbar-color: var(--color-primary-element-light) transparent;
 }
 
 .infos::-webkit-scrollbar {
@@ -1962,12 +1961,12 @@ export default {
 }
 
 .infos::-webkit-scrollbar-thumb {
-	background: #a9c7da;
+	background: var(--color-primary-element-light);
 	border-radius: 999px;
 }
 
 .infos::-webkit-scrollbar-thumb:hover {
-	background: #82aec9;
+	background: var(--color-primary-element-light);
 }
 
 /* ========================================
@@ -2015,7 +2014,7 @@ export default {
 
 	overflow: hidden;
 
-	background: white;
+	background: var(--color-main-background);
 	border: 1px solid var(--sidebar-border);
 	border-radius: 10px;
 
@@ -2051,7 +2050,7 @@ export default {
 }
 
 .acordeon-notification {
-	color: #8a3d08;
+	color: var(--color-warning-text);
 	background: var(--sidebar-warning-soft);
 }
 
@@ -2064,7 +2063,7 @@ export default {
 	overflow: hidden;
 	opacity: 0;
 
-	background: white;
+	background: var(--color-main-background);
 
 	transition:
 		max-height 0.28s ease,
@@ -2079,7 +2078,7 @@ export default {
 	overflow: hidden;
 	opacity: 1;
 
-	border-top: 1px solid #e5edf3;
+	border-top: 1px solid var(--color-border);
 }
 
 /* ========================================
@@ -2101,7 +2100,7 @@ export default {
 	font-weight: 700;
 	line-height: 1;
 
-	background: rgba(31, 127, 195, 0.11);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.11);
 	border-radius: 50%;
 }
 
@@ -2175,7 +2174,7 @@ export default {
 	overscroll-behavior: contain;
 
 	scrollbar-width: thin;
-	scrollbar-color: #b8cede transparent;
+	scrollbar-color: var(--color-primary-element-light) transparent;
 }
 
 .accordion-user-list::-webkit-scrollbar {
@@ -2187,7 +2186,7 @@ export default {
 }
 
 .accordion-user-list::-webkit-scrollbar-thumb {
-	background: #b8cede;
+	background: var(--color-primary-element-light);
 	border-radius: 999px;
 }
 
@@ -2234,8 +2233,8 @@ export default {
 .accordion-option--group {
 	min-height: 55px;
 
-	background: #f3f8fc;
-	border-color: #dde9f1;
+	background: var(--color-main-background);
+	border-color: var(--color-border);
 }
 
 .accordion-option__text {
@@ -2297,8 +2296,8 @@ export default {
 	margin-bottom: 6px;
 	padding: 7px 8px;
 
-	background: #f3f8fc;
-	border: 1px solid #dde9f1;
+	background: var(--color-main-background);
+	border: 1px solid var(--color-border);
 	border-radius: 9px;
 }
 
@@ -2359,7 +2358,7 @@ export default {
 ::v-deep .accordion-menu--select .vs__dropdown-toggle {
 	min-height: 40px;
 
-	background: #f8fbfd;
+	background: var(--color-main-background);
 	border-color: var(--sidebar-border);
 	border-radius: 9px;
 }
@@ -2385,12 +2384,12 @@ export default {
 	min-height: 43px;
 	padding: 9px 78px 9px 12px;
 
-	color: #47667d;
+	color: var(--color-primary-element-light-text);
 	font-size: 0.76rem;
 	font-weight: 500;
 	text-align: left;
 
-	background: #edf6fc;
+	background: var(--color-main-background);
 	border-top: 1px solid var(--sidebar-border);
 }
 
@@ -2415,7 +2414,7 @@ export default {
 .table_component table {
 	width: 100%;
 
-	border: 1px solid #dededf;
+	border: 1px solid var(--color-border);
 	border-collapse: collapse;
 
 	table-layout: fixed;
@@ -2425,17 +2424,17 @@ export default {
 .table_component th,
 .table_component td {
 	padding: 5px;
-	border: 1px solid #dededf;
+	border: 1px solid var(--color-border);
 }
 
 .table_component th {
-	color: black;
-	background-color: #eceff1;
+	color: var(--color-main-text);
+	background-color: var(--color-main-background);
 }
 
 .table_component td {
-	color: black;
-	background-color: white;
+	color: var(--color-main-text);
+	background-color: var(--color-main-background);
 }
 
 .caption-title {
@@ -2464,13 +2463,13 @@ export default {
 	height: 64px;
 	padding: 4px;
 
-	background-color: white;
-	border: 1px solid #cbd5e0;
+	background-color: var(--color-main-background);
+	border: 1px solid var(--color-primary-element);
 	border-radius: 50%;
 
 	box-shadow:
-		0 8px 20px rgba(0, 0, 0, 0.22),
-		0 2px 6px rgba(0, 0, 0, 0.15);
+		0 8px 20px rgb(from var(--color-background-darker) r g b / 0.22),
+		0 2px 6px rgb(from var(--color-background-darker) r g b / 0.15);
 
 	transition:
 		transform 0.2s ease,
@@ -2604,9 +2603,9 @@ export default {
 
 .sidebar-button:hover {
 	background: var(--sidebar-soft-hover) !important;
-	border-color: #b9d8eb !important;
+	border-color: var(--color-primary-element) !important;
 
-	box-shadow: 0 4px 10px rgba(31, 127, 195, 0.12) !important;
+	box-shadow: 0 4px 10px rgb(from var(--color-box-shadow) r g b / 0.12) !important;
 
 	transform: translateY(-1px);
 }
@@ -2616,8 +2615,8 @@ export default {
 }
 
 .acordeon-item:hover {
-	border-color: #b6d3e5;
-	box-shadow: 0 4px 12px rgba(15, 47, 74, 0.07);
+	border-color: var(--color-primary-element);
+	box-shadow: 0 4px 12px rgb(from var(--color-box-shadow) r g b / 0.07);
 }
 
 .acordeon-title:hover {
@@ -2626,17 +2625,17 @@ export default {
 }
 
 .acordeon-notification:hover {
-	background: #ffedcc;
+	background: var(--color-warning);
 }
 
 .accordion-option:hover {
 	background: var(--sidebar-soft);
-	border-color: #d1e4ef;
+	border-color: var(--color-primary-element);
 }
 
 .accordion-option--group:hover {
-	background: #e4f1f9;
-	border-color: #bad8e9;
+	background: var(--color-primary-element-light);
+	border-color: var(--color-primary-element);
 }
 
 .accordion-option:active {
@@ -2651,8 +2650,8 @@ export default {
 	transform: scale(1.08);
 
 	box-shadow:
-		0 10px 25px rgba(0, 0, 0, 0.28),
-		0 3px 8px rgba(0, 0, 0, 0.18);
+		0 10px 25px rgb(from var(--color-background-darker) r g b / 0.28),
+		0 3px 8px rgb(from var(--color-background-darker) r g b / 0.18);
 }
 
 .accordion-title {
@@ -2685,7 +2684,7 @@ export default {
 }
 
 .acordeon-item--admin {
-	border-color: rgba(35, 137, 215, 0.25);
+	border-color: rgb(from var(--color-primary-element) r g b / 0.25);
 }
 
 .acordeon-item--admin > .acordeon-title {
@@ -2711,7 +2710,7 @@ export default {
 	width: 100% !important;
 	min-height: 38px !important;
 
-	color: white !important;
+	color: var(--color-main-text) !important;
 	font-size: 0.76rem !important;
 	font-weight: 700 !important;
 
@@ -2736,7 +2735,7 @@ export default {
 }
 
 .accordion-action-button--all:hover {
-	color: white !important;
+	color: var(--color-main-text) !important;
 
 	background: var(--sidebar-primary) !important;
 	border-color: var(--sidebar-primary) !important;
@@ -2758,7 +2757,7 @@ export default {
 	overscroll-behavior: contain;
 
 	scrollbar-width: thin;
-	scrollbar-color: #dca75e transparent;
+	scrollbar-color: var(--color-warning) transparent;
 }
 
 .pending-list::-webkit-scrollbar {
@@ -2770,7 +2769,7 @@ export default {
 }
 
 .pending-list::-webkit-scrollbar-thumb {
-	background: #dca75e;
+	background: var(--color-warning);
 	border-radius: 999px;
 }
 
@@ -2798,8 +2797,8 @@ export default {
 	font-family: inherit;
 	text-align: left;
 
-	background: #fffaf1;
-	border: 1px solid #f0ddbd;
+	background: var(--color-main-background);
+	border: 1px solid var(--color-element-warning);
 	border-radius: 10px;
 
 	cursor: pointer;
@@ -2828,7 +2827,7 @@ export default {
 	width: 100%;
 	overflow: hidden;
 
-	color: #243746;
+	color: var(--color-primary-element-light-text);
 	font-size: 0.76rem;
 	font-weight: 700;
 	line-height: 1.2;
@@ -2840,7 +2839,7 @@ export default {
 	width: 100%;
 	overflow: hidden;
 
-	color: #9a5a16;
+	color: var(--color-warning-text);
 	font-size: 0.66rem;
 	font-weight: 600;
 	line-height: 1.2;
@@ -2857,29 +2856,29 @@ export default {
 	width: 34px;
 	height: 34px;
 
-	color: white;
+	color: var(--color-main-text);
 	font-size: 0.78rem;
 	font-weight: 800;
 	line-height: 1;
 
-	background: #b45309;
-	border: 3px solid #ffedd5;
+	background: var(--color-warning);
+	border: 3px solid var(--color-element-warning);
 	border-radius: 50%;
 
-	box-shadow: 0 2px 6px rgba(180, 83, 9, 0.22);
+	box-shadow: 0 2px 6px rgb(from var(--color-box-shadow) r g b / 0.22);
 }
 
 .pending-card:hover {
-	background: #fff3dc;
-	border-color: #dfb877;
+	background: var(--color-warning);
+	border-color: var(--color-element-warning);
 
-	box-shadow: 0 4px 10px rgba(146, 64, 14, 0.1);
+	box-shadow: 0 4px 10px rgb(from var(--color-box-shadow) r g b / 0.1);
 
 	transform: translateY(-1px);
 }
 
 .pending-card:hover .pending-card__days {
-	background: #92400e;
+	background: var(--color-warning);
 }
 
 .pending-card:active {

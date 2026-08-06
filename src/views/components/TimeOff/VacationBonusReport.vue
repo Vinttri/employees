@@ -563,13 +563,13 @@ export default {
 
 <style scoped>
 .informe-prima {
-	--prima-accent: #a9762f;
-	--prima-accent-dark: #7e541d;
-	--prima-accent-soft: rgba(169, 118, 47, 0.12);
-	--prima-success: #087f5b;
-	--prima-success-soft: #d7f5e8;
-	--prima-warning: #9a6700;
-	--prima-warning-soft: #fff1c7;
+	--prima-accent: var(--color-warning);
+	--prima-accent-dark: var(--color-warning);
+	--prima-accent-soft: rgb(from var(--color-warning) r g b / 0.12);
+	--prima-success: var(--color-success);
+	--prima-success-soft: var(--color-success);
+	--prima-warning: var(--color-warning);
+	--prima-warning-soft: var(--color-warning);
 	--prima-border: var(--color-border);
 	--prima-surface: var(--color-main-background);
 	--prima-surface-soft: var(--color-background-hover);
@@ -597,8 +597,8 @@ export default {
 	background:
 		linear-gradient(
 			135deg,
-			rgba(169, 118, 47, 0.11),
-			rgba(169, 118, 47, 0.025) 48%,
+			rgb(from var(--color-warning) r g b / 0.11),
+			rgb(from var(--color-warning) r g b / 0.025) 48%,
 			transparent
 		);
 
@@ -616,10 +616,10 @@ export default {
 .informe-avatar {
 	flex: 0 0 auto;
 
-	border: 2px solid rgba(169, 118, 47, 0.32);
+	border: 2px solid rgb(from var(--color-element-warning) r g b / 0.32);
 	border-radius: 50%;
 
-	box-shadow: 0 4px 12px rgba(99, 65, 18, 0.14);
+	box-shadow: 0 4px 12px rgb(from var(--color-box-shadow) r g b / 0.14);
 }
 
 .informe-avatar-fallback {
@@ -636,7 +636,7 @@ export default {
 	font-weight: 800;
 
 	background: var(--prima-accent-soft);
-	border: 2px solid rgba(169, 118, 47, 0.3);
+	border: 2px solid rgb(from var(--color-element-warning) r g b / 0.3);
 	border-radius: 50%;
 }
 
@@ -707,22 +707,22 @@ export default {
 	border: 1px solid var(--prima-border);
 	border-radius: 10px;
 
-	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.035);
+	box-shadow: 0 2px 7px rgb(from var(--color-box-shadow) r g b / 0.035);
 }
 
 .resumen-item--paid {
 	background: var(--prima-success-soft);
-	border-color: rgba(8, 127, 91, 0.18);
+	border-color: rgb(from var(--color-border-success) r g b / 0.18);
 }
 
 .resumen-item--pending {
 	background: var(--prima-warning-soft);
-	border-color: rgba(154, 103, 0, 0.18);
+	border-color: rgb(from var(--color-element-warning) r g b / 0.18);
 }
 
 .resumen-item--days {
 	background: var(--prima-accent-soft);
-	border-color: rgba(169, 118, 47, 0.2);
+	border-color: rgb(from var(--color-element-warning) r g b / 0.2);
 }
 
 .resumen-item__label {
@@ -966,13 +966,13 @@ export default {
 	min-height: 36px;
 	padding: 7px 12px;
 
-	color: white;
+	color: var(--color-main-text);
 	font-family: inherit;
 	font-size: 0.74rem;
 	font-weight: 750;
 
-	background: #000;
-	border: 1px solid #000;
+	background: var(--color-background-darker);
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
 
 	cursor: pointer;
@@ -988,7 +988,7 @@ export default {
 	color: var(--prima-accent-dark);
 
 	background: var(--prima-accent-soft);
-	border-color: rgba(169, 118, 47, 0.35);
+	border-color: rgb(from var(--color-element-warning) r g b / 0.35);
 }
 
 .status-stack {
@@ -1049,7 +1049,7 @@ export default {
 	gap: 12px;
 
 	background: var(--prima-accent-soft);
-	border: 1px solid rgba(169, 118, 47, 0.22);
+	border: 1px solid rgb(from var(--color-element-warning) r g b / 0.22);
 	border-radius: 10px;
 }
 
@@ -1292,11 +1292,11 @@ export default {
 }
 
 .payment-button:hover {
-	background: #3a3a3a;
+	background: var(--color-background-hover);
 }
 
 .payment-button--edit:hover {
-	color: white;
+	color: var(--color-main-text);
 	background: var(--prima-accent);
 	border-color: var(--prima-accent);
 }

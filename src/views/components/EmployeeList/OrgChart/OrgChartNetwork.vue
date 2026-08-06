@@ -86,6 +86,7 @@ import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
+import { getNextcloudThemeColor, getNextcloudThemeColorWithAlpha } from '../../../../utils/nextcloudTheme.js'
 import OrgChartTable from './OrgChartTable.vue'
 import OrgChartTraditional from './OrgChartTraditional.vue'
 
@@ -409,7 +410,10 @@ export default {
 				},
 				edges: {
 					smooth: { type: 'continuous' },
-					color: { color: '#8a8a8a', highlight: '#3478f6' },
+					color: {
+						color: getNextcloudThemeColor('--color-text-maxcontrast'),
+						highlight: getNextcloudThemeColor('--color-primary-element'),
+					},
 				},
 				nodes: {
 					borderWidth: 2,
@@ -447,7 +451,7 @@ export default {
 
 					ctx.beginPath()
 					ctx.arc(0, 0, radio, 0, 2 * Math.PI)
-					ctx.strokeStyle = '#3478f6'
+					ctx.strokeStyle = getNextcloudThemeColor('--color-primary-element')
 					ctx.lineWidth = 1
 					ctx.setLineDash([4, 6])
 					ctx.stroke()
@@ -455,7 +459,7 @@ export default {
 					const label = this.ringLabels[level]
 					if (label) {
 						ctx.font = 'bold 26px sans-serif'
-						ctx.fillStyle = 'rgba(120, 120, 120, .4)'
+						ctx.fillStyle = getNextcloudThemeColorWithAlpha('--color-text-maxcontrast', 0.4)
 						ctx.textAlign = 'center'
 						ctx.setLineDash([])
 						ctx.fillText(label, 0, -radio - 6)
@@ -706,8 +710,8 @@ export default {
 
 	&.active {
 		background: var(--color-primary-element);
-		color: var(--color-primary-element-text, #fff);
-		box-shadow: 0 2px 10px rgba(52, 120, 246, 0.35);
+		color: var(--color-primary-element-text);
+		box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.35);
 	}
 }
 

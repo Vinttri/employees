@@ -895,7 +895,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 8px;
 	background: var(--color-main-background);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.04);
 }
 
 .filters-card {
@@ -1036,26 +1036,26 @@ export default {
 }
 
 .compliance-card {
-	--semaforo-color: #d94f00;
-	--semaforo-bg: rgba(217, 79, 0, 0.12);
+	--semaforo-color: var(--color-warning);
+	--semaforo-bg: rgb(from var(--color-warning) r g b / 0.12);
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
 }
 
 .compliance-card.status-ok {
-	--semaforo-color: #108548;
-	--semaforo-bg: rgba(16, 133, 72, 0.12);
+	--semaforo-color: var(--color-success);
+	--semaforo-bg: rgb(from var(--color-success) r g b / 0.12);
 }
 
 .compliance-card.status-warning {
-	--semaforo-color: #c78200;
-	--semaforo-bg: rgba(199, 130, 0, 0.14);
+	--semaforo-color: var(--color-warning);
+	--semaforo-bg: rgb(from var(--color-warning) r g b / 0.14);
 }
 
 .compliance-card.status-danger {
-	--semaforo-color: #d94f00;
-	--semaforo-bg: rgba(217, 79, 0, 0.12);
+	--semaforo-color: var(--color-warning);
+	--semaforo-bg: rgb(from var(--color-warning) r g b / 0.12);
 }
 
 .semaforo-header {

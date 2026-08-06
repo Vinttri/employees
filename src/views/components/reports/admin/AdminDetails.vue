@@ -328,6 +328,7 @@ import VirtualList from 'vue-virtual-scroll-list'
 
 // eslint-disable-next-line import/no-named-as-default
 import Chart from 'chart.js/auto'
+import { getNextcloudThemeColor, getNextcloudThemeColorWithAlpha } from '../../../../utils/nextcloudTheme.js'
 
 import {
 // NcTextField,
@@ -882,8 +883,8 @@ export default {
 						{
 							label: t('employees', 'Estimated cost'),
 							data: datos.map(x => Number(x.costo.toFixed(2))),
-							backgroundColor: 'rgba(37, 99, 235, 0.76)',
-							borderColor: 'rgba(37, 99, 235, 1)',
+							backgroundColor: getNextcloudThemeColorWithAlpha('--color-primary-element', 0.76),
+							borderColor: getNextcloudThemeColor('--color-primary-element'),
 							borderRadius: 6,
 							borderWidth: 1,
 							xAxisID: 'xCost',
@@ -891,8 +892,8 @@ export default {
 						{
 							label: t('employees', 'Hours'),
 							data: datos.map(x => Number(x.total.toFixed(2))),
-							backgroundColor: 'rgba(20, 184, 166, 0.62)',
-							borderColor: 'rgba(13, 148, 136, 1)',
+							backgroundColor: getNextcloudThemeColorWithAlpha('--color-element-success', 0.62),
+							borderColor: getNextcloudThemeColor('--color-element-success'),
 							borderRadius: 6,
 							borderWidth: 1,
 							xAxisID: 'xHours',
@@ -953,7 +954,7 @@ export default {
 							position: 'bottom',
 							beginAtZero: true,
 							grid: {
-								color: 'rgba(148, 163, 184, 0.18)',
+								color: getNextcloudThemeColorWithAlpha('--color-border-maxcontrast', 0.18),
 							},
 							ticks: {
 								callback: value => this.formatMoney(value),
@@ -996,8 +997,8 @@ export default {
 						{
 							label: t('employees', 'Hours by activity'),
 							data: datos.map(x => Number(x.total.toFixed(2))),
-							backgroundColor: 'rgba(124, 58, 237, 0.72)',
-							borderColor: 'rgba(109, 40, 217, 1)',
+							backgroundColor: getNextcloudThemeColorWithAlpha('--color-primary-element', 0.72),
+							borderColor: getNextcloudThemeColor('--color-primary-element'),
 							borderRadius: 6,
 							borderWidth: 1,
 						},
@@ -1083,8 +1084,13 @@ export default {
 							y: Number(cliente.costo.toFixed(2)),
 							r: Math.max(7, Math.min(24, 7 + (cliente.reportes / maxReportes) * 17)),
 						}],
-						backgroundColor: `hsla(${(index * 47) % 360}, 72%, 52%, 0.62)`,
-						borderColor: `hsla(${(index * 47) % 360}, 72%, 38%, 1)`,
+						backgroundColor: getNextcloudThemeColorWithAlpha(
+							index % 2 ? '--color-element-success' : '--color-primary-element',
+							0.62,
+						),
+						borderColor: getNextcloudThemeColor(
+							index % 2 ? '--color-element-success' : '--color-primary-element',
+						),
 						borderWidth: 1,
 					})),
 				},
@@ -1269,10 +1275,10 @@ export default {
 .decision-card,
 .kpi-card,
 .panel {
-	background: var(--color-main-background, #fff);
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.08));
+	background: var(--color-main-background);
+	border: 1px solid var(--color-border);
 	border-radius: 12px;
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+	box-shadow: 0 10px 30px rgb(from var(--color-box-shadow) r g b / 0.06);
 }
 
 .hero-card {
@@ -1281,8 +1287,8 @@ export default {
 
 .hero-card-main {
 	background:
-		linear-gradient(135deg, rgba(91, 108, 250, 0.10), rgba(20, 184, 166, 0.08)),
-		var(--color-main-background, #fff);
+		linear-gradient(135deg, rgb(from var(--color-primary-element-light) r g b / 0.1), rgb(from var(--color-primary-element-light) r g b / 0.08)),
+		var(--color-main-background);
 }
 
 .eyebrow,
@@ -1291,20 +1297,20 @@ export default {
 	font-size: 0.75rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 }
 
 .hero-title {
 	margin: 8px 0 10px;
 	font-size: 1.75rem;
 	line-height: 1.15;
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 }
 
 .hero-copy {
 	margin: 0;
 	line-height: 1.5;
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 }
 
 .hero-stats {
@@ -1317,20 +1323,20 @@ export default {
 .hero-stat {
 	padding: 14px 16px;
 	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.74);
-	border: 1px solid rgba(91, 108, 250, 0.12);
+	background: rgb(from var(--color-main-background) r g b / 0.74);
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.12);
 }
 
 .hero-stat-label {
 	display: block;
 	margin-bottom: 6px;
 	font-size: 0.78rem;
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 }
 
 .hero-stat-value {
 	font-size: 1.15rem;
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 }
 
 .decision-grid {
@@ -1346,11 +1352,11 @@ export default {
 	min-width: 0;
 	padding: 16px;
 	border-radius: 10px;
-	box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+	box-shadow: 0 4px 18px rgb(from var(--color-box-shadow) r g b / 0.05);
 }
 
 .decision-card span {
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	font-size: 0.78rem;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1358,19 +1364,19 @@ export default {
 
 .decision-card strong {
 	overflow: hidden;
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 	font-size: 1.18rem;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 .decision-card small {
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	line-height: 1.35;
 }
 
 .decision-card.muted {
-	background: var(--color-background-hover, rgba(15, 23, 42, 0.05));
+	background: var(--color-background-hover);
 }
 
 .chart-controls {
@@ -1379,10 +1385,10 @@ export default {
 	align-items: end;
 	gap: 12px;
 	padding: 14px;
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.08));
+	border: 1px solid var(--color-border);
 	border-radius: 10px;
-	background: var(--color-main-background, #fff);
-	box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+	background: var(--color-main-background);
+	box-shadow: 0 4px 18px rgb(from var(--color-box-shadow) r g b / 0.04);
 }
 
 .control-group {
@@ -1392,7 +1398,7 @@ export default {
 }
 
 .control-group label {
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	font-size: 0.76rem;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1401,19 +1407,19 @@ export default {
 .control-group select {
 	min-height: 36px;
 	padding: 0 34px 0 10px;
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.12));
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
-	background: var(--color-main-background, #fff);
-	color: var(--color-main-text, #111827);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
 }
 
 .clear-focus {
 	min-height: 36px;
 	padding: 0 14px;
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.12));
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
-	background: var(--color-background-hover, rgba(15, 23, 42, 0.05));
-	color: var(--color-main-text, #111827);
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
 	font-weight: 700;
 }
 
@@ -1439,7 +1445,7 @@ export default {
 	font-size: 1.9rem;
 	font-weight: 700;
 	line-height: 1.15;
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 }
 
 .charts-grid {
@@ -1468,13 +1474,13 @@ export default {
 .panel-title {
 	margin: 4px 0 0;
 	font-size: 1rem;
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 }
 
 .panel-copy {
 	max-width: 620px;
 	margin: 6px 0 0;
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	font-size: 0.84rem;
 	line-height: 1.4;
 }
@@ -1484,8 +1490,8 @@ export default {
 	border-radius: 999px;
 	white-space: nowrap;
 	font-size: 0.75rem;
-	color: var(--color-text-maxcontrast, #6b7280);
-	background: var(--color-background-hover, rgba(15, 23, 42, 0.05));
+	color: var(--color-text-maxcontrast);
+	background: var(--color-background-hover);
 }
 
 .chart-box {
@@ -1502,9 +1508,9 @@ export default {
 	min-height: 280px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.08));
+	border: 1px solid var(--color-border);
 	border-radius: 10px;
-	background: var(--color-main-background, #fff);
+	background: var(--color-main-background);
 }
 
 .details-list {
@@ -1513,7 +1519,7 @@ export default {
 
 .ranking-table-wrap {
 	overflow: auto;
-	border: 1px solid var(--color-border, rgba(15, 23, 42, 0.08));
+	border: 1px solid var(--color-border);
 	border-radius: 10px;
 }
 
@@ -1521,24 +1527,24 @@ export default {
 	width: 100%;
 	min-width: 760px;
 	border-collapse: collapse;
-	background: var(--color-main-background, #fff);
+	background: var(--color-main-background);
 }
 
 .ranking-table th,
 .ranking-table td {
 	padding: 12px 14px;
-	border-bottom: 1px solid var(--color-border, rgba(15, 23, 42, 0.08));
+	border-bottom: 1px solid var(--color-border);
 	text-align: left;
 	vertical-align: middle;
 	white-space: nowrap;
 }
 
 .ranking-table th {
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	font-size: 0.78rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	background: var(--color-background-hover, rgba(15, 23, 42, 0.05));
+	background: var(--color-background-hover);
 }
 
 .ranking-table td:first-child {
@@ -1552,12 +1558,12 @@ export default {
 }
 
 .ranking-table td strong {
-	color: var(--color-main-text, #111827);
+	color: var(--color-main-text);
 }
 
 .ranking-table td span {
 	margin-top: 3px;
-	color: var(--color-text-maxcontrast, #6b7280);
+	color: var(--color-text-maxcontrast);
 	font-size: 0.82rem;
 }
 
@@ -1576,13 +1582,13 @@ export default {
 	height: 8px;
 	overflow: hidden;
 	border-radius: 999px;
-	background: var(--color-background-darker, rgba(15, 23, 42, 0.12));
+	background: var(--color-background-darker);
 }
 
 .share-value {
 	height: 100%;
 	border-radius: inherit;
-	background: var(--color-primary-element, #2563eb);
+	background: var(--color-primary-element);
 }
 
 @media (max-width: 1100px) {

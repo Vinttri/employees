@@ -2285,7 +2285,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 999px;
 	background: var(--color-main-background);
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 4px 14px rgb(from var(--color-box-shadow) r g b / 0.12);
 	transform: translateX(-50%);
 }
 
@@ -2352,7 +2352,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.05);
 	overflow: hidden;
 }
 
@@ -2463,46 +2463,46 @@ export default {
 }
 
 .status-borrador {
-	background: #e5e5e5;
-	color: #222;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
 }
 
 .status-pendiente_autorizacion {
-	background: #fff0b3;
-	color: #5f4500;
+	background: var(--color-warning);
+	color: var(--color-warning-text);
 }
 
 .status-autorizada {
-	background: #d5f5d5;
-	color: #115511;
+	background: var(--color-success);
+	color: var(--color-success-text);
 }
 
 .status-rechazada {
-	background: #ffd8d8;
-	color: #7a1111;
+	background: var(--color-error);
+	color: var(--color-error-text);
 }
 
 .status-cancelada {
-	background: #ececec;
-	color: #555;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
 }
 
 .document-completo {
-	border: 1px solid rgba(22, 163, 74, 0.25);
-	background: rgba(22, 163, 74, 0.12);
-	color: #15803d;
+	border: 1px solid rgb(from var(--color-border-success) r g b / 0.25);
+	background: rgb(from var(--color-success) r g b / 0.12);
+	color: var(--color-success-text);
 }
 
 .document-pendiente_firmado {
-	border: 1px solid rgba(234, 179, 8, 0.28);
-	background: rgba(234, 179, 8, 0.14);
-	color: #8a5700;
+	border: 1px solid rgb(from var(--color-element-warning) r g b / 0.28);
+	background: rgb(from var(--color-warning) r g b / 0.14);
+	color: var(--color-warning-text);
 }
 
 .document-pendiente_pdf {
-	border: 1px solid rgba(100, 116, 139, 0.25);
-	background: rgba(100, 116, 139, 0.14);
-	color: #475569;
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.25);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.14);
+	color: var(--color-primary-element-light-text);
 }
 
 .empty-state {
@@ -3415,9 +3415,9 @@ export default {
 		gap: 12px;
 		align-items: center;
 		padding: 16px;
-		border: 1px solid #e6b800;
+		border: 1px solid var(--color-element-warning);
 		border-radius: var(--border-radius-large);
-		background: #fff8d6;
+		background: var(--color-warning);
 	}
 
 	.pending-approval-icon {
@@ -3428,7 +3428,7 @@ export default {
 		height: 52px;
 		border-radius: var(--border-radius-large);
 		background: var(--color-main-background);
-		color: #7a5a00;
+		color: var(--color-warning-text);
 	}
 
 	.pending-approval-content {
@@ -3455,20 +3455,20 @@ export default {
 }
 
 .badge-document-ok {
-	background: rgba(22, 163, 74, 0.12);
-	color: #15803d;
-	border: 1px solid rgba(22, 163, 74, 0.25);
+	background: rgb(from var(--color-success) r g b / 0.12);
+	color: var(--color-success-text);
+	border: 1px solid rgb(from var(--color-border-success) r g b / 0.25);
 }
 
 .badge-document-pending {
-	background: rgba(234, 179, 8, 0.14);
-	color: #a16207;
-	border: 1px solid rgba(234, 179, 8, 0.28);
+	background: rgb(from var(--color-warning) r g b / 0.14);
+	color: var(--color-warning-text);
+	border: 1px solid rgb(from var(--color-element-warning) r g b / 0.28);
 }
 
 .badge-document-missing {
-	background: rgba(100, 116, 139, 0.14);
-	color: #475569;
-	border: 1px solid rgba(100, 116, 139, 0.25);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.14);
+	color: var(--color-primary-element-light-text);
+	border: 1px solid rgb(from var(--color-primary-element) r g b / 0.25);
 }
 </style>

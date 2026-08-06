@@ -96,19 +96,19 @@ export default {
 }
 
 .item--special {
-	background: linear-gradient(135deg, #3b82f622 0%, var(--color-main-background) 30%);
+	background: linear-gradient(135deg, rgb(from var(--color-primary-element-light) r g b / 0.133) 0%, var(--color-main-background) 30%);
 	border-radius: 8px;
-	border-left: 3px solid #8db5f5;
+	border-left: 3px solid var(--color-primary-element);
 }
 
 .item--billable {
-	background: linear-gradient(135deg, #22c55e22 0%, var(--color-main-background) 30%);
+	background: linear-gradient(135deg, rgb(from var(--color-success) r g b / 0.133) 0%, var(--color-main-background) 30%);
 	border-radius: 8px;
-	border-left: 3px solid #6ee09a;
+	border-left: 3px solid var(--color-border-success);
 }
 
 .item--disabled {
-	background: linear-gradient(135deg, rgba(0, 2, 1, 0.13) 0%, var(--color-main-background) 30%);
+	background: linear-gradient(135deg, rgb(from var(--color-background-darker) r g b / 0.13) 0%, var(--color-main-background) 30%);
 	opacity: 0.5;
 	border-radius: 8px;
 	border-left: 3px solid var(--color-border-dark);

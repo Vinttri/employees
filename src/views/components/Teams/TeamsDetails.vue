@@ -386,7 +386,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 22px;
 	background: var(--color-main-background);
-	box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 16px 36px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .team-hero__content {
@@ -399,7 +399,7 @@ export default {
 	margin-bottom: 10px;
 	padding: 5px 11px;
 	border-radius: 999px;
-	background: rgba(52, 120, 246, 0.12);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.12);
 	color: var(--color-primary-element);
 	font-size: 11px;
 	font-weight: 700;
@@ -482,7 +482,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 22px;
 	background: var(--color-main-background);
-	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+	box-shadow: 0 10px 28px rgb(from var(--color-box-shadow) r g b / 0.06);
 }
 
 .members-panel__header {
@@ -546,13 +546,13 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 18px;
 	background: var(--color-main-background);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 10px 24px rgb(from var(--color-box-shadow) r g b / 0.08);
 	transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .member-card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+	box-shadow: 0 16px 30px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .member-card__body {
@@ -607,7 +607,7 @@ export default {
 	padding: 36px;
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 2px 16px rgb(from var(--color-box-shadow) r g b / 0.08);
 	text-align: center;
 }
 

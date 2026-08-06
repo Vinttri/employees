@@ -1102,7 +1102,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+	box-shadow: 0 1px 4px rgb(from var(--color-box-shadow) r g b / 0.04);
 }
 
 .stat-card__icon {
@@ -1227,13 +1227,13 @@ export default {
 }
 
 .status-badge--active {
-	background: var(--color-success, #008000);
-	color: var(--color-success-text, #fff);
+	background: var(--color-success);
+	color: var(--color-success-text);
 }
 
 .status-badge--disabled {
-	background: var(--color-warning, #eca700);
-	color: var(--color-warning-text, #222);
+	background: var(--color-warning);
+	color: var(--color-warning-text);
 }
 
 .status-badge--pending {

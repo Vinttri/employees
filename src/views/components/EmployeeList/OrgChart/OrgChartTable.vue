@@ -291,7 +291,7 @@ export default {
 }
 
 .manager-card--open {
-	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 6px 18px rgb(from var(--color-box-shadow) r g b / 0.08);
 }
 
 .manager-card__header {
@@ -368,7 +368,7 @@ export default {
 }
 
 .stat-pill--direct {
-	background: rgba(52, 120, 246, 0.12);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.12);
 	color: var(--color-primary-element);
 }
 
@@ -381,7 +381,7 @@ export default {
 .manager-card__body {
 	border-top: 1px solid var(--color-border);
 	padding: 4px 16px 12px;
-	background: rgba(148, 163, 184, 0.04);
+	background: rgb(from var(--color-primary-element-light) r g b / 0.04);
 }
 
 .dependents-table {
@@ -401,7 +401,7 @@ export default {
 
 	td {
 		padding: 8px 6px;
-		border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+		border-bottom: 1px solid rgb(from var(--color-primary-element) r g b / 0.15);
 	}
 
 	tr:last-child td {
@@ -441,10 +441,10 @@ export default {
 	white-space: nowrap;
 }
 
-.level-badge--1 { background: rgba(52, 199, 89, 0.15); color: #1a7f37; }
-.level-badge--2 { background: rgba(255, 159, 10, 0.18); color: #a15c00; }
-.level-badge--3 { background: rgba(255, 69, 58, 0.15); color: #b3261e; }
-.level-badge--4 { background: rgba(140, 82, 255, 0.16); color: #6f2bd6; }
+.level-badge--1 { background: rgb(from var(--color-success) r g b / 0.15); color: var(--color-success-text); }
+.level-badge--2 { background: rgb(from var(--color-warning) r g b / 0.18); color: var(--color-warning-text); }
+.level-badge--3 { background: rgb(from var(--color-error) r g b / 0.15); color: var(--color-error-text); }
+.level-badge--4 { background: rgb(from var(--color-primary-element-light) r g b / 0.16); color: var(--color-primary-element-light-text); }
 
 .expand-enter-active,
 .expand-leave-active {

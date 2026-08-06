@@ -640,19 +640,19 @@ export default {
 }
 
 .summary-card {
-	background: #fff;
+	background: var(--color-main-background);
 	border-radius: 10px;
 	padding: 22px 20px;
 	text-align: center;
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-	border: 1px solid rgba(0, 0, 0, 0.06);
+	box-shadow: 0 6px 18px rgb(from var(--color-box-shadow) r g b / 0.06);
+	border: 1px solid rgb(from var(--color-border) r g b / 0.06);
 }
 
 .summary-value {
 	font-family: "Cormorant Garamond", serif;
 	font-size: 2.2rem;
 	font-weight: 600;
-	color: #555352;
+	color: var(--color-main-text);
 	line-height: 1.1;
 }
 
@@ -662,7 +662,7 @@ export default {
 	font-size: 0.75rem;
 	letter-spacing: 1.5px;
 	text-transform: uppercase;
-	color: #555352;
+	color: var(--color-main-text);
 }
 
 @media (max-width: 480px) {

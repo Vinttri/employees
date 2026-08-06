@@ -265,7 +265,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.05);
 }
 
 /* ── Header ── */
@@ -317,7 +317,7 @@ export default {
 
 .badge--billable {
 	background: color-mix(in srgb, var(--color-success) 60%);
-	color: #50ec07;
+	color: var(--color-success-text);
 }
 
 .badge--nonbillable {
@@ -465,7 +465,7 @@ export default {
 }
 
 .details-header--billable {
-    background: linear-gradient(135deg, #54bd70 20%, #0b4b1f 100%);
+    background: linear-gradient(135deg, var(--color-success) 20%, var(--color-success) 100%);
     border-radius: 8px;
     padding: 16px 16px 10px 16px;
 }
@@ -473,16 +473,16 @@ export default {
 .details-header--billable .eyebrow,
 .details-header--billable h2,
 .details-header--billable .subtitle {
-    color: #ffffff;
+    color: var(--color-main-text);
 }
 
 .details-header--billable .details-icon {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-main-text);
+    background: rgb(from var(--color-main-background) r g b / 0.15);
 }
 
 .details-header--billable .badge--billable {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background: rgb(from var(--color-main-background) r g b / 0.2);
+    color: var(--color-main-text);
 }
 </style>

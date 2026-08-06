@@ -436,7 +436,7 @@ export default {
 	border: 1px solid var(--color-border);
 	border-radius: 8px;
 	background: var(--color-main-background);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 2px 10px rgb(from var(--color-box-shadow) r g b / 0.04);
 }
 
 .panel-header {

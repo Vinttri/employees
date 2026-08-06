@@ -161,7 +161,7 @@ export default {
 .rsg {
 	padding-top: 16px;
 	padding-bottom: 16px;
-	border: 1px solid rgb(232, 232, 232);
+	border: 1px solid var(--color-border);
 	border-radius: 3px;
 	display: flex;
 	margin-left: 20px;

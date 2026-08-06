@@ -326,7 +326,7 @@ header { display: flex; justify-content: space-between; align-items: start; marg
 label { display: flex; flex-direction: column; gap: 5px; }
 input, select, textarea { box-sizing: border-box; width: 100%; min-height: 38px; padding: 8px; border: 1px solid var(--color-border-maxcontrast); border-radius: var(--border-radius); background: var(--color-main-background); color: var(--color-main-text); }
 textarea { min-height: 90px; resize: vertical; }.form-action { justify-content: flex-end; }.state { text-align: center; padding: 40px; } ul { padding-left: 22px; }
-.modal-backdrop { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .5); }
-.modal { width: min(520px, 100%); max-height: 90vh; overflow: auto; padding: 24px; border-radius: var(--border-radius-large); background: var(--color-main-background); box-shadow: 0 8px 30px rgba(0, 0, 0, .25); }
+.modal-backdrop { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgb(from var(--color-background-darker) r g b / 0.5); }
+.modal { width: min(520px, 100%); max-height: 90vh; overflow: auto; padding: 24px; border-radius: var(--border-radius-large); background: var(--color-main-background); box-shadow: 0 8px 30px rgb(from var(--color-box-shadow) r g b / 0.25); }
 .modal label { margin-bottom: 12px; }.modal .actions { justify-content: flex-end; }
 </style>

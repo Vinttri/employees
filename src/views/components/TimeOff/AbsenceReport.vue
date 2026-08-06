@@ -497,6 +497,7 @@ import { translate as t } from '@nextcloud/l10n'
 
 import { localizeAbsenceText } from '../../../utils/absenceTypeLabel.js'
 import { nextcloudLocale } from '../../../utils/nextcloudLocale.js'
+import { getNextcloudThemeColor } from '../../../utils/nextcloudTheme.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -508,16 +509,20 @@ import AccountSearch from 'vue-material-design-icons/AccountSearch.vue'
 import VacationBonusReport from './VacationBonusReport.vue'
 import FileExcelOutline from 'vue-material-design-icons/FileExcelOutline.vue'
 
-const PALETA_TIPOS = [
-	{ bg: '#dbeafe', color: '#1d4ed8' },
-	{ bg: '#fef3c7', color: '#b45309' },
-	{ bg: '#d1fae5', color: '#065f46' },
-	{ bg: '#ede9fe', color: '#5b21b6' },
-	{ bg: '#fee2e2', color: '#b91c1c' },
-	{ bg: '#fce7f3', color: '#9d174d' },
-	{ bg: '#ccfbf1', color: '#0f766e' },
-	{ bg: '#ffedd5', color: '#c2410c' },
+const THEME_PALETTE = [
+	['--color-primary-element-light', '--color-primary-element-light-text'],
+	['--color-warning', '--color-warning-text'],
+	['--color-success', '--color-success-text'],
+	['--color-info', '--color-info-text'],
+	['--color-error', '--color-error-text'],
 ]
+
+function themePalette() {
+	return THEME_PALETTE.map(([background, color]) => ({
+		bg: getNextcloudThemeColor(background),
+		color: getNextcloudThemeColor(color),
+	}))
+}
 
 function hashStr(str) {
 	let h = 0
@@ -818,7 +823,8 @@ export default {
 
 		onAvatarError(event, name, size = 36) {
 			const iniciales = this.iniciales(name)
-			const paleta = PALETA_TIPOS[hashStr(name || '') % PALETA_TIPOS.length]
+			const palette = themePalette()
+			const paleta = palette[hashStr(name || '') % palette.length]
 			const center = size / 2
 			const fontSize = Math.max(12, Math.round(size * 0.36))
 			const textY = Math.round(center + fontSize * 0.35)
@@ -831,7 +837,8 @@ export default {
 
 		colorTipo(type) {
 			if (!type) return {}
-			const p = PALETA_TIPOS[hashStr(type) % PALETA_TIPOS.length]
+			const palette = themePalette()
+			const p = palette[hashStr(type) % palette.length]
 			return { background: p.bg, color: p.color }
 		},
 
@@ -907,8 +914,8 @@ export default {
 	--reporte-radius: 12px;
 	--reporte-radius-small: 8px;
 	--reporte-shadow:
-		0 8px 24px rgba(0, 0, 0, 0.08),
-		0 2px 6px rgba(0, 0, 0, 0.04);
+		0 8px 24px rgb(from var(--color-background-darker) r g b / 0.08),
+		0 2px 6px rgb(from var(--color-background-darker) r g b / 0.04);
 
 	display: flex;
 	flex-direction: column;
@@ -1114,7 +1121,7 @@ export default {
 	font-size: 0.68rem;
 	font-weight: 700;
 
-	background: white;
+	background: var(--color-main-background);
 	border-radius: 999px;
 }
 
@@ -1204,7 +1211,7 @@ export default {
 	border-radius: var(--reporte-radius);
 
 	box-shadow:
-		0 3px 10px rgba(0, 0, 0, 0.04);
+		0 3px 10px rgb(from var(--color-background-darker) r g b / 0.04);
 
 	scrollbar-width: thin;
 	scrollbar-color: var(--color-border-dark) transparent;
@@ -1294,7 +1301,7 @@ export default {
 }
 
 .row-futuro td:first-child {
-	border-left: 3px solid #f0a500;
+	border-left: 3px solid var(--color-element-warning);
 }
 
 .reporte-tabla tbody tr:last-child td {
@@ -1364,12 +1371,12 @@ export default {
 }
 
 .date-tardia {
-	color: #b60909;
+	color: var(--color-error-text);
 	font-weight: 600;
 }
 
 .date-temprana {
-	color: #f85a1c;
+	color: var(--color-error-text);
 	font-weight: 600;
 }
 
@@ -1423,8 +1430,8 @@ export default {
 }
 
 .badge-prima {
-	color: #065f46;
-	background: #d1fae5;
+	color: var(--color-success-text);
+	background: var(--color-success);
 }
 
 .badge-prima-no {
@@ -1450,23 +1457,23 @@ export default {
 }
 
 .chip-cancelado {
-	color: #b91c1c;
-	background: #fee2e2;
+	color: var(--color-error-text);
+	background: var(--color-error);
 }
 
 .chip-completado {
-	color: #065f46;
-	background: #d1fae5;
+	color: var(--color-success-text);
+	background: var(--color-success);
 }
 
 .chip-encurso {
-	color: #1d4ed8;
-	background: #dbeafe;
+	color: var(--color-primary-element-light-text);
+	background: var(--color-primary-element-light);
 }
 
 .chip-pendiente {
-	color: #b45309;
-	background: #fef3c7;
+	color: var(--color-warning-text);
+	background: var(--color-warning);
 }
 
 /* ========================================
@@ -1494,18 +1501,18 @@ export default {
 }
 
 .chip-a-aprobado {
-	color: #065f46;
-	background: #d1fae5;
+	color: var(--color-success-text);
+	background: var(--color-success);
 }
 
 .chip-a-rechazado {
-	color: #b91c1c;
-	background: #fee2e2;
+	color: var(--color-error-text);
+	background: var(--color-error);
 }
 
 .chip-a-cancelado {
-	color: #9d174d;
-	background: #fce7f3;
+	color: var(--color-primary-element-light-text);
+	background: var(--color-primary-element-light);
 }
 
 .chip-a-pendiente {
@@ -1615,14 +1622,14 @@ export default {
 	min-height: 36px;
 	padding: 7px 13px;
 
-	color: white;
+	color: var(--color-main-text);
 	font-family: inherit;
 	font-size: 0.74rem;
 	font-weight: 700;
 	white-space: nowrap;
 
-	background: #000;
-	border: 1px solid #000;
+	background: var(--color-background-darker);
+	border: 1px solid var(--color-border);
 	border-radius: var(--reporte-radius-small);
 
 	cursor: pointer;
@@ -1687,12 +1694,12 @@ export default {
 }
 
 .resumen-card--prima-si {
-	background: #d1fae5;
-	border-color: rgba(6, 95, 70, 0.18);
+	background: var(--color-success);
+	border-color: rgb(from var(--color-border-success) r g b / 0.18);
 }
 
 .resumen-card--prima-si .resumen-valor-prima {
-	color: #065f46;
+	color: var(--color-success-text);
 }
 
 /* ========================================
@@ -1814,10 +1821,10 @@ export default {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background-color: #1F4E79;
-    border-color: #1F4E79;
+    background-color: var(--color-primary-element-light);
+    border-color: var(--color-primary-element);
 }
-.btn-excel-periodos:hover { background-color: #2b6aa3; }
+.btn-excel-periodos:hover { background-color: var(--color-primary-element-light); }
 
 /* ========================================
  * RESPONSIVE
@@ -1989,7 +1996,7 @@ export default {
 	border-color: var(--color-primary);
 
 	box-shadow:
-		0 0 0 2px rgba(0, 130, 201, 0.14);
+		0 0 0 2px rgb(from var(--color-primary-element-light) r g b / 0.14);
 }
 
 .reporte-tabla tbody tr:hover {
@@ -1997,16 +2004,16 @@ export default {
 }
 
 .resumen-card:hover {
-	box-shadow: 0 5px 14px rgba(0, 0, 0, 0.07);
+	box-shadow: 0 5px 14px rgb(from var(--color-box-shadow) r g b / 0.07);
 	transform: translateY(-1px);
 }
 
 .btn-prima-vacacional:hover {
-	background: #3a3a3a;
+	background: var(--color-background-hover);
 }
 
 .btn-prima-vacacional:active {
-	background: #000;
+	background: var(--color-background-darker);
 	transform: scale(0.98);
 }
 </style>

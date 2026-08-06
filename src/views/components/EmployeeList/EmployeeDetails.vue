@@ -80,7 +80,7 @@
 			<!-- Tabs -->
 			<div class="center">
 				<VueTabs active-tab-color="var(--color-primary-element)"
-					active-text-color="white"
+					active-text-color="var(--color-primary-element-text)"
 					type="grow"
 					centered>
 					<VTab :title="t('employees', 'Employee')">
@@ -384,7 +384,7 @@ export default {
 	font-weight: 600;
 }
 .employee-edit-toolbar__actions { display: flex; align-items: center; gap: 8px; }
-.well { margin: 0 auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+.well { margin: 0 auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgb(from var(--color-box-shadow) r g b / 0.1); }
 .user-card { display: flex; align-items: center; padding: 0 10px 10px; }
 .info { display: flex; flex-direction: column; }
 .info h2 { margin: 0; width: 100%; }
@@ -397,7 +397,7 @@ export default {
 	padding: 36px;
 	border-radius: var(--border-radius-large);
 	background: var(--color-main-background);
-	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 2px 16px rgb(from var(--color-box-shadow) r g b / 0.08);
 	text-align: center;
 }
 

@@ -666,10 +666,10 @@ export default {
   width: 190px;
   box-sizing: border-box;
   padding: 6px 0;
-  border: 1px solid rgba(0, 0, 0, 0.28);
+  border: 1px solid rgb(from var(--color-border) r g b / 0.28);
   border-radius: var(--border-radius);
   background: var(--color-main-background);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgb(from var(--color-box-shadow) r g b / 0.12);
 }
 
 .filter-section {

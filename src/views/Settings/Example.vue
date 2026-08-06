@@ -209,7 +209,7 @@ export default {
 
 <style>
 	.ejemplo {
-		color: red;
+		color: var(--color-error-text);
 	}
 	.table_component {
     overflow: auto;
@@ -218,7 +218,7 @@ export default {
 }
 
 .table_component table {
-    border: 1px solid #dededf;
+    border: 1px solid var(--color-border);
     height: 100%;
     width: 100%;
     table-layout: fixed;
@@ -233,16 +233,16 @@ export default {
 }
 
 .table_component th {
-    border: 1px solid #dededf;
-    background-color: #eceff1;
-    color: #000000;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
     padding: 5px;
 }
 
 .table_component td {
-    border: 1px solid #dededf;
-    background-color: #ffffff;
-    color: #000000;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
     padding: 5px;
 }
 </style>
