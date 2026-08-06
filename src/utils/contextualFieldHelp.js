@@ -187,6 +187,11 @@ const enhance = (root) => {
 	})
 }
 
+const enhanceAppAndDialogs = (root) => {
+	enhance(root)
+	document.querySelectorAll('.modal-mask[role="dialog"]').forEach(dialog => enhance(dialog))
+}
+
 export const startContextualFieldHelp = (rootSelector) => {
 	const root = typeof rootSelector === 'string' ? document.querySelector(rootSelector) : rootSelector
 	if (!root) return () => {}
@@ -196,11 +201,11 @@ export const startContextualFieldHelp = (rootSelector) => {
 		if (frame !== null) return
 		frame = window.requestAnimationFrame(() => {
 			frame = null
-			enhance(root)
+			enhanceAppAndDialogs(root)
 		})
 	}
 	const observer = new MutationObserver(schedule)
-	observer.observe(root, { childList: true, subtree: true })
+	observer.observe(document.body || root, { childList: true, subtree: true })
 	schedule()
 
 	return () => {

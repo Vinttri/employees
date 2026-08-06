@@ -2,7 +2,19 @@ import { translate as t } from '@nextcloud/l10n'
 
 const rules = [
 	{
-		match: /\biban\b|bank account|account number|банковск|сч[её]т|cuenta bancaria/i,
+		match: /search|filter|поиск|фильтр|buscar|filtrar/i,
+		short: 'Filters the visible records without changing them.',
+		purpose: 'Use search or filters to narrow the current list; the underlying employee or business data is not modified.',
+		example: 'Type finance to show matching employees or records',
+	},
+	{
+		match: /period|период|per[ií]odo/i,
+		short: 'Selects the reporting or calculation period.',
+		purpose: 'The selected period determines which dates and records are shown or included in the calculation.',
+		example: 'August 2026 for the monthly payroll calculation',
+	},
+	{
+		match: /\biban\b|bank account|account number|банковск|номер сч[её]та|сч[её]т получателя|cuenta bancaria/i,
 		short: 'Used to prepare the employee payment.',
 		purpose: 'The account is included in payroll bank files and identifies where the payment must be sent.',
 		example: 'CY00 … 1234 (the employee’s valid IBAN)',

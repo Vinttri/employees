@@ -33,6 +33,8 @@ for (const contract of [
 	'tooltip',
 	"event.key === 'Escape'",
 	'dataset.employeesFieldHelp',
+	'.modal-mask[role="dialog"]',
+	'document.body || root',
 ]) {
 	assert.ok(enhancer.includes(contract), `missing accessibility or lifecycle contract ${contract}`)
 }
@@ -43,6 +45,9 @@ assert.match(catalog, /salary|payroll/)
 assert.match(catalog, /absence|vacation/)
 assert.match(catalog, /department|organisation/)
 assert.match(catalog, /inventory/)
+assert.match(catalog, /search\|filter/)
+assert.match(catalog, /period\|период/)
+assert.equal(catalog.includes('банковск|сч[её]т|'), false, 'bank rule must not match the word “расчётный”')
 assert.equal(/#[0-9a-f]{3,8}\b/i.test(styles), false, 'field help must not hardcode colors')
 for (const token of ['--color-main-background', '--color-main-text', '--color-primary-element', '--color-border']) {
 	assert.ok(styles.includes(token), `missing Nextcloud theme token ${token}`)
@@ -56,6 +61,8 @@ for (const key of [
 	'Defines how an absence affects payroll and calendars.',
 	'Identifies the equipment in inventory.',
 	'Enter the value that should be saved in this field.',
+	'Filters the visible records without changing them.',
+	'Selects the reporting or calculation period.',
 ]) {
 	assert.ok(russian[key], `missing Russian field help translation: ${key}`)
 }
